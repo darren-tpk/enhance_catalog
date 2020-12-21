@@ -1,21 +1,21 @@
 from obspy import UTCDateTime
 from waveform_collection import gather_waveforms, gather_waveforms_bulk
 
-# Seismic Data
-STARTTIME = UTCDateTime(2005, 7, 3, 10, 18, 22, 110000)
-ENDTIME   = UTCDateTime(2005, 7, 3, 16, 18, 22, 110000)
-
-st = gather_waveforms(source='IRIS', network='AV', station='AUL',
-                      location='*', channel='BHN', starttime=STARTTIME,
-                      endtime=ENDTIME)
-
-## Infrasound
-#STARTTIME = UTCDateTime(2020, 10, 7, 9, 41)
-#ENDTIME   = UTCDateTime(2020, 10, 7, 9, 50)
+# # Seismic Data
+# STARTTIME = UTCDateTime(2005, 7, 3, 10, 18, 22, 110000)
+# ENDTIME   = UTCDateTime(2005, 7, 3, 16, 18, 22, 110000)
 #
-#st = gather_waveforms(source='IRIS', network='AV', station='KENI',
-#                      location='01', channel='HDF', starttime=STARTTIME,
-#                      endtime=ENDTIME)
+# st = gather_waveforms(source='IRIS', network='AV', station='AUL',
+#                       location='*', channel='BHN', starttime=STARTTIME,
+#                       endtime=ENDTIME)
+
+# Infrasound
+STARTTIME = UTCDateTime(2020, 10, 7, 9, 41)
+ENDTIME   = UTCDateTime(2020, 10, 7, 9, 50)
+
+st = gather_waveforms(source='IRIS', network='AV', station='KENI',
+                     location='01', channel='HDF', starttime=STARTTIME,
+                     endtime=ENDTIME)
 
 # Plot and get stats
 st.plot(color='black')
