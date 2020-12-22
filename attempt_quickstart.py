@@ -35,6 +35,7 @@ from obspy import read_events
 catalog_raw = read_events(output_file, "HYPODDPHA")
 
 # quick loop to fix network and station entries, and remove EQs without picks
+from obspy import Catalog
 catalog = Catalog()
 for i in range(0,len(catalog_raw)):
     num_picks = len(catalog_raw[i].picks)
