@@ -32,19 +32,17 @@ ncsn2pha(input_file, output_file)
 
 # read hypoddpha file into a python catalog
 from obspy import read_events
-catalog = read_events(output_file, "HYPODDPHA")
+catalog_raw = read_events(output_file, "HYPODDPHA")
 
 # quick loop to fix network and station entries, and remove EQs without picks
-has_picks = []
-for i in range(len(catalog)):
-    num_picks = len(catalog[i].picks)
-    if num_picks != 0:
-        has_picks.append(i)
+catalog = Catalog()
+for i in range(0,len(catalog_raw)):
+    num_picks = len(catalog_raw[i].picks)
     for j in range(num_picks):
-        catalog[i].picks[j].waveform_id.network_code = catalog[i].picks[j].waveform_id.station_code[0:2]
-        catalog[i].picks[j].waveform_id.station_code = catalog[i].picks[j].waveform_id.station_code[2:]
-
-
+        catalog_raw[i].picks[j].waveform_id.network_code = catalog_raw[i].picks[j].waveform_id.station_code[0:2]
+        catalog_raw[i].picks[j].waveform_id.station_code = catalog_raw[i].picks[j].waveform_id.station_code[2:]
+    if num_picks != 0:
+        catalog.append(catalog_raw[i])
 
 # plot catalog
 fig = catalog.plot(projection="local",resolution="l")
