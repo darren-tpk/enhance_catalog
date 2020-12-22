@@ -44,6 +44,8 @@ for i in range(len(catalog)):
         catalog[i].picks[j].waveform_id.network_code = catalog[i].picks[j].waveform_id.station_code[0:2]
         catalog[i].picks[j].waveform_id.station_code = catalog[i].picks[j].waveform_id.station_code[2:]
 
+
+
 # plot catalog
 fig = catalog.plot(projection="local",resolution="l")
 
@@ -58,7 +60,7 @@ from eqcorrscan import Tribe
 tribe = Tribe().construct(
     method="from_client", lowcut=4.0, highcut=15.0, samp_rate=50.0, length=6.0,
     filt_order=4, prepick=0.5, client_id=client, catalog=catalog, data_pad=20.,
-    process_len=60, min_snr=5.0, parallel=True)
+    process_len=3600, min_snr=5.0, parallel=False)
 print(tribe)
 
 ####################################
@@ -88,5 +90,5 @@ from eqcorrscan import Tribe
 tribe = Tribe().construct(
     method="from_client", lowcut=4.0, highcut=15.0, samp_rate=50.0, length=6.0,
     filt_order=4, prepick=0.5, client_id=client, catalog=catalog, data_pad=20.,
-    process_len=21600, min_snr=5.0, parallel=True)
+    process_len=21600, min_snr=5.0, parallel=False)
 print(tribe)
