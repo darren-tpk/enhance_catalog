@@ -10,8 +10,8 @@
 
 # # Parse phase info
 #
-# from prepare_catalog.parser import printer
-# from prepare_catalog.parser import construct_phase_catalog
+# from phase_processing.hypoi_parser import printer
+# from phase_processing.hypoi_parser import construct_phase_catalog
 #
 # phase_dir = '/Users/darrentpk/Desktop/Research/PREEVENTS/Data/avo_internal/hypoinverse.txt'
 # all_Event = construct_phase_catalog(phase_dir)
@@ -23,7 +23,7 @@
 # printer(all_Event[0].all_Phase[0])
 
 # Convert hypoi phase data to hypoddpha form
-from data_management.ncsn2pha import ncsn2pha
+from phase_processing.ncsn2pha import ncsn2pha
 
 main_dir = '/Users/darrentpk/Desktop/avo_data/'
 input_file = main_dir + 'augustine2_hypoi.txt'
