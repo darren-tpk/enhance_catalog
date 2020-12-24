@@ -23,7 +23,7 @@
 # printer(all_Event[0].all_Phase[0])
 
 # Convert hypoi phase data to hypoddpha form
-from phase_processing.ncsn2pha import ncsn2pha
+from phase_processing.phase_processing.ncsn2pha import ncsn2pha
 
 main_dir = '/Users/darrentpk/Desktop/avo_data/'
 input_file = main_dir + 'augustine2_hypoi.txt'
@@ -42,6 +42,7 @@ for i in range(0,len(catalog_raw)):
     for j in range(num_picks):
         catalog_raw[i].picks[j].waveform_id.network_code = catalog_raw[i].picks[j].waveform_id.station_code[0:2]
         catalog_raw[i].picks[j].waveform_id.station_code = catalog_raw[i].picks[j].waveform_id.station_code[2:]
+        catalog_raw[i].picks[j].waveform_id.channel_code  = "*" + catalog_raw[i].picks[j].waveform_id.channel_code
     if num_picks != 0:
         catalog.append(catalog_raw[i])
 

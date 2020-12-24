@@ -1,21 +1,21 @@
 from obspy import UTCDateTime
 from waveform_collection import gather_waveforms, gather_waveforms_bulk
 
-# # Seismic Data
-# STARTTIME = UTCDateTime(2005, 7, 3, 10, 18, 22, 110000)
-# ENDTIME   = UTCDateTime(2005, 7, 3, 16, 18, 22, 110000)
+# Seismic Data
+STARTTIME = UTCDateTime(2015, 1, 15, 5, 27, 45, 560000)
+ENDTIME   = UTCDateTime(2015, 1, 15, 6, 27, 45, 560000)
+
+st = gather_waveforms(source='IRIS', network='AV', station='AUW',
+                      location='*', channel='Z', starttime=STARTTIME,
+                      endtime=ENDTIME)
+
+# # Infrasound
+# STARTTIME = UTCDateTime(2020, 10, 7, 9, 41)
+# ENDTIME   = UTCDateTime(2020, 10, 7, 9, 50)
 #
-# st = gather_waveforms(source='IRIS', network='AV', station='AUL',
-#                       location='*', channel='BHN', starttime=STARTTIME,
-#                       endtime=ENDTIME)
-
-# Infrasound
-STARTTIME = UTCDateTime(2020, 10, 7, 9, 41)
-ENDTIME   = UTCDateTime(2020, 10, 7, 9, 50)
-
-st = gather_waveforms(source='IRIS', network='AV', station='KENI',
-                     location='01', channel='HDF', starttime=STARTTIME,
-                     endtime=ENDTIME)
+# st = gather_waveforms(source='IRIS', network='AV', station='KENI',
+#                      location='01', channel='HDF', starttime=STARTTIME,
+#                      endtime=ENDTIME)
 
 # Plot and get stats
 st.plot(color='black')
@@ -23,7 +23,7 @@ st[0].stats
 
 # Response removal
 st2 = st
-st2.remove_response(output = 'ACC', plot = False)
+st2.remove_response(output = 'DISP', plot = False)
 
 # Filter
 st3 = st2
