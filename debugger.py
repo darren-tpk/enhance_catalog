@@ -5,9 +5,15 @@ from obspy import Catalog
 from obspy import Stream
 from obspy import read_events
 from obspy import UTCDateTime
-from eqcorrscan.core import template_gen
+from obspy.core.event import Comment, CreationInfo
+from eqcorrscan.core.match_filter.template import Template
+from eqcorrscan.core.match_filter.tribe import getpass
+from eqcorrscan.core.match_filter.tribe import Tribe
 from eqcorrscan.core.template_gen import _group_events
-from eqcorrscan.core.template_gen import _download_from_client
+from eqcorrscan.core.template_gen import _rms
+from eqcorrscan.utils.plotting import pretty_template_plot as tplot
+from eqcorrscan.utils.plotting import noise_plot
+from eqcorrscan.utils import pre_processing
 
 class TemplateGenError(Exception):
     def __init__(self, value):
@@ -18,10 +24,11 @@ class TemplateGenError(Exception):
         return 'TemplateGenError: ' + self.value
 
 from waveform_collection import gather_waveforms
-st = gather_waveforms(source='IRIS', network='AV', station='AUL',
+st_wc = gather_waveforms(source='IRIS', network='AV', station='AUL',
                            location='', channel='*N', starttime=UTCDateTime(2015, 1, 15, 5, 27, 45, 560000),
                            endtime=UTCDateTime(2015, 1, 16, 5, 27, 45, 560000))
 
+method = 'from_client'
 swin = 'all'
 lowcut = 4
 highcut = 15
@@ -30,7 +37,6 @@ length = 6
 filt_order = 4
 prepick = 0.5
 client_id = Client('IRIS')
-catalog = catalog
 data_pad = 20
 process_len = 86400
 min_snr = None
@@ -44,6 +50,13 @@ skip_short_chans = False
 save_progress = False
 url = None
 
+# Convert hypoi phase data to hypoddpha form
+from phase_processing.phase_processing.ncsn2pha import ncsn2pha
+main_dir = '/Users/darrentpk/Desktop/avo_data/'
+input_file = main_dir + 'augustine2_hypoi.txt'
+output_file = main_dir + 'augustine2_hypoddpha.txt'
+ncsn2pha(input_file, output_file)
+
 # Sub-sample our catalog
 catalog_raw = read_events(output_file, "HYPODDPHA")
 catalog = Catalog()
@@ -55,6 +68,12 @@ for i in range(0,10):
         catalog_raw[i].picks[j].waveform_id.channel_code  = "*" + catalog_raw[i].picks[j].waveform_id.channel_code
     if num_picks != 0:
         catalog.append(catalog_raw[i])
+
+# Set up logging
+logging.basicConfig(
+    level=logging.ERROR,
+    format="%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s")
+Logger = logging.getLogger(__name__)
 
 # now try template_gen
 client_map = {'from_client': 'fdsn', 'from_seishub': 'seishub'}
@@ -273,10 +292,179 @@ for sub_catalog in sub_catalogs:
             st_stachans.append('.'.join([tr.stats.station,
                                          tr.stats.channel]))
         # Cut and extract the templates
-        template = _template_gen(
-            event.picks, st, length, swin, prepick=prepick, plot=plot,
-            all_horiz=all_horiz, delayed=delayed, min_snr=min_snr,
-            plotdir=plotdir)
+        picks = event.picks
+        # _template_gen
+        # the users picks intact.
+        if not isinstance(swin, list):
+            swin = [swin]
+        for _swin in swin:
+            assert _swin in ['P', 'all', 'S', 'P_all', 'S_all']
+        picks_copy = []
+        for pick in picks:
+            if not pick.waveform_id:
+                Logger.warning(
+                    "Pick not associated with waveform, will not use it: "
+                    "{0}".format(pick))
+                continue
+            if not pick.waveform_id.station_code or not \
+                    pick.waveform_id.channel_code:
+                Logger.warning(
+                    "Pick not associated with a channel, will not use it:"
+                    " {0}".format(pick))
+                continue
+            picks_copy.append(pick)
+        # if len(picks_copy) == 0:
+        #     return Stream() # commented out
+        st_copy = Stream()
+        for tr in st:
+            # Check that the data can be represented by float16, and check they
+            # are not all zeros
+            if np.all(tr.data.astype(np.float16) == 0):
+                Logger.error("Trace is all zeros at float16 level, either gain or "
+                             "check. Not using in template: {0}".format(tr))
+                continue
+            st_copy += tr
+        st = st_copy
+        # if len(st) == 0:
+        #     return st
+        # Get the earliest pick-time and use that if we are not using delayed.
+        picks_copy.sort(key=lambda p: p.time)
+        first_pick = picks_copy[0]
+        if plot:
+            stplot = st.slice(first_pick.time - 20,
+                              first_pick.time + length + 90).copy()
+            noise = stplot.copy()
+        # Work out starttimes
+        starttimes = []
+        for _swin in swin:
+            for tr in st:
+                starttime = {'station': tr.stats.station,
+                             'channel': tr.stats.channel, 'picks': []}
+                station_picks = [pick for pick in picks_copy
+                                 if pick.waveform_id.station_code ==
+                                 tr.stats.station]
+                if _swin == 'P_all':
+                    p_pick = [pick for pick in station_picks
+                              if pick.phase_hint.upper()[0] == 'P']
+                    if len(p_pick) == 0:
+                        continue
+                    starttime.update({'picks': p_pick})
+                elif _swin == 'S_all':
+                    s_pick = [pick for pick in station_picks
+                              if pick.phase_hint.upper()[0] == 'S']
+                    if len(s_pick) == 0:
+                        continue
+                    starttime.update({'picks': s_pick})
+                elif _swin == 'all':
+                    if all_horiz and tr.stats.channel[-1] in ['1', '2', '3',
+                                                              'N', 'E']:
+                        # Get all picks on horizontal channels
+                        channel_pick = [
+                            pick for pick in station_picks
+                            if pick.waveform_id.channel_code[-1] in
+                               ['1', '2', '3', 'N', 'E']]
+                    else:
+                        channel_pick = [
+                            pick for pick in station_picks
+                            if pick.waveform_id.channel_code[-1] == tr.stats.channel[-1]] # FLAG
+                    if len(channel_pick) == 0:
+                        continue
+                    starttime.update({'picks': channel_pick})
+                elif _swin == 'P':
+                    p_pick = [pick for pick in station_picks
+                              if pick.phase_hint.upper()[0] == 'P' and
+                              pick.waveform_id.channel_code == tr.stats.channel]
+                    if len(p_pick) == 0:
+                        continue
+                    starttime.update({'picks': p_pick})
+                elif _swin == 'S':
+                    if tr.stats.channel[-1] in ['Z', 'U']:
+                        continue
+                    s_pick = [pick for pick in station_picks
+                              if pick.phase_hint.upper()[0] == 'S']
+                    if not all_horiz:
+                        s_pick = [pick for pick in s_pick
+                                  if pick.waveform_id.channel_code ==
+                                  tr.stats.channel]
+                    starttime.update({'picks': s_pick})
+                    if len(starttime['picks']) == 0:
+                        continue
+                if not delayed:
+                    starttime.update({'picks': [first_pick]})
+                starttimes.append(starttime)
+        # Cut the data
+        st1 = Stream()
+        for _starttime in starttimes:
+            Logger.info(f"Working on channel {_starttime['station']}."
+                        f"{_starttime['channel']}")
+            tr = st.select(
+                station=_starttime['station'], channel=_starttime['channel'])[0]
+            Logger.info(f"Found Trace {tr}")
+            used_tr = False
+            for pick in _starttime['picks']:
+                if not pick.phase_hint:
+                    Logger.warning(
+                        "Pick for {0}.{1} has no phase hint given, you should not "
+                        "use this template for cross-correlation"
+                        " re-picking!".format(
+                            pick.waveform_id.station_code,
+                            pick.waveform_id.channel_code))
+                starttime = pick.time - prepick
+                Logger.debug("Cutting {0}".format(tr.id))
+                noise_amp = _rms(
+                    tr.slice(starttime=starttime - 100, endtime=starttime).data)
+                tr_cut = tr.slice(
+                    starttime=starttime, endtime=starttime + length,
+                    nearest_sample=False).copy()
+                if plot:
+                    noise.select(
+                        station=_starttime['station'],
+                        channel=_starttime['channel']).trim(
+                        noise[0].stats.starttime, starttime)
+                if len(tr_cut.data) == 0:
+                    Logger.warning(
+                        "No data provided for {0}.{1} starting at {2}".format(
+                            tr.stats.station, tr.stats.channel, starttime))
+                    continue
+                # Ensure that the template is the correct length
+                if len(tr_cut.data) == (tr_cut.stats.sampling_rate *
+                                        length) + 1:
+                    tr_cut.data = tr_cut.data[0:-1]
+                Logger.debug(
+                    'Cut starttime = %s\nCut endtime %s' %
+                    (str(tr_cut.stats.starttime), str(tr_cut.stats.endtime)))
+                if min_snr is not None and \
+                        max(tr_cut.data) / noise_amp < min_snr:
+                    Logger.warning(
+                        "Signal-to-noise ratio {0} below threshold for {1}.{2}, "
+                        "not using".format(
+                            max(tr_cut.data) / noise_amp, tr_cut.stats.station,
+                            tr_cut.stats.channel))
+                    continue
+                st1 += tr_cut
+                used_tr = True
+            if not used_tr:
+                Logger.warning('No pick for {0}'.format(tr.id))
+        if plot and len(st1) > 0:
+            plot_kwargs = dict(show=True)
+            if plotdir is not None:
+                if not os.path.isdir(plotdir):
+                    os.makedirs(plotdir)
+                plot_kwargs.update(dict(show=False, save=True))
+            tplot(st1, background=stplot, picks=picks_copy,
+                  title='Template for ' + str(st1[0].stats.starttime),
+                  savefile="{0}/{1}_template.png".format(
+                      plotdir, st1[0].stats.starttime.strftime(
+                          "%Y-%m-%dT%H%M%S")),
+                  **plot_kwargs)
+            noise_plot(signal=st1, noise=noise,
+                       savefile="{0}/{1}_noise.png".format(
+                           plotdir, st1[0].stats.starttime.strftime(
+                               "%Y-%m-%dT%H%M%S")),
+                       **plot_kwargs)
+            del stplot
+        template = st1
+        ### End of _template_gen
         process_lengths.append(len(st[0].data) / samp_rate)
         temp_list.append(template)
         catalog_out += event
@@ -290,3 +478,51 @@ for sub_catalog in sub_catalogs:
                         "%Y-%m-%dT%H%M%S")),
                 format="MSEED")
     del st
+
+templates = temp_list
+catalog = catalog_out
+process_lengths = process_lengths
+
+all_t = []
+
+# From templates craft tribe
+for template, event, process_len in zip(templates, catalog,
+                                        process_lengths):
+    t = Template()
+    for tr in template:
+        if not np.any(tr.data.astype(np.float16)):
+            Logger.warning('Data are zero in float16, missing data,'
+                           ' will not use: {0}'.format(tr.id))
+            template.remove(tr)
+    if len(template) == 0:
+        Logger.error('Empty Template')
+        continue
+    t.st = template
+    t.name = template.sort(['starttime'])[0]. \
+        stats.starttime.strftime('%Y_%m_%dt%H_%M_%S')
+    t.lowcut = lowcut
+    t.highcut = highcut
+    t.filt_order = filt_order
+    t.samp_rate = samp_rate
+    t.process_length = process_len
+    t.prepick = prepick
+    event.comments.append(Comment(
+        text="eqcorrscan_template_" + t.name,
+        creation_info=CreationInfo(agency='eqcorrscan',
+                                   author=getpass.getuser())))
+    t.event = event
+    all_t.append(t)
+tribe = Tribe(all_t)
+
+print(tribe[0])
+fig = tribe[0].st.plot(equal_scale=False, size=(800, 600))
+
+# remove templates with <5 stations
+tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 5]
+print(tribe)
+
+# client detect
+t1 = UTCDateTime(2015,2,23,0,0,0)
+party, st = tribe.client_detect(
+    client=client, starttime=t1, endtime=t1 + (86400 * 2), threshold=9.,
+    threshold_type="MAD", trig_int=2.0, plot=False, return_stream=True)
