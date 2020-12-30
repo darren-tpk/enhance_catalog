@@ -31,7 +31,7 @@ hypoddpha_file = main_dir + 'augustine2_hypoddpha.txt'
 ncsn2pha(hypoi_file, hypoddpha_file)
 
 # read hypoddpha file into a python catalog
-from phase_processing.phase_processing.ncsn2pha import read_hypoddpha
+from phase_processing.phase_processing.read_hypoddpha import read_hypoddpha
 catalog = read_hypoddpha(hypoi_file, hypoddpha_file)
 
 # plot catalog
