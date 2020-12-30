@@ -41,6 +41,13 @@ fig = catalog.plot(projection="local",resolution="l")
 from eqcorrscan.utils.catalog_utils import filter_picks
 catalog_filtered = filter_picks(catalog=catalog, evaluation_mode="manual", top_n_picks=5)
 
+# sub-sample catalog
+from obspy import Catalog
+catalog_sample = Catalog()
+for i in range(10):
+    catalog_sample.append(catalog[i])
+catalog = catalog_sample
+
 # construct tribe
 from obspy.clients.fdsn import Client
 client = Client("IRIS")
@@ -51,6 +58,33 @@ tribe = Tribe().construct(
     process_len=3600, min_snr=5.0, parallel=False)
 print(tribe)
 
+# to look at one template
+print(tribe[0])
+fig = tribe[0].st.plot(equal_scale=False, size=(800, 600))
+
+# detect events
+from obspy import UTCDateTime
+t1 = UTCDateTime(2015,2,23,0,0,0)
+tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 5]
+print(tribe)
+party, st = tribe.client_detect(
+    client=client, starttime=t1, endtime=t1 + (86400 * 2), threshold=9.,
+    threshold_type="MAD", trig_int=2.0, plot=False, return_stream=True)
+
+# view most productive family
+family = sorted(party.families, key=lambda f: len(f))[-1]
+print(family)
+fig = family.template.st.plot(equal_scale=False, size=(800, 600))
+
+# get a dictionary of streams for each detection in a Family and look at those
+streams = family.extract_streams(stream=st, length=10, prepick=2.5)
+print(family.detections[0])
+fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
+
+st = st.merge(method=1)
+repicked_catalog = party.lag_calc(st, pre_processed=False, shift_len=0.5, min_cc=0.4)
+
+print(repicked_catalog[100].picks[0])print(repicked_catalog[100].picks[0].comments[0])
 ####################################
 # From EQcorrscan tutorial
 
@@ -80,3 +114,4 @@ tribe = Tribe().construct(
     filt_order=4, prepick=0.5, client_id=client, catalog=catalog, data_pad=20.,
     process_len=21600, min_snr=5.0, parallel=False)
 print(tribe)
+
