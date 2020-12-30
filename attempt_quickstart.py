@@ -26,25 +26,13 @@
 from phase_processing.phase_processing.ncsn2pha import ncsn2pha
 
 main_dir = '/Users/darrentpk/Desktop/avo_data/'
-input_file = main_dir + 'augustine2_hypoi.txt'
-output_file = main_dir + 'augustine2_hypoddpha.txt'
-ncsn2pha(input_file, output_file)
+hypoi_file = main_dir + 'augustine2_hypoi.txt'
+hypoddpha_file = main_dir + 'augustine2_hypoddpha.txt'
+ncsn2pha(hypoi_file, hypoddpha_file)
 
 # read hypoddpha file into a python catalog
-from obspy import read_events
-catalog_raw = read_events(output_file, "HYPODDPHA")
-
-# quick loop to fix network and station entries, and remove EQs without picks
-from obspy import Catalog
-catalog = Catalog()
-for i in range(0,len(catalog_raw)):
-    num_picks = len(catalog_raw[i].picks)
-    for j in range(num_picks):
-        catalog_raw[i].picks[j].waveform_id.network_code = catalog_raw[i].picks[j].waveform_id.station_code[0:2]
-        catalog_raw[i].picks[j].waveform_id.station_code = catalog_raw[i].picks[j].waveform_id.station_code[2:]
-        catalog_raw[i].picks[j].waveform_id.channel_code  = "*" + catalog_raw[i].picks[j].waveform_id.channel_code
-    if num_picks != 0:
-        catalog.append(catalog_raw[i])
+from phase_processing.phase_processing.ncsn2pha import read_hypoddpha
+catalog = read_hypoddpha(hypoi_file, hypoddpha_file)
 
 # plot catalog
 fig = catalog.plot(projection="local",resolution="l")
