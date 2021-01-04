@@ -55,12 +55,12 @@ from eqcorrscan import Tribe
 tribe = Tribe().construct(
     method="from_client", lowcut=4.0, highcut=15.0, samp_rate=50.0, length=6.0,
     filt_order=4, prepick=0.5, client_id=client, catalog=catalog, data_pad=20.,
-    process_len=3600, min_snr=5.0, parallel=False)
+    process_len=21600, min_snr=5.0, parallel=False) # process_len = 21600
 print(tribe)
 
 # to look at one template
-print(tribe[0])
-fig = tribe[0].st.plot(equal_scale=False, size=(800, 600))
+#print(tribe[2])
+#fig = tribe[2].st.plot(equal_scale=False, size=(800, 600))
 
 # detect events
 from obspy import UTCDateTime
@@ -81,37 +81,13 @@ streams = family.extract_streams(stream=st, length=10, prepick=2.5)
 print(family.detections[0])
 fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
 
-st = st.merge(method=1)
-repicked_catalog = party.lag_calc(st, pre_processed=False, shift_len=0.5, min_cc=0.4)
+# remove response for streams
+from obspy import read_inventory
+sample_st = streams[family.detections[0].id]
+inv = read_inventory(sample_st)
+sample_st.remove_response(inventory=inv)
+fig = sample_st.plot(equal_scale=False, size=(800, 600))
 
-print(repicked_catalog[100].picks[0])print(repicked_catalog[100].picks[0].comments[0])
-####################################
-# From EQcorrscan tutorial
-
-import logging
-
-logging.basicConfig(
-    level=logging.ERROR,
-    format="%(asctime)s\t%(name)s\t%(levelname)s\t%(message)s")
-
-from obspy import UTCDateTime
-from obspy.clients.fdsn import Client
-from eqcorrscan.utils.catalog_utils import filter_picks
-
-client = Client("NCEDC")
-t1 = UTCDateTime(2004, 9, 28)
-t2 = t1 + 86400
-catalog = client.get_events(
-    starttime=t1, endtime=t2, minmagnitude=2.5, minlatitude=35.7, maxlatitude=36.1,
-    minlongitude=-120.6, maxlongitude=-120.2, includearrivals=True)
-fig = catalog.plot(projection="local", resolution="l")
-catalog = filter_picks(catalog=catalog, evaluation_mode="manual", top_n_picks=20)
-
-from eqcorrscan import Tribe
-
-tribe = Tribe().construct(
-    method="from_client", lowcut=4.0, highcut=15.0, samp_rate=50.0, length=6.0,
-    filt_order=4, prepick=0.5, client_id=client, catalog=catalog, data_pad=20.,
-    process_len=21600, min_snr=5.0, parallel=False)
-print(tribe)
-
+#st = st.merge(method=1)
+#repicked_catalog = party.lag_calc(st, pre_processed=False, shift_len=0.5, min_cc=0.4)
+#print(repicked_catalog[100].picks[0])print(repicked_catalog[100].picks[0].comments[0])
