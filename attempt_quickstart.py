@@ -38,8 +38,8 @@ catalog = read_hypoddpha(hypoi_file, hypoddpha_file)
 fig = catalog.plot(projection="local",resolution="l")
 
 # attempt to filter catalog
-from eqcorrscan.utils.catalog_utils import filter_picks
-catalog_filtered = filter_picks(catalog=catalog, evaluation_mode="manual", top_n_picks=5)
+#from eqcorrscan.utils.catalog_utils import filter_picks
+#catalog_filtered = filter_picks(catalog=catalog, evaluation_mode="manual", top_n_picks=5)
 
 # sub-sample catalog
 from obspy import Catalog
