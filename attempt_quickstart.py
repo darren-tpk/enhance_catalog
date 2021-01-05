@@ -55,7 +55,7 @@ from eqcorrscan import Tribe
 tribe = Tribe().construct(
     method="from_client", lowcut=4.0, highcut=15.0, samp_rate=50.0, length=6.0,
     filt_order=4, prepick=0.5, client_id=client, catalog=catalog, data_pad=20.,
-    process_len=21600, min_snr=5.0, parallel=False) # process_len = 21600
+    process_len=3600, min_snr=5.0, parallel=True) # process_len = 21600
 print(tribe)
 
 # # to look at one template
@@ -83,11 +83,11 @@ print(family.detections[0])
 fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
 
 # # remove response for streams
-# from obspy import read_inventory
-# sample_st = streams[family.detections[0].id]
-# inv = read_inventory(sample_st)
-# sample_st.remove_response(inventory=inv)
-# fig = sample_st.plot(equal_scale=False, size=(800, 600))
+sample_st = streams[family.detections[0].id]
+inv = client.get_stations(network = "AV", station = "AU*", level = 'response')
+sample_st.remove_response(inventory=inv, output="VEL")
+sample_st.filter('highpass',freq=1)
+fig = sample_st.plot(equal_scale=False, size=(800, 600))
 
 st_merged = st.merge(method=1)
 repicked_catalog = party.lag_calc(st_merged, pre_processed=False, shift_len=0.5, min_cc=0.4)
