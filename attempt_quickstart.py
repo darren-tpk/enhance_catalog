@@ -34,8 +34,8 @@ ncsn2pha(hypoi_file, hypoddpha_file)
 from phase_processing.phase_processing.read_hypoddpha import read_hypoddpha
 catalog = read_hypoddpha(hypoi_file, hypoddpha_file)
 
-# plot catalog
-fig = catalog.plot(projection="local",resolution="l")
+# # plot catalog
+# fig = catalog.plot(projection="local",resolution="l")
 
 # attempt to filter catalog
 #from eqcorrscan.utils.catalog_utils import filter_picks
@@ -58,14 +58,15 @@ tribe = Tribe().construct(
     process_len=21600, min_snr=5.0, parallel=False) # process_len = 21600
 print(tribe)
 
-# to look at one template
-#print(tribe[2])
-#fig = tribe[2].st.plot(equal_scale=False, size=(800, 600))
+# # to look at one template
+# print(tribe[2])
+# fig = tribe[2].st.plot(equal_scale=False, size=(800, 600))
 
 # detect events
 from obspy import UTCDateTime
 t1 = UTCDateTime(2015,2,23,0,0,0)
-tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 5]
+# only use tribes that have 5 or more stations...
+tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 5] # 5
 print(tribe)
 party, st = tribe.client_detect(
     client=client, starttime=t1, endtime=t1 + (86400 * 2), threshold=9.,
@@ -81,13 +82,14 @@ streams = family.extract_streams(stream=st, length=10, prepick=2.5)
 print(family.detections[0])
 fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
 
-# remove response for streams
-from obspy import read_inventory
-sample_st = streams[family.detections[0].id]
-inv = read_inventory(sample_st)
-sample_st.remove_response(inventory=inv)
-fig = sample_st.plot(equal_scale=False, size=(800, 600))
+# # remove response for streams
+# from obspy import read_inventory
+# sample_st = streams[family.detections[0].id]
+# inv = read_inventory(sample_st)
+# sample_st.remove_response(inventory=inv)
+# fig = sample_st.plot(equal_scale=False, size=(800, 600))
 
-#st = st.merge(method=1)
-#repicked_catalog = party.lag_calc(st, pre_processed=False, shift_len=0.5, min_cc=0.4)
-#print(repicked_catalog[100].picks[0])print(repicked_catalog[100].picks[0].comments[0])
+st_merged = st.merge(method=1)
+repicked_catalog = party.lag_calc(st_merged, pre_processed=False, shift_len=0.5, min_cc=0.4)
+print(repicked_catalog[0].picks[0])
+print(repicked_catalog[0].picks[0].comments[0])
