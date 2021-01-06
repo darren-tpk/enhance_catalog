@@ -26,8 +26,8 @@
 from phase_processing.phase_processing.ncsn2pha import ncsn2pha
 
 main_dir = '/Users/darrentpk/Desktop/avo_data/'
-hypoi_file = main_dir + 'augustine2_hypoi.txt'
-hypoddpha_file = main_dir + 'augustine2_hypoddpha.txt'
+hypoi_file = main_dir + 'augustine3_hypoi.txt'
+hypoddpha_file = main_dir + 'augustine3_hypoddpha.txt'
 ncsn2pha(hypoi_file, hypoddpha_file)
 
 # read hypoddpha file into a python catalog
@@ -40,6 +40,14 @@ catalog = read_hypoddpha(hypoi_file, hypoddpha_file)
 # attempt to filter catalog
 #from eqcorrscan.utils.catalog_utils import filter_picks
 #catalog_filtered = filter_picks(catalog=catalog, evaluation_mode="manual", top_n_picks=5)
+
+# extract magnitudes
+import numpy as np
+mag_list = []
+for i in range(len(catalog)):
+    mag_list.append(catalog[i].magnitudes[0].mag)
+all_mag = np.array(mag_list)
+
 
 # sub-sample catalog
 from obspy import Catalog
@@ -55,7 +63,7 @@ from eqcorrscan import Tribe
 tribe = Tribe().construct(
     method="from_client", lowcut=4.0, highcut=15.0, samp_rate=50.0, length=6.0,
     filt_order=4, prepick=0.5, client_id=client, catalog=catalog, data_pad=20.,
-    process_len=3600, min_snr=5.0, parallel=True) # process_len = 21600
+    process_len=86400, min_snr=5.0, parallel=True) # process_len = 21600
 print(tribe)
 
 # # to look at one template
@@ -83,10 +91,10 @@ print(family.detections[0])
 fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
 
 # # remove response for streams
-sample_st = streams[family.detections[0].id]
+sample_st = streams[family.detections[27].id]
 inv = client.get_stations(network = "AV", station = "AU*", level = 'response')
 sample_st.remove_response(inventory=inv, output="VEL")
-sample_st.filter('highpass',freq=1)
+sample_st.filter('highpass',freq=2)
 fig = sample_st.plot(equal_scale=False, size=(800, 600))
 
 st_merged = st.merge(method=1)
