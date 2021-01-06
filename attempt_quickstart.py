@@ -1,33 +1,11 @@
-# Data is from 30km radius around Augustine
-
-# # Read catalog file
-#
-# import pandas as pd
-#
-# catalog_dir = '/Users/darrentpk/Desktop/Research/PREEVENTS/Data/avo_internal/detailed_readable_text.txt'
-# catalog = pd.read_csv(catalog_dir,header=0,skiprows=list([1]),skipfooter=1,delim_whitespace=True,engine='python')
-# catalog
-
-# # Parse phase info
-#
-# from phase_processing.hypoi_parser import printer
-# from phase_processing.hypoi_parser import construct_phase_catalog
-#
-# phase_dir = '/Users/darrentpk/Desktop/Research/PREEVENTS/Data/avo_internal/hypoinverse.txt'
-# all_Event = construct_phase_catalog(phase_dir)
-#
-# print('Event Sample:\n----------')
-# printer(all_Event[0])
-#
-# print('\nPhase Sample:\n----------')
-# printer(all_Event[0].all_Phase[0])
+# Data is from 25km radius around Augustine
 
 # Convert hypoi phase data to hypoddpha form
 from phase_processing.phase_processing.ncsn2pha import ncsn2pha
 
 main_dir = '/Users/darrentpk/Desktop/avo_data/'
-hypoi_file = main_dir + 'augustine3_hypoi.txt'
-hypoddpha_file = main_dir + 'augustine3_hypoddpha.txt'
+hypoi_file = main_dir + 'augustine2015_2017_hypoi.txt'
+hypoddpha_file = main_dir + 'augustine2015_2017_hypoddpha.txt'
 ncsn2pha(hypoi_file, hypoddpha_file)
 
 # read hypoddpha file into a python catalog
@@ -41,19 +19,20 @@ catalog = read_hypoddpha(hypoi_file, hypoddpha_file)
 #from eqcorrscan.utils.catalog_utils import filter_picks
 #catalog_filtered = filter_picks(catalog=catalog, evaluation_mode="manual", top_n_picks=5)
 
-# extract magnitudes
-import numpy as np
-mag_list = []
-for i in range(len(catalog)):
-    mag_list.append(catalog[i].magnitudes[0].mag)
-all_mag = np.array(mag_list)
+# # extract magnitudes
+# import numpy as np
+# mag_list = []
+# for i in range(len(catalog)):
+#     mag_list.append(catalog[i].magnitudes[0].mag)
+# all_mag = np.array(mag_list)
 
-
-# sub-sample catalog
+# sub-sample catalog, picking only events with mag >1
 from obspy import Catalog
 catalog_sample = Catalog()
-for i in range(10):
-    catalog_sample.append(catalog[i])
+for i in range(len(catalog)):
+    mag = catalog[i].magnitudes[0].mag
+    if mag > 1:
+        catalog_sample.append(catalog[i])
 catalog = catalog_sample
 
 # construct tribe
@@ -72,7 +51,7 @@ print(tribe)
 
 # detect events
 from obspy import UTCDateTime
-t1 = UTCDateTime(2015,2,23,0,0,0)
+t1 = UTCDateTime(2016,8,26,0,0,0)
 # only use tribes that have 5 or more stations...
 tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 5] # 5
 print(tribe)
@@ -91,10 +70,10 @@ print(family.detections[0])
 fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
 
 # # remove response for streams
-sample_st = streams[family.detections[27].id]
-inv = client.get_stations(network = "AV", station = "AU*", level = 'response')
+sample_st = streams[family.detections[0].id]
+inv = client.get_stations(network = "AV", station = "*", level = 'response')
 sample_st.remove_response(inventory=inv, output="VEL")
-sample_st.filter('highpass',freq=2)
+sample_st.filter('highpass',freq=1)
 fig = sample_st.plot(equal_scale=False, size=(800, 600))
 
 st_merged = st.merge(method=1)
