@@ -31,7 +31,7 @@ from obspy import Catalog
 catalog_sample = Catalog()
 for i in range(len(catalog)):
     mag = catalog[i].magnitudes[0].mag
-    if mag > 1:
+    if mag > 1.2:
         catalog_sample.append(catalog[i])
 catalog = catalog_sample
 
@@ -56,7 +56,7 @@ t1 = UTCDateTime(2016,8,26,0,0,0)
 tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 5] # 5
 print(tribe)
 party, st = tribe.client_detect(
-    client=client, starttime=t1, endtime=t1 + (86400 * 2), threshold=9.,
+    client=client, starttime=t1, endtime=t1 + (86400 * 1), threshold=9.,
     threshold_type="MAD", trig_int=2.0, plot=False, return_stream=True)
 
 # view most productive family
@@ -67,7 +67,7 @@ fig = family.template.st.plot(equal_scale=False, size=(800, 600))
 # get a dictionary of streams for each detection in a Family and look at those
 streams = family.extract_streams(stream=st, length=10, prepick=2.5)
 print(family.detections[0])
-fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
+#fig = streams[family.detections[0].id].plot(equal_scale=False, size=(800, 600))
 
 # # remove response for streams
 sample_st = streams[family.detections[0].id]
