@@ -18,8 +18,8 @@ from phase_processing.phase_processing.read_hypoddpha import read_hypoddpha
 # Load all party data and append
 party_all = Party()
 #st_all = Stream()
-main_dir = '/Volumes/NorthStar/'
-save_dir =  main_dir + 'data/'
+main_dir = '/home/ptan/output/'
+save_dir =  main_dir + 'pickles/'
 all_files = os.listdir(save_dir)
 for i in range(len(all_files)):
 #for i in range(5):
@@ -113,7 +113,7 @@ ax.set_xlim([detection_floor,max(detection_array)])
 ax.set_xlabel('Detection-Threshold Gap');
 ax.set_ylabel('Frequency');
 ax.set_title('Histogram of Detection Values');
-outfile = main_dir + 'examples/det_hist.png'
+outfile = main_dir + 'figures/det_hist.png'
 plt.savefig(outfile)
 
 ### Create plot cumulative detections in time (inbuilt for EQcorrscan)
@@ -146,7 +146,7 @@ ax.set_ylim([0,170])
 ax.set_xlabel('Days since ' + str(start_day)[:10]);
 ax.set_ylabel('Daily frequency');
 ax.set_title('Plot of EVENTS+DETECTIONS per day, from ' + str(start_day)[:10]);
-outfile = main_dir + 'examples/combined_perday.png'
+outfile = main_dir + 'figures/combined_perday.png'
 plt.savefig(outfile)
 
 ### Create events per day plot (FOR RAW CATALOG)
@@ -176,7 +176,7 @@ ax.set_ylim([0,170])
 ax.set_xlabel('Days since ' + str(start_day)[:10]);
 ax.set_ylabel('Daily frequency');
 ax.set_title('Plot of EVENTS per day, from ' + str(start_day)[:10]);
-outfile = main_dir + 'examples/event_perday.png'
+outfile = main_dir + 'figures/event_perday.png'
 plt.savefig(outfile)
 
 ### Create family using raw catalog events
