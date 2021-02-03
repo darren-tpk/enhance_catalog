@@ -13,7 +13,7 @@ from phase_processing.ncsn2pha import ncsn2pha
 from phase_processing.read_hypoddpha import read_hypoddpha
 
 # Convert hypoi phase data to hypoddpha form
-main_dir = '/home/ptan/anaconda3/envs/eqcorrscan/attempt_eqcorrscan/avo_data'
+main_dir = '/home/ptan/anaconda3/envs/eqcorrscan/attempt_eqcorrscan/avo_data/'
 hypoi_file = main_dir + 'redoubt_20080101_20100101_hypoi.txt'
 hypoddpha_file = main_dir + 'redoubt_20080101_20100101_hypoddpha.txt'
 ncsn2pha(hypoi_file, hypoddpha_file)
