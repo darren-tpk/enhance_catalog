@@ -9,8 +9,8 @@ from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 from eqcorrscan import Tribe
 from eqcorrscan.utils.catalog_utils import filter_picks
-from phase_processing import ncsn2pha
-from phase_processing import read_hypoddpha
+from phase_processing.ncsn2pha import ncsn2pha
+from phase_processing.read_hypoddpha import read_hypoddpha
 
 # Convert hypoi phase data to hypoddpha form
 main_dir = '/home/ptan/anaconda3/envs/eqcorrscan/attempt_eqcorrscan/avo_data'
