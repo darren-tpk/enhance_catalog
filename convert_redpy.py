@@ -11,14 +11,14 @@ hypoddpha_file = 'redoubt_20090101_20090501_hypoddpha.txt'
 max_dt = 4  # maximum time difference between REDPy detections and AVO events allowed, in seconds
 
 # load in detection list and core list using pandas
-redpy_det = pd.read_csv('/home/ptan/project/avo_data/redpy/catalog.txt', sep=' ', names=['Cluster','DateTime'])
-redpy_core = pd.read_csv('/home/ptan/project/avo_data/redpy/cores.txt', sep=' ', names=['Cluster','DateTime'])
-redpy_orphan = pd.read_csv('/home/ptan/project/avo_data/redpy/orphancatalog.txt', names=['DateTime'])
+redpy_det = pd.read_csv('/home/ptan/attempt_eqcorrscan/avo_data/redpy/catalog.txt', sep=' ', names=['Cluster','DateTime'])
+redpy_core = pd.read_csv('/home/ptan/attempt_eqcorrscan/avo_data/redpy/cores.txt', sep=' ', names=['Cluster','DateTime'])
+redpy_orphan = pd.read_csv('/home/ptan/attempt_eqcorrscan/avo_data/redpy/orphancatalog.txt', names=['DateTime'])
 # prepare core and orphan datetimes as an array
 core_events_time = np.array([UTCDateTime(t) for t in redpy_core.DateTime])
 orphan_events_time = np.array([UTCDateTime(t) for t in redpy_orphan.DateTime])
 # prepare AVO catalog with known picks
-catalog_dir = '/home/ptan/project/avo_data/'
+catalog_dir = '/home/ptan/attempt_eqcorrscan/avo_data/'
 hypoi_path = catalog_dir + hypoi_file
 hypoddpha_path = catalog_dir + hypoddpha_file
 ncsn2pha(hypoi_path, hypoddpha_path)

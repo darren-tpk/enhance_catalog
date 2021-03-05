@@ -13,6 +13,7 @@ from toolbox import remove_boxcars
 # define all variables here
 hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
 hypoddpha_file = 'redoubt_20090101_20090501_hypoddpha.txt'
+channel_convention = True
 start_time = UTCDateTime(2009, 2, 26, 0, 0, 0)
 end_time = start_time + (24 * 60 * 60)
 tolerance = 5e4     # for boxcar removal
@@ -31,13 +32,13 @@ data_dir = '/home/data/redoubt/'
 data_filenames_complete = os.listdir(data_dir)
 
 # convert hypoi phase data to hypoddpha form
-catalog_dir = '/home/ptan/project/avo_data/'
+catalog_dir = '/home/ptan/attempt_eqcorrscan/avo_data/'
 hypoi_path = catalog_dir + hypoi_file
 hypoddpha_path = catalog_dir + hypoddpha_file
-ncsn2pha(hypoi_path, hypoddpha_path)
+ncsn2pha(hypoi_path, hypoddpha_path, channel_convention)
 
 # read hypoddpha file into a python catalog
-catalog_raw = read_hypoddpha(hypoi_path, hypoddpha_path)
+catalog_raw = read_hypoddpha(hypoi_path, hypoddpha_path, channel_convention)
 
 # sub-sample catalog, picking only events on swarm day for testing
 catalog_sample = Catalog()
@@ -99,7 +100,7 @@ tribe = Tribe().construct(
 print('Time Elapsed: ',UTCDateTime()-run_time)
 
 # write tribe into output
-tribe_outpath = '/home/ptan/project/output/' + tribe_out
+tribe_outpath = '/home/ptan/attempt_eqcorrscan/output/' + tribe_out
 if os.path.exists(tribe_outpath+'.tgz'):
     os.remove(tribe_outpath+'.tgz')
     tribe.write(tribe_outpath)

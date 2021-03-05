@@ -22,7 +22,7 @@ tolerance = 5e4 # for boxcar removal
 party_out = 'party'
 
 # read tribe data
-tribe_inpath = '/home/ptan/project/output/' + tribe_in
+tribe_inpath = '/home/ptan/attempt_eqcorrscan/output/' + tribe_in
 tribe = read_tribe(tribe_inpath)
 
 # print station numbers of each template before filter
@@ -80,7 +80,7 @@ for i in range(num_days):
     party_all = party_all + party
 
 # write the combined party object as a tar file
-party_outpath = '/home/ptan/project/output/' + party_out
+party_outpath = '/home/ptan/attempt_eqcorrscan/output/' + party_out
 if os.path.exists(party_outpath+'.tgz'):
     os.remove(party_outpath+'.tgz')
     party_all.write(party_outpath + '.tgz' , format='tar')
