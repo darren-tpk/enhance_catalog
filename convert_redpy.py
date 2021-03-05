@@ -8,7 +8,7 @@ from phase_processing.read_hypoddpha import read_hypoddpha
 # define all variables here
 hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
 hypoddpha_file = 'redoubt_20090101_20090501_hypoddpha.txt'
-max_dt = 10.5  # maximum time difference between REDPy detections and AVO events allowed, in seconds
+max_dt = 4  # maximum time difference between REDPy detections and AVO events allowed, in seconds
 
 # load in detection list and core list using pandas
 redpy_det = pd.read_csv('/home/ptan/project/avo_data/redpy/catalog.txt', sep=' ', names=['Cluster','DateTime'])
@@ -42,7 +42,7 @@ for i in range(len(redpy_det)):
         redpy_event = Event(origins=[Origin(time=det_time, comments=[Comment(text='ORPHAN EVENT;')])])
     # otherwise it is a cluster event
     else:
-        redpy_event = Event(origins=[Origin(time=det_time, comments=[Comment(text='CLUSTER EVENT;')])])
+        redpy_event = Event(origins=[Origin(time=det_time, comments=[Comment(text='CLUSTER ' + str(cluster) + ' EVENT;')])])
     # check if event is part of AVO catalog, using a inter-event tolerance of 10.5s
     if min(abs(avo_events_time - det_time)) < max_dt:
         # find the closest event in time
@@ -55,7 +55,7 @@ for i in range(len(redpy_det)):
         redpy_event.origins[0].latitude = avo_event.origins[0].latitude
         redpy_event.origins[0].depth = avo_event.origins[0].depth
         redpy_event.origins[0].arrivals = avo_event.origins[0].arrivals
-        redpy_event.origins[0].comments[0].text += ' IN AVO'
+        redpy_event.origins[0].comments[0].text += ' IN AVO, DT = ' + '%.2f' % min(abs(avo_events_time - det_time))
     # if event is not part of the AVO catalog, we use...
     else:
         redpy_event.origins[0].comments[0].text += ' NOT IN AVO'
@@ -63,11 +63,3 @@ for i in range(len(redpy_det)):
     redpy_catalog.append(redpy_event)
     if core:
         core_catalog.append(redpy_event)
-
-
-
-
-
-
-
-

@@ -11,8 +11,8 @@ from phase_processing.read_hypoddpha import read_hypoddpha
 from toolbox import remove_boxcars
 
 # define all variables here
-hypoi_file = 'redoubt_20080101_20100101_hypoi.txt'
-hypoddpha_file = 'redoubt_20080101_20100101_hypoddpha.txt'
+hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
+hypoddpha_file = 'redoubt_20090101_20090501_hypoddpha.txt'
 start_time = UTCDateTime(2009, 2, 26, 0, 0, 0)
 end_time = start_time + (24 * 60 * 60)
 tolerance = 5e4     # for boxcar removal

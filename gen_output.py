@@ -17,9 +17,13 @@ party = Party().read(party_in)
 # party2 = Party().read(party2_in)
 
 # clean party off of repeated detections
-time_interval = 30 # number of seconds before and after each detection to check for repeats
+time_interval = 30  # number of seconds before and after each detection to check for repeats
 party_clean = remove_repeats(party,time_interval)
 # save cleaned party
 party_clean_out = 'party_clean'
 party_clean_outpath = '/home/ptan/project/output/' + party_clean_out
-party.write(party_clean_outpath + '.tgz' , format='tar')
+if os.path.exists(party_clean_outpath+'.tgz'):
+    os.remove(party_clean_outpath+'.tgz')
+    party_clean.write(party_clean_outpath + '.tgz' , format='tar')
+else:
+    party_clean.write(party_clean_outpath + '.tgz' , format='tar')
