@@ -13,7 +13,7 @@ from toolbox import remove_boxcars
 # define all variables here
 hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
 hypoddpha_file = 'redoubt_20090101_20090501_hypoddpha.txt'
-channel_convention = True
+channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
 start_time = UTCDateTime(2009, 2, 26, 0, 0, 0)
 end_time = start_time + (24 * 60 * 60)
 tolerance = 5e4     # for boxcar removal

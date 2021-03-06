@@ -93,7 +93,7 @@ else:
 #         client=Client('IRIS'), starttime=start_time, endtime=end_time, threshold=20.,
 #         threshold_type="MAD", trig_int=30.0, plot=False, return_stream=True)
 # party2_out = 'party2'
-# party2_outpath = '/home/ptan/project/output/' + party2_out
+# party2_outpath = '/home/ptan/attempt_eqcorrscan/output/' + party2_out
 # if os.path.exists(party2_outpath+'.tgz'):
 #     os.remove(party2_outpath+'.tgz')
 #     party2.write(party2_outpath + '.tgz' , format='tar')
