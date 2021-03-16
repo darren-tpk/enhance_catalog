@@ -1,4 +1,3 @@
-
 def remove_boxcars(st,tolerance):
     import numpy as np
     from obspy import Stream
@@ -132,5 +131,32 @@ def get_local_stations(volcano_name,radius):
 #         if station not in local_stations:
 #             print(i, station)
 
-
+### create detection-threshold histogram
+def gen_detect_hist(party):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    # Initialize lists for detection and threshold values
+    detection_list = []
+    threshold_list = []
+    for i in range(len(party.families)):
+        family = party[i]
+        for j in range(len(family)):
+            # append detection & threshold values for every detection in the current family
+            detection_value = abs(family[j].detect_val)
+            detection_list.append(detection_value)
+            threshold_value = family[j].threshold
+            threshold_list.append(threshold_value)
+    # plot distribution of detections as histogram and save
+    detection_array = np.array(detection_list) - np.array(threshold_list)
+    detection_floor = np.floor(min(detection_array))
+    detection_ceil = np.ceil(max(detection_array))
+    threshold_array = np.unique(threshold_list)
+    fig, ax = plt.subplots()
+    ax.grid(True)
+    ax.hist(detection_array, bins=np.arange(detection_floor, detection_ceil, 0.1), color='teal', edgecolor='black')
+    ax.set_xlim([detection_floor, max(detection_array)])
+    ax.set_xlabel('Detection-Threshold Gap')
+    ax.set_ylabel('Frequency')
+    ax.set_title('Histogram of Detection Values')
+    fig.show()
 

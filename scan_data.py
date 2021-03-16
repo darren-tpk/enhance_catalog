@@ -14,7 +14,7 @@ from toolbox import remove_boxcars
 tribe_in = 'tribe.tgz'  # name of tribe file to read
 start_time = UTCDateTime(2009, 2, 26, 0, 0, 0)
 end_time = start_time + (24 * 60 * 60)
-threshold = 20
+threshold = 30  # Used to be 20 without RDWB and RDJH
 threshold_type = 'MAD'
 trig_int = 30
 parallel_process = 'True'
