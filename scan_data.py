@@ -8,10 +8,9 @@ from eqcorrscan import Party
 from eqcorrscan.core.match_filter.tribe import read_tribe
 from obspy import UTCDateTime, Stream, read
 # import toolbox functions
-from toolbox import remove_boxcars
+from toolbox import remove_boxcars, reader, writer
 
 # define all variables here
-tribe_in = 'tribe.tgz'  # name of tribe file to read
 start_time = UTCDateTime(2009, 2, 26, 0, 0, 0)
 end_time = start_time + (24 * 60 * 60)
 threshold = 30  # Used to be 20 without RDWB and RDJH
@@ -19,11 +18,9 @@ threshold_type = 'MAD'
 trig_int = 30
 parallel_process = 'True'
 tolerance = 5e4 # for boxcar removal
-party_out = 'party'
 
 # read tribe data
-tribe_inpath = '/home/ptan/attempt_eqcorrscan/output/' + tribe_in
-tribe = read_tribe(tribe_inpath)
+tribe = reader('/home/ptan/attempt_eqcorrscan/output/tribe.tgz')
 
 # print station numbers of each template before filter
 print('\nBefore filter:')
@@ -80,12 +77,8 @@ for i in range(num_days):
     party_all = party_all + party
 
 # write the combined party object as a tar file
-party_outpath = '/home/ptan/attempt_eqcorrscan/output/' + party_out
-if os.path.exists(party_outpath+'.tgz'):
-    os.remove(party_outpath+'.tgz')
-    party_all.write(party_outpath + '.tgz' , format='tar')
-else:
-    party_all.write(party_outpath + '.tgz' , format='tar')
+party_outpath = '/home/ptan/attempt_eqcorrscan/output/'
+writer(party_outpath+'party.tgz')
 
 # # use client detect and compare
 # from obspy.clients.fdsn import Client

@@ -8,7 +8,7 @@ from eqcorrscan.core.match_filter.tribe import Tribe
 from phase_processing.ncsn2pha import ncsn2pha
 from phase_processing.read_hypoddpha import read_hypoddpha
 # import toolbox functions
-from toolbox import remove_boxcars
+from toolbox import remove_boxcars, reader, writer
 
 # define all variables here
 hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
@@ -25,7 +25,6 @@ filt_order = 4      # number of corners for filter
 prepick = 5.0       # pre-pick time (s), follows Wech et al. (2018)
 process_len = 86400 # length to process (s)
 min_snr = 5.0       # minimum SNR, follows Jeremy's recommendation
-tribe_out = 'tribe' # name of tribe tar file saved in output
 
 # redoubt data directory
 data_dir = '/home/data/redoubt/'
@@ -100,9 +99,5 @@ tribe = Tribe().construct(
 print('Time Elapsed: ',UTCDateTime()-run_time)
 
 # write tribe into output
-tribe_outpath = '/home/ptan/attempt_eqcorrscan/output/' + tribe_out
-if os.path.exists(tribe_outpath+'.tgz'):
-    os.remove(tribe_outpath+'.tgz')
-    tribe.write(tribe_outpath)
-else:
-    tribe.write(tribe_outpath)
+tribe_outpath = '/home/ptan/attempt_eqcorrscan/output/'
+writer(tribe_outpath+'tribe.tgz', tribe)

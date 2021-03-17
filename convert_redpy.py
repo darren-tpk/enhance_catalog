@@ -4,7 +4,7 @@ from obspy import Catalog, UTCDateTime
 from obspy.core.event import Event, Origin, Comment
 from phase_processing.ncsn2pha import ncsn2pha
 from phase_processing.read_hypoddpha import read_hypoddpha
-import time
+from toolbox import writer
 
 # define all variables here
 hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
@@ -150,7 +150,7 @@ print('Orphan catalog created, processing time: %.2f s' % (time_stop-time_start)
 
 # save catalog files
 catalog_outpath = '/home/ptan/attempt_eqcorrscan/output/'
-redpy_catalog.write(catalog_outpath+'redpy_catalog.xml', format='QUAKEML')
-core_catalog.write(catalog_outpath+'core_catalog.xml', format='QUAKEML')
-core_loc_catalog.write(catalog_outpath+'core_loc_catalog.xml', format='QUAKEML')
-orphan_catalog.write(catalog_outpath+'orphan_catalog.xml', format='QUAKEML')
+writer(catalog_outpath+'redpy_catalog.xml', redpy_catalog)
+writer(catalog_outpath+'core_catalog.xml', core_catalog)
+writer(catalog_outpath+'core_loc_catalog.xml', core_loc_catalog)
+writer(catalog_outpath+'orphan_catalog.xml', orphan_catalog)
