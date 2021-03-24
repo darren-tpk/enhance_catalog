@@ -2,15 +2,15 @@
 
 # import packages that we need
 import os
-import glob
-from obspy import UTCDateTime, Stream, Catalog, read
+from obspy import UTCDateTime, Catalog
 from eqcorrscan.core.match_filter.tribe import Tribe
 from phase_processing.ncsn2pha import ncsn2pha
 from phase_processing.read_hypoddpha import read_hypoddpha
 # import toolbox functions
-from toolbox import remove_boxcars, reader, writer
+from toolbox import prepare_catalog_stream, writer
 
 # define all variables here
+data_dir = '/home/data/redoubt/'  # redoubt data directory
 hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
 hypoddpha_file = 'redoubt_20090101_20090501_hypoddpha.txt'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
@@ -25,10 +25,6 @@ filt_order = 4      # number of corners for filter
 prepick = 5.0       # pre-pick time (s), follows Wech et al. (2018)
 process_len = 86400 # length to process (s)
 min_snr = 5.0       # minimum SNR, follows Jeremy's recommendation
-
-# redoubt data directory
-data_dir = '/home/data/redoubt/'
-data_filenames_complete = os.listdir(data_dir)
 
 # convert hypoi phase data to hypoddpha form
 catalog_dir = '/home/ptan/attempt_eqcorrscan/avo_data/'
@@ -47,47 +43,7 @@ for i in range(len(catalog_raw)):
         catalog_sample.append(catalog_raw[i])
 catalog = catalog_sample
 
-# now prepare stream
-# get unique list of all station channel data needed for the day's events
-data_filenames = []
-for event in catalog:
-    for pick in event.picks:
-        # extract key information from pick
-        sta = pick.waveform_id.station_code
-        chan = pick.waveform_id.channel_code
-        pick_year = pick.time.year
-        pick_julday = pick.time.julday
-        # craft file string and append
-        data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year) + ':' + f'{pick_julday:03}' + ':*'
-        data_filenames.append(data_filename)
-        # add next day if pick occurs in the first 15 minutes of the day
-        if pick.time.hour == 0 and pick.time.minute < 15:
-            if pick.time.julday == 1: # special case for first day of the year
-                data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year-1) + ':365:*'
-                data_filenames.append(data_filename)
-            else:
-                data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year) + ':' + f'{(pick_julday-1):03}' + ':*'
-                data_filenames.append(data_filename)
-        # add previous day if pick occurs in the last 15 minutes of the day
-        if pick.time.hour == 23 and pick.time.minute > 45:
-            if pick.time.julday == 365: # special case for last day of the year
-                data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year+1) + ':001:*'
-                data_filenames.append(data_filename)
-            else:
-                data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year) + ':' + f'{(pick_julday+1):03}' + ':*'
-                data_filenames.append(data_filename)
-# now compile unique and sort
-data_filenames = list(set(data_filenames))
-data_filenames.sort()
-
-# read in all streams we need
-stream = Stream()
-for data_filename in data_filenames:
-    real_data_filename = (glob.glob(data_filename)).pop()
-    stream_contribution = read(real_data_filename)
-    stream = stream + stream_contribution
-stream = remove_boxcars(stream,tolerance)
-stream.detrend("simple").merge()
+stream = prepare_catalog_stream(data_dir,catalog,tolerance)
 
 # now build templates
 print('Constructing templates ...')

@@ -23,7 +23,11 @@ def remove_boxcars(st,tolerance):
             elif index != spike_index[i - 1] + 1 or index != spike_index[i + 1] - 1:
                 spike_limits.append(index)
         if len(spike_limits) % 2 != 0:
-            raise ValueError('Review remove_boxcars: The number of spike limits is not even!')
+            print('WARNING: Data has a non-even number of spikes, returning empty stream.')
+            return Stream()
+        elif len(spike_limits) > 20:
+            print('WARNING: Data has >20 spike limits identified, returning empty stream.')
+            return Stream()
         # knowing our spike limits, we get data limits for extraction
         spike_limits = np.array(spike_limits)
         extract_limits = [*sum(zip(spike_limits[0::2] - 1, spike_limits[1::2] + 1), ())]
@@ -226,3 +230,94 @@ def reader(inpath):
         raise ValueError('Review reader(): input path does not follow naming convention.')
     return object
 
+def read_trace(data_dir,station,channel,starttime,endtime,tolerance=5e4):
+    # import packages
+    import glob
+    from obspy import Stream, Trace, read
+    from toolbox import remove_boxcars
+    # initialize list of data filenames for reading
+    data_filenames = []
+    # extract year and day from starttime
+    start_year = starttime.year
+    start_julday = starttime.julday
+    end_year = endtime.year
+    end_julday = endtime.julday
+    # craft file string and append
+    data_filename = data_dir + station + '.' + channel + '.' + str(start_year) + ':' + f'{start_julday:03}' + ':*'
+    data_filenames.append(data_filename)
+    # add another day if starttime and endtime are on different data files
+    if start_year != end_year or start_julday != end_julday:
+        data_filename = data_dir + station + '.' + channel + '.' + str(end_year) + ':' + f'{end_julday:03}' + ':*'
+        data_filenames.append(data_filename)
+    # read in all traces we need
+    tr_unmerged = Stream()
+    for data_filename in data_filenames:
+        matching_filenames = (glob.glob(data_filename))
+        for matching_filename in matching_filenames:
+            try:
+                tr_contribution = read(matching_filename)
+                tr_unmerged = tr_unmerged + tr_contribution
+            except:
+                continue
+    # remove boxcar spikes, detrend, merge, and trim to desired starttime and endtime
+    tr_merged = tr_unmerged.copy()
+    tr_merged.trim(starttime=starttime, endtime=endtime)
+    tr_merged = remove_boxcars(tr_merged, tolerance)
+    tr_merged.detrend("simple").merge()
+    # since a single station and channel is provided, the traces should merge into 1
+    if len(tr_merged) == 0:
+        output = Stream()
+    elif len(tr_merged) == 1:
+        output = tr_merged[0]
+    else:
+        raise ValueError('Error in read_trace(), function returns stream rather than trace.')
+    return output
+
+def prepare_catalog_stream(data_dir,catalog,tolerance):
+    # import packages
+    import glob
+    from obspy import Stream, read
+    from toolbox import remove_boxcars
+    # get unique list of all station channel data needed for the day's events
+    data_filenames = []
+    for event in catalog:
+        for pick in event.picks:
+            # extract key information from pick
+            sta = pick.waveform_id.station_code
+            chan = pick.waveform_id.channel_code
+            pick_year = pick.time.year
+            pick_julday = pick.time.julday
+            # craft file string and append
+            data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year) + ':' + f'{pick_julday:03}' + ':*'
+            data_filenames.append(data_filename)
+            # add next day if pick occurs in the first 15 minutes of the day
+            if pick.time.hour == 0 and pick.time.minute < 15:
+                if pick.time.julday == 1:  # special case for first day of the year
+                    data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year - 1) + ':365:*'
+                    data_filenames.append(data_filename)
+                else:
+                    data_filename = data_dir + sta + '.' + chan + '.' + str(
+                        pick_year) + ':' + f'{(pick_julday - 1):03}' + ':*'
+                    data_filenames.append(data_filename)
+            # add previous day if pick occurs in the last 15 minutes of the day
+            if pick.time.hour == 23 and pick.time.minute > 45:
+                if pick.time.julday == 365:  # special case for last day of the year
+                    data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year + 1) + ':001:*'
+                    data_filenames.append(data_filename)
+                else:
+                    data_filename = data_dir + sta + '.' + chan + '.' + str(
+                        pick_year) + ':' + f'{(pick_julday + 1):03}' + ':*'
+                    data_filenames.append(data_filename)
+    # now compile unique and sort
+    data_filenames = list(set(data_filenames))
+    data_filenames.sort()
+    # read in all streams we need
+    stream = Stream()
+    for data_filename in data_filenames:
+        real_data_filename = (glob.glob(data_filename)).pop()
+        stream_contribution = read(real_data_filename)
+        stream = stream + stream_contribution
+    # remove boxcar spikes, detrend and merge
+    stream = remove_boxcars(stream, tolerance)
+    stream.detrend("simple").merge()
+    return stream
