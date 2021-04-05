@@ -11,26 +11,44 @@ def remove_boxcars(st,tolerance):
         data = tr.data
         tr_detrended = tr.copy().detrend()
         data_detrended = tr_detrended.data
-        spike_index = np.where(data_detrended > tolerance * np.median(abs(data_detrended)))[0]
-        # extract spike limits
-        spike_limits = []
-        for i in range(len(spike_index)):
-            index = spike_index[i]
-            if index == spike_index[0]:
-                spike_limits.append(index)
-            elif index == spike_index[-1]:
-                spike_limits.append(index)
-            elif index != spike_index[i - 1] + 1 or index != spike_index[i + 1] - 1:
-                spike_limits.append(index)
-        if len(spike_limits) % 2 != 0:
-            print('WARNING: Data has a non-even number of spikes, returning empty stream.')
-            return Stream()
-        elif len(spike_limits) > 20:
-            print('WARNING: Data has >20 spike limits identified, returning empty stream.')
-            return Stream()
+        spike_indices = np.where(data_detrended > tolerance * (np.median(abs(data_detrended))+1))[0]
+        # extract isolated spikes
+        isolated_spike_index = []
+        for i, spike_index in enumerate(spike_indices):
+            # if spike indices is 1x1
+            if len(spike_indices) == 1:
+                isolated_spike_index.append(i)
+            # if isolated spike is the first element
+            elif i == 0 and (spike_index != spike_indices[i+1]-1):
+                isolated_spike_index.append(i)
+            # if isolated spike is the last element
+            elif i == len(spike_indices)-1 and (spike_index != spike_indices[i-1]+1):
+                isolated_spike_index.append(i)
+            # if the isolated spike is in the middle of the list
+            elif (spike_index != spike_indices[i-1]+1) and (spike_index != spike_indices[i+1]-1):
+                isolated_spike_index.append(i)
+        # now determine where the isolated spikes and boxcars are by index
+        isolated_spikes = [spike_indices[i] for i in isolated_spike_index]
+        boxcar_indices = [spike_index for spike_index in spike_indices if spike_index not in spike_indices[isolated_spike_index]]
+        # knowing our spike limits, we execute interpolation
+        for isolated_spike in isolated_spikes:
+            tr.data[isolated_spike] = (tr.data[isolated_spike-1] + tr.data[isolated_spike+1])/2
+        # now extract boxcar limits
+        boxcar_limits = []
+        for i in range(len(boxcar_indices)):
+            index = boxcar_indices[i]
+            if index == boxcar_indices[0]:
+                boxcar_limits.append(index)
+            elif index == boxcar_indices[-1]:
+                boxcar_limits.append(index)
+            elif index != boxcar_indices[i - 1] + 1 or index != boxcar_indices[i + 1] - 1:
+                boxcar_limits.append(index)
+        if len(boxcar_limits) % 2 != 0:
+            print('WARNING: Data has a non-even number of spikes, skipping trace.')
+            continue
         # knowing our spike limits, we get data limits for extraction
-        spike_limits = np.array(spike_limits)
-        extract_limits = [*sum(zip(spike_limits[0::2] - 1, spike_limits[1::2] + 1), ())]
+        boxcar_limits = np.array(boxcar_limits)
+        extract_limits = [*sum(zip(boxcar_limits[0::2] - 1, boxcar_limits[1::2] + 1), ())]
         # add data's head and tail index to extraction limits
         extract_limits = np.append(extract_limits, len(data) - 1)
         extract_limits = np.insert(extract_limits, 0, 0)
@@ -134,8 +152,8 @@ def get_local_stations(volcano_name,radius):
     import pandas as pd
     import geopy.distance
     # get volcano lat and lon
-    volcano_list = pd.read_csv('/home/ptan/project/avo_data/volcano_list.csv')
-    station_list = pd.read_csv('/home/ptan/project/avo_data/station_list.csv')
+    volcano_list = pd.read_csv('/home/ptan/attempt_eqcorrscan/avo_data/volcano_list.csv')
+    station_list = pd.read_csv('/home/ptan/attempt_eqcorrscan/avo_data/station_list.csv')
     volcano_names = [name.lower() for name in volcano_list.volcano]
     volcano_index = volcano_names.index(volcano_name.lower())
     volcano_lat = volcano_list.latitude[volcano_index]
@@ -273,7 +291,7 @@ def read_trace(data_dir,station,channel,starttime,endtime,tolerance=5e4):
         raise ValueError('Error in read_trace(), function returns stream rather than trace.')
     return output
 
-def prepare_catalog_stream(data_dir,catalog,tolerance):
+def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance):
     # import packages
     import glob
     from obspy import Stream, read
@@ -314,10 +332,38 @@ def prepare_catalog_stream(data_dir,catalog,tolerance):
     # read in all streams we need
     stream = Stream()
     for data_filename in data_filenames:
-        real_data_filename = (glob.glob(data_filename)).pop()
-        stream_contribution = read(real_data_filename)
-        stream = stream + stream_contribution
+        matching_filenames = (glob.glob(data_filename))
+        for matching_filename in matching_filenames:
+            try:
+                stream_contribution = read(matching_filename)
+                stream = stream + stream_contribution
+            except:
+                continue
+    # resample all downloaded streams to prevent inconsistencies
+    stream.resample(resampling_frequency)
     # remove boxcar spikes, detrend and merge
     stream = remove_boxcars(stream, tolerance)
-    stream.detrend("simple").merge()
+    stream = stream.detrend("simple")
+    stream = stream.merge()
     return stream
+
+# function to use IRIS to download same streams as input
+def client_download(stream_in,source='IRIS'):
+    # import packages
+    from obspy import Stream
+    from waveform_collection import gather_waveforms
+    # initialize stream_out
+    stream_out = Stream()
+    # loop through input stream
+    for trace_in in stream_in:
+        network = trace_in.stats.network
+        station = trace_in.stats.station
+        location = trace_in.stats.location
+        channel = trace_in.stats.channel
+        starttime = trace_in.stats.starttime
+        endtime = trace_in.stats.endtime
+        trace_out = gather_waveforms(source=source, network=network, station=station,
+                      location=location, channel=channel, starttime=starttime,
+                      endtime=endtime)
+        stream_out = stream_out + trace_out
+    return(stream_out)
