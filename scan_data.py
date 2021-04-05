@@ -1,40 +1,44 @@
 # scan data to make detections
 
 # import packages that we need
-import os
+import time
 import glob
 import numpy as np
-from eqcorrscan import Party
-from eqcorrscan.core.match_filter.tribe import read_tribe
+from eqcorrscan import Party, Tribe
 from obspy import UTCDateTime, Stream, read
 # import toolbox functions
 from toolbox import remove_boxcars, reader, writer
 
 # define all variables here
-start_time = UTCDateTime(2009, 2, 26, 0, 0, 0)
-end_time = start_time + (24 * 60 * 60)
-threshold = 30  # Used to be 20 without RDWB and RDJH
+start_time = UTCDateTime(2009, 1, 1, 0, 0, 0)
+end_time = UTCDateTime(2009, 1, 8, 0, 0, 0)  # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
+samp_rate = 50             # to resample streams to match tribes
+threshold = 30             # Used to be 20 without RDWB and RDJH
 threshold_type = 'MAD'
 trig_int = 30
 parallel_process = 'True'
-tolerance = 5e4 # for boxcar removal
+tolerance = 4e4 # for boxcar removal
 
 # read tribe data
 tribe = reader('/home/ptan/attempt_eqcorrscan/output/tribe.tgz')
 
-# print station numbers of each template before filter
+# # filter away templates with < 3 stations
+# print('\nBefore filter:')
+# print(tribe)
+# tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 3]
+# print('\nAfter removing templates with < 3 stations...')
+# print(tribe)
+
+# filter away templates with < 3 valid picks (with data stream attached)
 print('\nBefore filter:')
 print(tribe)
-# for template in tribe:
-#     num_stations = len({tr.stats.station for tr in template.st})
-#     print(template.name + ': ' + str(num_stations) + ' stations')
-# filter away templates with < 3 stations
-tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 3]
-print('\nAfter removing templates with < 3 stations...')
+new_tribe = Tribe()
+for template in tribe:
+    if len(template.st) >= 3:
+        new_tribe += template
+tribe = new_tribe
+print('\nAfter removing templates with < 3 valid picks...')
 print(tribe)
-# for template in tribe:
-#     num_stations = len({tr.stats.station for tr in template.st})
-#     print(template.name + ': ' + str(num_stations) + ' stations')
 
 # get unique list of all template station & channel combinations
 data_dir = '/home/data/redoubt/'
@@ -51,30 +55,45 @@ for template in tribe:
 data_fileheads = list(set(data_fileheads))
 data_fileheads.sort()
 
-# BRUTE FORCE SCAN: load each day's data and scan day by day
+# brute force scan: load each day's data and scan day by day
 party_all = Party()
 num_days = int(np.floor((end_time - start_time) / 86400))
+time_start = time.time()
 for i in range(num_days):
     # define boundaries of our day's scan
     t1 = start_time + (i * 86400)
     t2 = start_time + ((i + 1) * 86400)
-    # initialize and download stream
+    print('\nNow at %s...' % str(t1))
+    # initialize and read in stream
     stream = Stream()
     for data_filehead in data_fileheads:
         data_filename = data_filehead + str(t1.year) + ':' + f'{t1.julday :03}' + ':*'
-        real_data_filename = (glob.glob(data_filename))
-        if real_data_filename:
-            stream_contribution = read(real_data_filename.pop())
-            # for trace_contribution in stream_contribution:
-            #    median_filter(trace_contribution,windowlength=despike_window,interp_len=despike_interp)
-            stream = stream + stream_contribution
+        matching_filenames = (glob.glob(data_filename))
+        for matching_filename in matching_filenames:
+            try:
+                stream_contribution = read(matching_filename)
+                stream = stream + stream_contribution
+            except:
+                continue
+    # process stream (remove spikes, downsample to match tribe, detrend)
     stream = remove_boxcars(stream,tolerance)
-    stream.detrend("simple").merge()
+    stream = stream.resample(sampling_rate=50.0)
+    stream = stream.detrend("simple")
+    stream = stream.merge()
+    print('Stream despiked, resampled and merged. Getting party of detections...')
     # scan the current day
-    party = tribe.detect(
-        stream=stream, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int, overlap=None, parallel_process='True')
-    # append party to party_all
-    party_all = party_all + party
+    try:
+        party = tribe.detect(
+            stream=stream, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int, daylong=True, overlap=None, parallel_process='True')
+        # append party to party_all
+        party_all = party_all + party
+        time_current = time.time()
+        print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+    except:
+        print('Party failed, skipping.')
+        continue
+time_end = time.time()
+print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_start)/3600))
 
 # write the combined party object as a tar file
 party_outpath = '/home/ptan/attempt_eqcorrscan/output/'
