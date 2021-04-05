@@ -158,7 +158,7 @@ ax.set_xlim([0,num_day])
 #ax.set_ylim([0,170])
 ax.set_xlabel('Days since ' + str(start_day)[:10]);
 ax.set_ylabel('Daily frequency');
-ax.set_title('Plot of DETECTIONS per day, from ' + str(start_day)[:10]);
+ax.set_title('Plot of DETECTIONS per day, from ' + str(start_day)[:10])
 outfile = main_dir + 'figures/det_perday.png'
 plt.savefig(outfile)
 
