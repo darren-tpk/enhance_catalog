@@ -11,7 +11,7 @@ from toolbox import remove_boxcars, reader, writer
 
 # define all variables here
 start_time = UTCDateTime(2009, 1, 1, 0, 0, 0)
-end_time = UTCDateTime(2009, 1, 8, 0, 0, 0)  # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
+end_time = UTCDateTime(2009, 5, 1, 0, 0, 0)  # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
 samp_rate = 50             # to resample streams to match tribes
 threshold = 30             # Used to be 20 without RDWB and RDJH
 threshold_type = 'MAD'
@@ -97,7 +97,7 @@ print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_st
 
 # write the combined party object as a tar file
 party_outpath = '/home/ptan/attempt_eqcorrscan/output/'
-writer(party_outpath+'party.tgz')
+writer(party_outpath+'party.tgz',party_all)
 
 # # use client detect and compare
 # from obspy.clients.fdsn import Client
