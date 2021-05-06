@@ -3,6 +3,7 @@
 # import packages that we need
 import time
 from obspy import UTCDateTime, Catalog
+from obspy.clients.fdsn import Client
 from eqcorrscan.core.match_filter.tribe import Tribe
 # import toolbox functions
 from toolbox import get_local_stations, prepare_catalog_stream, reader, writer
@@ -10,18 +11,16 @@ from toolbox import get_local_stations, prepare_catalog_stream, reader, writer
 # define all variables here
 data_dir = '/home/data/redoubt/'  # redoubt data directory
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
-start_time = UTCDateTime(2009, 2, 26, 0, 0, 0)
-end_time = start_time + (24 * 60 * 60)
 resampling_frequency = 50  # for resampling traces prior to final merge
 tolerance = 4e4            # for boxcar removal
 lowcut = 1.0               # filter lowcut (Hz), follows Jeremy's recommendation
 highcut = 10.0             # filter highcut (Hz), follows Jeremy's recommendation
 samp_rate = 50.0           # new sampling rate (Hz)
-length = 20.0              # template length (s), follows Wech et al. (2018)
+length = 10.0              # template length (s), Wech et al. (2018) chose 30s
 filt_order = 4             # number of corners for filter
-prepick = 5.0              # pre-pick time (s), follows Wech et al. (2018)
+prepick = 2.0              # pre-pick time (s), Wech et al. (2018) chose 5s
 process_len = 86400        # length to process (s)
-min_snr = 5.0              # minimum SNR, follows Jeremy's recommendation
+min_snr = None             # minimum SNR, Jeremy's recommendation was 5.0 (same as EQcorrscan tutorial)
 local_volcano = 'redoubt'  # for get_local_stations function, since we only take picks from stations near Redoubt
 local_radius = 25          # for get_local_stations function; radius around volcano to accept stations
 
@@ -53,7 +52,7 @@ for k in range(len(catalog)):
     stream = prepare_catalog_stream(data_dir,event,resampling_frequency,tolerance)
     day_start = UTCDateTime(event[0].origins[0].time.date)
     day_end = day_start + 86400
-    stream.trim(starttime=day_start, endtime=day_end)
+    stream = stream.trim(starttime=day_start, endtime=day_end)
     # construct template
     try:
         # construct using local data file
@@ -64,7 +63,6 @@ for k in range(len(catalog)):
     except:
         # if local data files fail, use client download
         print('WARNING: local data failed to produce template, using client method instead.')
-        from obspy.clients.fdsn import Client
         client = Client('IRIS')
         template = Tribe().construct(
             method="from_client", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
@@ -95,4 +93,4 @@ print('\nTemplate creation complete. Time taken: %.2f s' % (time_end-time_start)
 
 # write tribe into output
 tribe_outpath = '/home/ptan/attempt_eqcorrscan/output/'
-writer(tribe_outpath+'tribe.tgz', tribe)
+writer(tribe_outpath+'tribe_10.tgz', tribe)

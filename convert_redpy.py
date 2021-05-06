@@ -186,7 +186,7 @@ writer(catalog_outpath+'orphan_catalog.xml', orphan_catalog)
 # make picks using single channel STA/LTA
 redpy_catalog = reader(catalog_outpath+'redpy_catalog.xml')
 from obspy.signal.trigger import coincidence_trigger, classic_sta_lta, trigger_onset
-# go through redpy_catalog and add picks to redpy detections associated with an AVO event
+# go through redpy_catalog and add picks to redpy detections not associated with an AVO event
 print('\nMaking picks for non-associated cluster events...')
 time_start = time.time()
 for cluster_NA in clusters_NA:

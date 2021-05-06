@@ -43,9 +43,9 @@ def remove_boxcars(st,tolerance):
                 boxcar_limits.append(index)
             elif index != boxcar_indices[i - 1] + 1 or index != boxcar_indices[i + 1] - 1:
                 boxcar_limits.append(index)
-        if len(boxcar_limits) % 2 != 0:
-            print('WARNING: Data has a non-even number of spikes, skipping trace.')
-            continue
+        # if len(boxcar_limits) % 2 != 0:
+        #     print('WARNING: Data has a non-even number of spikes, skipping trace.')
+        #     continue
         # knowing our spike limits, we get data limits for extraction
         boxcar_limits = np.array(boxcar_limits)
         extract_limits = [*sum(zip(boxcar_limits[0::2] - 1, boxcar_limits[1::2] + 1), ())]
@@ -193,7 +193,6 @@ def gen_detect_hist(party):
     detection_array = np.array(detection_list) - np.array(threshold_list)
     detection_floor = np.floor(min(detection_array))
     detection_ceil = np.ceil(max(detection_array))
-    threshold_array = np.unique(threshold_list)
     fig, ax = plt.subplots()
     ax.grid(True)
     ax.hist(detection_array, bins=np.arange(detection_floor, detection_ceil, 0.1), color='teal', edgecolor='black')
@@ -248,7 +247,8 @@ def reader(inpath):
         raise ValueError('Review reader(): input path does not follow naming convention.')
     return object
 
-def read_trace(data_dir,station,channel,starttime,endtime,tolerance=5e4):
+# read traces from local data files (NOTE: limited to less than 24h in duration)
+def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
     # import packages
     import glob
     from obspy import Stream, Trace, read
@@ -339,11 +339,9 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance):
                 stream = stream + stream_contribution
             except:
                 continue
-    # resample all downloaded streams to prevent inconsistencies
-    stream.resample(resampling_frequency)
-    # remove boxcar spikes, detrend and merge
+    # remove boxcar spikes, resample and merge
     stream = remove_boxcars(stream, tolerance)
-    stream = stream.detrend("simple")
+    stream = stream.resample(resampling_frequency)
     stream = stream.merge()
     return stream
 
@@ -367,3 +365,81 @@ def client_download(stream_in,source='IRIS'):
                       endtime=endtime)
         stream_out = stream_out + trace_out
     return(stream_out)
+
+# get detection stream by downloading necessary streams
+def get_detection(detection,data_dir='/home/data/redoubt/',length=10,resampling_frequency=50,tolerance=4e4,lowcut=1,highcut=10,plot=False):
+    # import packages
+    import glob
+    from obspy import Stream, read
+    from toolbox import remove_boxcars
+    # extract detection time and stachan combinations
+    detect_time = detection.detect_time
+    year = detect_time.year
+    julday = detect_time.julday
+    stachans = detection.chans
+    # initialize data filename list
+    data_filenames = []
+    # loop through stachan combinations
+    for sta, chan in stachans:
+        # stitch data filename and append
+        data_filename = data_dir + sta + '.' + chan + '.' + str(year) + ':' + f'{julday:03}' + ':*'
+        data_filenames.append(data_filename)
+    # read in all streams we need
+    stream = Stream()
+    for data_filename in data_filenames:
+        matching_filenames = (glob.glob(data_filename))
+        for matching_filename in matching_filenames:
+            try:
+                stream_contribution = read(matching_filename)
+                stream = stream + stream_contribution
+            except:
+                continue
+    # trim streams to what we need
+    stream.trim(starttime=detect_time,endtime=detect_time+length)
+    # resample all downloaded streams to prevent inconsistencies
+    stream.resample(resampling_frequency)
+    # remove boxcar spikes, detrend and merge
+    stream = remove_boxcars(stream, tolerance)
+    stream = stream.detrend("simple")
+    # filter and taper
+    stream = stream.filter('bandpass',freqmax=highcut,freqmin=lowcut)
+    stream = stream.taper(0.05, type='hann', max_length=(0.75 * 1024 / 50))
+    stream = stream.merge()
+    if plot:
+        stream.plot(color='b',equal_scale=False, size=(800, 600))
+    return stream
+
+# plot detection-threshold gap by UTCDateTime
+def gen_detect_scatter(party,option):
+    # import packages
+    import numpy as np
+    import matplotlib.pyplot as plt
+    # initialize lists
+    detect_times = []
+    channel_numbers = []
+    detection_values = []
+    threshold_values = []
+    # loop through families
+    for family in party.families:
+        # loop through detections in the family
+        for detection in family:
+            # append essential information
+            detect_times.append(detection.detect_time)
+            channel_numbers.append(len(detection.chans))
+            detection_values.append(abs(detection.detect_val))
+            threshold_values.append(detection.threshold)
+    # calculate surplus and convert lists to arrays for plotting
+    surplus = np.array(detection_values) - np.array(threshold_values)
+    detect_times = np.array(detect_times)
+    channel_numbers = np.array(channel_numbers)
+    # plot scatters
+    fig, ax = plt.subplots(figsize=(8, 7))
+    ax.plot(detect_times,surplus,'.',color='teal')
+    ax.axhline(y=0,color='red')
+    ax.set_xticks(xticks)
+    ax.set_xticklabels(xticklabels,rotation=20,horizontalalignment='right')
+    ax.set_xlabel('UTCDate')
+    ax.set_ylabel('Detection-Threshold Gap')
+    ax.set_title('Detection Quality vs Time')
+    ax.grid()
+    fig.show()

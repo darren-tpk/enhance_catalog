@@ -10,35 +10,35 @@ from obspy import UTCDateTime, Stream, read
 from toolbox import remove_boxcars, reader, writer
 
 # define all variables here
-start_time = UTCDateTime(2009, 1, 1, 0, 0, 0)
-end_time = UTCDateTime(2009, 5, 1, 0, 0, 0)  # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
+start_time = UTCDateTime(2009, 3, 18, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
+end_time = UTCDateTime(2009, 3, 27, 0, 0, 0)  # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
 samp_rate = 50             # to resample streams to match tribes
-threshold = 30             # Used to be 20 without RDWB and RDJH
-threshold_type = 'MAD'
-trig_int = 30
+threshold = 0.6             # Used to be 20 without RDWB and RDJH
+threshold_type = 'av_chan_corr'
+trig_int = 10
 parallel_process = 'True'
 tolerance = 4e4 # for boxcar removal
 
 # read tribe data
-tribe = reader('/home/ptan/attempt_eqcorrscan/output/tribe.tgz')
+tribe = reader('/home/ptan/attempt_eqcorrscan/output/tribe_10.tgz')
 
-# # filter away templates with < 3 stations
-# print('\nBefore filter:')
-# print(tribe)
-# tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 3]
-# print('\nAfter removing templates with < 3 stations...')
-# print(tribe)
-
-# filter away templates with < 3 valid picks (with data stream attached)
+# filter away templates with < 3 stations
 print('\nBefore filter:')
 print(tribe)
-new_tribe = Tribe()
-for template in tribe:
-    if len(template.st) >= 3:
-        new_tribe += template
-tribe = new_tribe
-print('\nAfter removing templates with < 3 valid picks...')
+tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= 3]
+print('\nAfter removing templates with < 3 stations...')
 print(tribe)
+
+# # filter away templates with < 3 valid picks (with data stream attached)
+# print('\nBefore filter:')
+# print(tribe)
+# new_tribe = Tribe()
+# for template in tribe:
+#     if len(template.st) >= 3:
+#         new_tribe += template
+# tribe = new_tribe
+# print('\nAfter removing templates with < 3 valid picks...')
+# print(tribe)
 
 # get unique list of all template station & channel combinations
 data_dir = '/home/data/redoubt/'
@@ -77,7 +77,7 @@ for i in range(num_days):
                 continue
     # process stream (remove spikes, downsample to match tribe, detrend)
     stream = remove_boxcars(stream,tolerance)
-    stream = stream.resample(sampling_rate=50.0)
+    stream = stream.resample(sampling_rate=samp_rate)
     stream = stream.detrend("simple")
     stream = stream.merge()
     print('Stream despiked, resampled and merged. Getting party of detections...')
@@ -97,7 +97,7 @@ print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_st
 
 # write the combined party object as a tar file
 party_outpath = '/home/ptan/attempt_eqcorrscan/output/'
-writer(party_outpath+'party.tgz',party_all)
+writer(party_outpath+'party_marchswarm.tgz',party_all)
 
 # # use client detect and compare
 # from obspy.clients.fdsn import Client

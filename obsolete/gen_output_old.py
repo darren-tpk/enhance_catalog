@@ -142,7 +142,7 @@ for family in party_clean:
 all_detection_time = np.array(all_detection_time)
 # Bin by day
 first_time = min(all_detection_time)
-start_day = UTCDateTime(2009,2,17)#UTCDateTime(first_time.year,first_time.month,first_time.day)
+start_day = UTCDateTime(first_time.year,first_time.month,first_time.day)
 num_day = np.ceil((max(all_detection_time) - min(all_detection_time))/86400)
 bin_counts_det = []
 for i in range(int(num_day)):
