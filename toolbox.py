@@ -1,3 +1,5 @@
+# repository for all functions
+
 # function to remove artificial boxcar-like signals from stream
 def remove_boxcars(st,tolerance):
     # import packages
@@ -409,37 +411,37 @@ def get_detection(detection,data_dir='/home/data/redoubt/',length=10,resampling_
         stream.plot(color='b',equal_scale=False, size=(800, 600))
     return stream
 
-# plot detection-threshold gap by UTCDateTime
-def gen_detect_scatter(party,option):
-    # import packages
-    import numpy as np
-    import matplotlib.pyplot as plt
-    # initialize lists
-    detect_times = []
-    channel_numbers = []
-    detection_values = []
-    threshold_values = []
-    # loop through families
-    for family in party.families:
-        # loop through detections in the family
-        for detection in family:
-            # append essential information
-            detect_times.append(detection.detect_time)
-            channel_numbers.append(len(detection.chans))
-            detection_values.append(abs(detection.detect_val))
-            threshold_values.append(detection.threshold)
-    # calculate surplus and convert lists to arrays for plotting
-    surplus = np.array(detection_values) - np.array(threshold_values)
-    detect_times = np.array(detect_times)
-    channel_numbers = np.array(channel_numbers)
-    # plot scatters
-    fig, ax = plt.subplots(figsize=(8, 7))
-    ax.plot(detect_times,surplus,'.',color='teal')
-    ax.axhline(y=0,color='red')
-    ax.set_xticks(xticks)
-    ax.set_xticklabels(xticklabels,rotation=20,horizontalalignment='right')
-    ax.set_xlabel('UTCDate')
-    ax.set_ylabel('Detection-Threshold Gap')
-    ax.set_title('Detection Quality vs Time')
-    ax.grid()
-    fig.show()
+# # plot detection-threshold gap by UTCDateTime
+# def gen_detect_scatter(party,option):
+#     # import packages
+#     import numpy as np
+#     import matplotlib.pyplot as plt
+#     # initialize lists
+#     detect_times = []
+#     channel_numbers = []
+#     detection_values = []
+#     threshold_values = []
+#     # loop through families
+#     for family in party.families:
+#         # loop through detections in the family
+#         for detection in family:
+#             # append essential information
+#             detect_times.append(detection.detect_time)
+#             channel_numbers.append(len(detection.chans))
+#             detection_values.append(abs(detection.detect_val))
+#             threshold_values.append(detection.threshold)
+#     # calculate surplus and convert lists to arrays for plotting
+#     surplus = np.array(detection_values) - np.array(threshold_values)
+#     detect_times = np.array(detect_times)
+#     channel_numbers = np.array(channel_numbers)
+#     # plot scatters
+#     fig, ax = plt.subplots(figsize=(8, 7))
+#     ax.plot(detect_times,surplus,'.',color='teal')
+#     ax.axhline(y=0,color='red')
+#     ax.set_xticks(xticks)
+#     ax.set_xticklabels(xticklabels,rotation=20,horizontalalignment='right')
+#     ax.set_xlabel('UTCDate')
+#     ax.set_ylabel('Detection-Threshold Gap')
+#     ax.set_title('Detection Quality vs Time')
+#     ax.grid()
+#     fig.show()

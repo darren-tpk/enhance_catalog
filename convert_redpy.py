@@ -1,6 +1,7 @@
 # convert redpy outputs to python objects, adopt/make picks
 
 # import packages that we need
+import pickle
 import time
 import pandas as pd
 import numpy as np
@@ -80,6 +81,11 @@ clusters_AVO = list(np.unique(np.array(cluster_list_AVO)))
 clusters_NA = [cluster for cluster in list(np.unique(np.array(redpy_det.Cluster))) if cluster not in clusters_AVO]
 time_stop = time.time()
 print('ObsPy catalog created, processing time: %.2f s' % (time_stop-time_start))
+
+# save clusters_NA and clusters_AVO as pickles for later use
+with open('/home/ptan/attempt_eqcorrscan/avo_data/redpy/clusters_NA_AVO.txt', 'wb') as cluster_pickle:   #Pickling
+   pickle.dump(clusters_NA, cluster_pickle)
+   pickle.dump(clusters_AVO,cluster_pickle)
 
 # go through redpy_catalog and add picks to redpy detections associated with an AVO event
 print('\nAdopting picks for associated cluster events...')
@@ -246,6 +252,8 @@ for cluster_NA in clusters_NA:
                     redpy_catalog[contribution_index].origins[0].arrivals.append(add_arrival)
 time_stop = time.time()
 print('Pick making complete, processing time: %.2f s' % (time_stop-time_start))
+
+# TO ADD: saving redpy_catalog_picked and core_catalog_picked
 
 # # make picks from stacks
 # # initialize catalog of stacks

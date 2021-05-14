@@ -1,3 +1,4 @@
+# conduct sensitivity test for different threshold values (av_chan_corr)
 
 # import packages that we need
 import numpy as np
@@ -12,9 +13,9 @@ party_input = party_all
 plot_cumu = True
 plot_wave = True
 separate_wave = False
-thres_min = 0.70
-thres_max = 0.78
-thres_vec = np.linspace(thres_min,thres_max,3)
+thres_min = 0.65
+thres_max = 0.85
+thres_vec = np.linspace(thres_min,thres_max,5)
 num_days = 9
 
 # retrieve all detect_val, detect_time and no_chans
