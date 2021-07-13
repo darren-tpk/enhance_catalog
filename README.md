@@ -1,4 +1,4 @@
-# attempt_eqcorrscan
+# enhance_catalog
  
 Here I store the codes I use to get eqcorrscan running. 
 
