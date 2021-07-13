@@ -1,143 +1,194 @@
-# repository for all functions
+#%% Toolbox of all functions
 
-# function to remove artificial boxcar-like signals from stream
+#%% [remove_boxcars] function to remove artificial boxcar-like signals from stream
 def remove_boxcars(st,tolerance):
-    # import packages
+
+    # Import dependencies
     import numpy as np
     from obspy import Stream
-    # initialize output stream
+
+    # Initialize output stream
     st_out = Stream()
-    # loop through traces in stream
+
+    # Loop through traces in stream
     for tr in st:
-        # detrend data and find spikes above tolerance (median(abs(data)) multiplier)
+
+        # Detrend data and find spikes above tolerance (median(abs(data)) multiplier)
         data = tr.data
         tr_detrended = tr.copy().detrend()
         data_detrended = tr_detrended.data
         spike_indices = np.where(data_detrended > tolerance * (np.median(abs(data_detrended))+1))[0]
-        # extract isolated spikes
+
+        # Initialize isolated spikes list
         isolated_spike_index = []
+
+        # Loop through all spike indices to find isolated spikes
         for i, spike_index in enumerate(spike_indices):
-            # if spike indices is 1x1
+
+            # If spike indices is 1x1
             if len(spike_indices) == 1:
                 isolated_spike_index.append(i)
-            # if isolated spike is the first element
+
+            # If isolated spike is the first element
             elif i == 0 and (spike_index != spike_indices[i+1]-1):
                 isolated_spike_index.append(i)
-            # if isolated spike is the last element
+
+            # If isolated spike is the last element
             elif i == len(spike_indices)-1 and (spike_index != spike_indices[i-1]+1):
                 isolated_spike_index.append(i)
-            # if the isolated spike is in the middle of the list
+
+            # If the isolated spike is in the middle of the list
             elif (spike_index != spike_indices[i-1]+1) and (spike_index != spike_indices[i+1]-1):
                 isolated_spike_index.append(i)
-        # now determine where the isolated spikes and boxcars are by index
+
+        # Determine where the isolated spikes and boxcars are by index
         isolated_spikes = [spike_indices[i] for i in isolated_spike_index]
         boxcar_indices = [spike_index for spike_index in spike_indices if spike_index not in spike_indices[isolated_spike_index]]
-        # knowing our spike limits, we execute interpolation
+
+        # Execute interpolation between isolated spikes
         for isolated_spike in isolated_spikes:
             tr.data[isolated_spike] = (tr.data[isolated_spike-1] + tr.data[isolated_spike+1])/2
-        # now extract boxcar limits
+
+        # Initialize boxcar limits list
         boxcar_limits = []
+
+        # Loop through all boxcar indices
         for i in range(len(boxcar_indices)):
             index = boxcar_indices[i]
+
+            # Record index if it is the first boxcar index
             if index == boxcar_indices[0]:
                 boxcar_limits.append(index)
+
+            # Record index if it is the last boxcar index
             elif index == boxcar_indices[-1]:
                 boxcar_limits.append(index)
+
+            # Record index if it is a discontinuous member
             elif index != boxcar_indices[i - 1] + 1 or index != boxcar_indices[i + 1] - 1:
                 boxcar_limits.append(index)
+
         # if len(boxcar_limits) % 2 != 0:
         #     print('WARNING: Data has a non-even number of spikes, skipping trace.')
         #     continue
-        # knowing our spike limits, we get data limits for extraction
+
+        # Use boxcar limits to obtain data limits for extraction
         boxcar_limits = np.array(boxcar_limits)
         extract_limits = [*sum(zip(boxcar_limits[0::2] - 1, boxcar_limits[1::2] + 1), ())]
-        # add data's head and tail index to extraction limits
+
+        # Add our data's head and tail index to extraction limits
         extract_limits = np.append(extract_limits, len(data) - 1)
         extract_limits = np.insert(extract_limits, 0, 0)
-        # using the sampling rate, we determine start time and end time of extraction
+
+        # Use the sampling rate to determine start time and end time of extraction
         tr_starttime = tr.stats.starttime
         dt = 1 / tr.stats.sampling_rate
-        # loop through limit pairs
+
+        # Loop through limit pairs for data extraction
         for j in range(0, len(extract_limits), 2):
+
+            # Determine start and end time of valid data section
             extract_starttime = tr_starttime + (extract_limits[j] * dt)
             extract_endtime = tr_starttime + (extract_limits[j + 1] * dt)
-            # extract trace and store in output stream
+
+            # Extract trace and store in output stream
             tr_out = tr.slice(extract_starttime, extract_endtime)
             st_out = st_out + tr_out
+
+    # Return de-spiked and de-boxcared trace
     return st_out
 
-# function to compare trace with data on IRIS
+# [compare_tr] function to compare the same trace on local data vs its counterpart on IRIS
 def compare_tr(tr):
-    # import packages
+
+    # Import dependencies
     from obspy import Stream
     from waveform_collection import gather_waveforms
-    # define net-sta-chan, starttime, endtime
+
+    # Define net-sta-chan, starttime, endtime
     network = tr.stats.network
     station = tr.stats.station
     channel = tr.stats.channel
     starttime = tr.stats.starttime
     endtime = tr.stats.endtime
-    # gather waveforms
+
+    # Gather waveforms
     tr_client = gather_waveforms(source='IRIS', network=network, station=station,
                           location='*', channel=channel, starttime=starttime,
                           endtime=endtime)
-    # combine and plot on same figure
+
+    # Combine both traces and plot on the same figure
     combine = Stream()
     combine = combine + tr
     combine = combine + tr_client
     combine.plot()
 
-# function to clean repeating events in a party
+# [remove_repeats] function to clean repeating events in a party
+# Note that this has been replaced by party.decluster()
 def remove_repeats(party,time_interval):
-    # import packages
+
+    # Import dependencies
     import numpy as np
     from eqcorrscan import Party, Family
-    # initialize an inclusion list, list of all i&j, and arrays of detection times, values, and thresholds
+
+    # Initialize an inclusion list, list of all i&j, and arrays of detection times, values, and thresholds
     include_list = []
     all_i = []
     all_j = []
     all_detection_time = []
     all_detection_val = []
     all_detection_threshold = []
-    # loop through each family in the party
+
+    # Loop through each family in the party
     for i in range(len(party.families)):
-        # populate include list with ones (we start by including all detections in each family)
+
+        # Populate include list with ones (we start by including all detections in each family)
         include_list.append(np.ones(len(party[i])))
         family = party[i]
-        # loop through each detection in the family, storing key info
+
+        # Loop through each detection in the family, storing detection info (time, val, threshold)
         for j in range(len(family)):
             all_i.append(i)
             all_j.append(j)
             all_detection_time.append(family[j].detect_time)
             all_detection_val.append(family[j].detect_val)
             all_detection_threshold.append(family[j].threshold)
-    # convert to arrays
+
+    # Convert all lists to arrays
     all_detection_time = np.array(all_detection_time)
     all_detection_val = np.array(all_detection_val)
     all_detection_threshold = np.array(all_detection_threshold)
-    # now loop through all families' detections again, making comparisons
+
+    # Loop through all families' detections again, making comparisons
     for i in range(len(party.families)):
-        # extract family
+
+        # Extract family
         family = party[i]
-        # loop through family's detections
+
+        # Loop through family's detections
         for j in range(len(family)):
-            # if the event is already excluded, continue
+
+            # If the event is already excluded, continue
             if include_list[i][j] == 0:
                 continue
-            # calculate time difference for all other detections
+
+            # Calculate time difference with all other detections
             time_difference = abs(all_detection_time-family[j].detect_time)
             matching_index = np.where(time_difference<time_interval)[0]
-            # if the only matching event is itself, continue
+
+            # If the only matching event is itself, continue
             if len(matching_index) == 1:
                 continue
-            # otherwise, find highest detection value, and exclude other events
+
+            # Otherwise, find highest detection value, and exclude other events
             else:
                 matching_detection_diff = all_detection_val[matching_index] - all_detection_threshold[matching_index]
                 max_detection_index = matching_index[np.argmax(abs(matching_detection_diff))]
                 exclude_index = matching_index[matching_index!=max_detection_index]
                 for k in exclude_index:
                     include_list[all_i[k]][all_j[k]] = 0
-    # lastly, populate new party with only unrepeated detections
+
+    # Populate new party with only unrepeated detections
     party_clean = Party()
     for i in range(len(party.families)):
         family_clean = Family(template=party[i].template)
@@ -145,53 +196,67 @@ def remove_repeats(party,time_interval):
             if include_list[i][j] == 1:
                 family_clean = family_clean + party[i][j]
         party_clean = party_clean + family_clean
+
+    # Return cleaned party object
     return party_clean
 
-# function to get all stations within a radius of a volcano
-def get_local_stations(volcano_name,radius):
-    # import packages
+# [get_local_stations] function to get all stations within a radius of a volcano
+def get_local_stations(list_dir,volcano_name,radius):
+
+    # Import dependencies
     import numpy as np
     import pandas as pd
     import geopy.distance
-    # get volcano lat and lon
-    volcano_list = pd.read_csv('/home/ptan/attempt_eqcorrscan/avo_data/volcano_list.csv')
-    station_list = pd.read_csv('/home/ptan/attempt_eqcorrscan/avo_data/station_list.csv')
+
+    # Read in volcano lat and lon
+    volcano_list = pd.read_csv(list_dir + 'volcano_list.csv')
+    station_list = pd.read_csv(list_dir + 'station_list.csv')
     volcano_names = [name.lower() for name in volcano_list.volcano]
     volcano_index = volcano_names.index(volcano_name.lower())
     volcano_lat = volcano_list.latitude[volcano_index]
     volcano_lon = volcano_list.longitude[volcano_index]
     volcano_coord = (volcano_lat,volcano_lon)
-    # now get distances with all stations
-    station_distances = [];
+
+    # Get distances from all stations
+    station_distances = []
     for i in range(len(station_list)):
         station_lat = station_list.latitude[i]
         station_lon = station_list.longitude[i]
         station_coord = (station_lat,station_lon)
         station_distance = geopy.distance.GeodesicDistance(volcano_coord,station_coord).km
         station_distances.append(station_distance)
-    # use radius condition to derive list
+
+    # Use radius condition to derive list
     local_stations = list(station_list.station[(np.array(station_distances) < radius)])
+
+    # Return list of local stations
     return local_stations
 
-# function to create detection-threshold histogram
+# [gen_detect_hist] function to create detection-threshold histogram
 def gen_detect_hist(party):
-    # import pacakges
+
+    # Import dependencies
     import numpy as np
     import matplotlib.pyplot as plt
+
     # Initialize lists for detection and threshold values
     detection_list = []
     threshold_list = []
-    # loop through each family
+
+    # Loop through each family
     for i in range(len(party.families)):
         family = party[i]
-        # loop through detections in each family
+
+        # Loop through detections in each family
         for j in range(len(family)):
-            # append detection & threshold values for every detection
+
+            # Append detection & threshold values for every detection
             detection_value = abs(family[j].detect_val)
             detection_list.append(detection_value)
             threshold_value = family[j].threshold
             threshold_list.append(threshold_value)
-    # plot distribution of detections as histogram and save
+
+    # Plot distribution of detections as histogram and save
     detection_array = np.array(detection_list) - np.array(threshold_list)
     detection_floor = np.floor(min(detection_array))
     detection_ceil = np.ceil(max(detection_array))
@@ -204,23 +269,29 @@ def gen_detect_hist(party):
     ax.set_title('Histogram of Detection Values')
     fig.show()
 
+# [writer] function to write and save a catalog/tribe/party
 def writer(outpath,object):
-    # check for file extension
+
+    # Run quick check for file extension
     if (outpath[-4:] != '.tgz') and (outpath[-4:] != '.xml'):
         raise ValueError('Invalid file extension, please check path input.')
-    # import pacakges and object classes
+
+    # Import dependencies
     import os
     from obspy import Catalog
     from eqcorrscan import Party
     from eqcorrscan.core.match_filter.tribe import Tribe
-    # if the file already exists, remove it
+
+    # If the file already exists, remove it
     if os.path.exists(outpath):
         os.remove(outpath)
-    # initialize class samplers
+
+    # Initialize class samplers
     catalog_type = Catalog()
     party_type = Party()
     tribe_type = Tribe()
-    # use if condition to choose saving style
+
+    # Use if condition to choose saving style
     if type(object) == type(catalog_type):
         object.write(outpath, format='QUAKEML')
     elif type(object) == type(party_type):
@@ -230,46 +301,58 @@ def writer(outpath,object):
     else:
         raise ValueError('Review writer(): input has invalid object type!')
 
+# [reader] function to read a catalog/tribe/party
 def reader(inpath):
-    # check for file extension
+
+    # Run quick check for file extension
     if (inpath[-4:] != '.tgz') and (inpath[-4:] != '.xml'):
         raise ValueError('Invalid file extension, please check path input.')
-    # import packages
+
+    # Import dependencies
     from obspy import read_events
-    from eqcorrscan import Party
+    from eqcorrscan.core.match_filter import read_party
     from eqcorrscan.core.match_filter.tribe import read_tribe
-    # use if condition to choose reading style
-    if ('catalog' in inpath) and (inpath[-4:] == '.xml'):
+
+    # Use if condition to choose reading style
+    if ('catalog' or 'events' or 'templates' in inpath) and (inpath[-4:] == '.xml'):
         object = read_events(inpath, format='QUAKEML')
     elif ('party' in inpath) and (inpath[-4:] == '.tgz'):
-        object = Party().read(inpath)
+        object = read_party(inpath, read_detection_catalog=False)
     elif ('tribe' in inpath) and (inpath[-4:] == '.tgz'):
         object = read_tribe(inpath)
     else:
         raise ValueError('Review reader(): input path does not follow naming convention.')
+
+    # Return object that was read
     return object
 
-# read traces from local data files (NOTE: limited to less than 24h in duration)
+# [read_trace] read trace from local data files (limited to less than 24h in duration)
 def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
-    # import packages
+
+    # Import dependencies
     import glob
-    from obspy import Stream, Trace, read
+    from obspy import Stream, read
     from toolbox import remove_boxcars
-    # initialize list of data filenames for reading
+
+    # Initialize list of data filenames for reading
     data_filenames = []
-    # extract year and day from starttime
+
+    # Extract year and julday from starttime
     start_year = starttime.year
     start_julday = starttime.julday
     end_year = endtime.year
     end_julday = endtime.julday
-    # craft file string and append
+
+    # Craft file string and append
     data_filename = data_dir + station + '.' + channel + '.' + str(start_year) + ':' + f'{start_julday:03}' + ':*'
     data_filenames.append(data_filename)
-    # add another day if starttime and endtime are on different data files
+
+    # Add another day if starttime and endtime are on different data files
     if start_year != end_year or start_julday != end_julday:
         data_filename = data_dir + station + '.' + channel + '.' + str(end_year) + ':' + f'{end_julday:03}' + ':*'
         data_filenames.append(data_filename)
-    # read in all traces we need
+
+    # Read in all traces we need
     tr_unmerged = Stream()
     for data_filename in data_filenames:
         matching_filenames = (glob.glob(data_filename))
@@ -279,38 +362,52 @@ def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
                 tr_unmerged = tr_unmerged + tr_contribution
             except:
                 continue
-    # remove boxcar spikes, detrend, merge, and trim to desired starttime and endtime
+
+    # Remove boxcars and spikes, detrend, merge, and trim to desired starttime and endtime
     tr_merged = tr_unmerged.copy()
     tr_merged.trim(starttime=starttime, endtime=endtime)
     tr_merged = remove_boxcars(tr_merged, tolerance)
     tr_merged.detrend("simple").merge()
-    # since a single station and channel is provided, the traces should merge into 1
+
+    # Since a single station and channel is provided, the traces should merge into 1
     if len(tr_merged) == 0:
         output = Stream()
     elif len(tr_merged) == 1:
         output = tr_merged[0]
     else:
         raise ValueError('Error in read_trace(), function returns stream rather than trace.')
+
+    # Return trace
     return output
 
+# [prepare_catalog_stream] function to read streams pertaining to an input catalog
 def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance):
-    # import packages
+
+    # Import dependencies
     import glob
     from obspy import Stream, read
     from toolbox import remove_boxcars
-    # get unique list of all station channel data needed for the day's events
+
+    # Initialize list for all station channel data needed for the day's events
     data_filenames = []
+
+    # Loop through catalog's events
     for event in catalog:
+
+        # Loop through event's picks
         for pick in event.picks:
-            # extract key information from pick
+
+            # Extract stachan, year and julday of pick
             sta = pick.waveform_id.station_code
             chan = pick.waveform_id.channel_code
             pick_year = pick.time.year
             pick_julday = pick.time.julday
-            # craft file string and append
+
+            # Craft file string and append
             data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year) + ':' + f'{pick_julday:03}' + ':*'
             data_filenames.append(data_filename)
-            # add next day if pick occurs in the first 15 minutes of the day
+
+            # Add next day if pick occurs in the first 15 minutes of the day
             if pick.time.hour == 0 and pick.time.minute < 15:
                 if pick.time.julday == 1:  # special case for first day of the year
                     data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year - 1) + ':365:*'
@@ -319,7 +416,8 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance):
                     data_filename = data_dir + sta + '.' + chan + '.' + str(
                         pick_year) + ':' + f'{(pick_julday - 1):03}' + ':*'
                     data_filenames.append(data_filename)
-            # add previous day if pick occurs in the last 15 minutes of the day
+
+            # Add previous day if pick occurs in the last 15 minutes of the day
             if pick.time.hour == 23 and pick.time.minute > 45:
                 if pick.time.julday == 365:  # special case for last day of the year
                     data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year + 1) + ':001:*'
@@ -328,10 +426,12 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance):
                     data_filename = data_dir + sta + '.' + chan + '.' + str(
                         pick_year) + ':' + f'{(pick_julday + 1):03}' + ':*'
                     data_filenames.append(data_filename)
-    # now compile unique and sort
+
+    # Make list unique, then sort
     data_filenames = list(set(data_filenames))
     data_filenames.sort()
-    # read in all streams we need
+
+    # Read in all required traces, merging into a stream object
     stream = Stream()
     for data_filename in data_filenames:
         matching_filenames = (glob.glob(data_filename))
@@ -341,52 +441,72 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance):
                 stream = stream + stream_contribution
             except:
                 continue
-    # remove boxcar spikes, resample and merge
+
+    # Remove boxcar and spikes, resample and merge
     stream = remove_boxcars(stream, tolerance)
     stream = stream.resample(resampling_frequency)
     stream = stream.merge()
+
+    # Return stream object
     return stream
 
-# function to use IRIS to download same streams as input
+# [client_download] function to use IRIS to download the same input streams
 def client_download(stream_in,source='IRIS'):
-    # import packages
+
+    # Import dependencies
     from obspy import Stream
     from waveform_collection import gather_waveforms
-    # initialize stream_out
+
+    # Initialize output stream
     stream_out = Stream()
-    # loop through input stream
+
+    # Loop through input stream's traces
     for trace_in in stream_in:
+
+        # Gather net-sta-chan and time limits to use gather_waveforms
         network = trace_in.stats.network
         station = trace_in.stats.station
         location = trace_in.stats.location
         channel = trace_in.stats.channel
         starttime = trace_in.stats.starttime
         endtime = trace_in.stats.endtime
+
+        # Use gather_waveforms to pull data from IRIS
         trace_out = gather_waveforms(source=source, network=network, station=station,
                       location=location, channel=channel, starttime=starttime,
                       endtime=endtime)
+
+        # Add trace contribution to output stream
         stream_out = stream_out + trace_out
+
+    # Return stream object
     return(stream_out)
 
-# get detection stream by downloading necessary streams
+# [get_detection] get stream related to detection by downloading necessary streams
 def get_detection(detection,data_dir='/home/data/redoubt/',length=10,resampling_frequency=50,tolerance=4e4,lowcut=1,highcut=10,plot=False):
-    # import packages
+
+    # Import dependencies
     import glob
     from obspy import Stream, read
     from toolbox import remove_boxcars
-    # extract detection time and stachan combinations
+
+    # Extract detection time and sta-chan combinations
     detect_time = detection.detect_time
     year = detect_time.year
     julday = detect_time.julday
     stachans = detection.chans
-    # initialize data filename list
+
+    # Initialize data filename list
     data_filenames = []
-    # loop through stachan combinations
+
+    # Loop through sta-chan combinations
     for sta, chan in stachans:
-        # stitch data filename and append
+
+        # Stitch data filename and append
         data_filename = data_dir + sta + '.' + chan + '.' + str(year) + ':' + f'{julday:03}' + ':*'
         data_filenames.append(data_filename)
-    # read in all streams we need
+
+    # Read in all required streams
     stream = Stream()
     for data_filename in data_filenames:
         matching_filenames = (glob.glob(data_filename))
@@ -396,52 +516,121 @@ def get_detection(detection,data_dir='/home/data/redoubt/',length=10,resampling_
                 stream = stream + stream_contribution
             except:
                 continue
-    # trim streams to what we need
+
+    # Trim stream to desired length
     stream.trim(starttime=detect_time,endtime=detect_time+length)
-    # resample all downloaded streams to prevent inconsistencies
+
+    # Resample all traces to prevent inconsistencies
     stream.resample(resampling_frequency)
-    # remove boxcar spikes, detrend and merge
+
+    # Remove boxcar and spikes, detrend and merge
     stream = remove_boxcars(stream, tolerance)
     stream = stream.detrend("simple")
-    # filter and taper
+
+    # Filter and taper
     stream = stream.filter('bandpass',freqmax=highcut,freqmin=lowcut)
     stream = stream.taper(0.05, type='hann', max_length=(0.75 * 1024 / 50))
     stream = stream.merge()
+
+    # Plot if desired
     if plot:
         stream.plot(color='b',equal_scale=False, size=(800, 600))
+
+    # Return stream object
     return stream
 
-# # plot detection-threshold gap by UTCDateTime
-# def gen_detect_scatter(party,option):
-#     # import packages
-#     import numpy as np
-#     import matplotlib.pyplot as plt
-#     # initialize lists
-#     detect_times = []
-#     channel_numbers = []
-#     detection_values = []
-#     threshold_values = []
-#     # loop through families
-#     for family in party.families:
-#         # loop through detections in the family
-#         for detection in family:
-#             # append essential information
-#             detect_times.append(detection.detect_time)
-#             channel_numbers.append(len(detection.chans))
-#             detection_values.append(abs(detection.detect_val))
-#             threshold_values.append(detection.threshold)
-#     # calculate surplus and convert lists to arrays for plotting
-#     surplus = np.array(detection_values) - np.array(threshold_values)
-#     detect_times = np.array(detect_times)
-#     channel_numbers = np.array(channel_numbers)
-#     # plot scatters
-#     fig, ax = plt.subplots(figsize=(8, 7))
-#     ax.plot(detect_times,surplus,'.',color='teal')
-#     ax.axhline(y=0,color='red')
-#     ax.set_xticks(xticks)
-#     ax.set_xticklabels(xticklabels,rotation=20,horizontalalignment='right')
-#     ax.set_xlabel('UTCDate')
-#     ax.set_ylabel('Detection-Threshold Gap')
-#     ax.set_title('Detection Quality vs Time')
-#     ax.grid()
-#     fig.show()
+# [prepare_stream_dict] prepare stream dictionary pertaining to input catalog
+def prepare_stream_dict(catalog,pre_pick,length,local=False,data_dir=None,resampling_frequency=50):
+
+    # Import dependencies
+    from toolbox import read_trace
+    from obspy import Stream
+    from waveform_collection import gather_waveforms
+
+    # Initialize list to contain tuples
+    stream_tuples = []
+
+    # Loop through events in catalog
+    for event in catalog:
+
+        # Extract resource id and initialize stream object
+        event_id = event.resource_id.id
+        event_st = Stream()
+
+        # Loop through picks in event
+        for pick in event.picks:
+
+            # Extract waveform details from pick object
+            network = pick.waveform_id.network_code
+            station = pick.waveform_id.station_code
+            channel = pick.waveform_id.channel_code
+            starttime = pick.time - pre_pick
+            endtime = starttime + length
+
+            # Read trace from local data directory if local, use IRIS if not local
+            if local:
+                tr = read_trace(data_dir, station, channel, starttime, endtime, tolerance=4e4)
+            else:
+                tr = gather_waveforms(source='IRIS', network=network, station=station,location='*',
+                                      channel=channel, starttime=starttime,endtime=endtime)
+                tr = tr.resample(resampling_frequency)  # for my EQcorrscan attempt
+
+            # Add trace to stream object
+            event_st += tr
+
+        # Split stream and append by alongside event id
+        event_st = event_st.split()
+        stream_tuples.append((event_id,event_st))
+
+    # Convert tuple object to dict object
+    stream_dict = dict(stream_tuples)
+
+    # Return stream dictionary
+    return stream_dict
+
+# raster2array from https://www.neonscience.org/resources/learning-hub/tutorials/merge-lidar-geotiff-py
+def raster2array(geotif_file):
+    metadata = {}
+    dataset = gdal.Open(geotif_file)
+    metadata['array_rows'] = dataset.RasterYSize
+    metadata['array_cols'] = dataset.RasterXSize
+    metadata['bands'] = dataset.RasterCount
+    metadata['driver'] = dataset.GetDriver().LongName
+    metadata['projection'] = dataset.GetProjection()
+    metadata['geotransform'] = dataset.GetGeoTransform()
+
+    mapinfo = dataset.GetGeoTransform()
+    metadata['pixelWidth'] = mapinfo[1]
+    metadata['pixelHeight'] = mapinfo[5]
+
+    xMin = mapinfo[0]
+    xMax = mapinfo[0] + dataset.RasterXSize/mapinfo[1]
+    yMin = mapinfo[3] + dataset.RasterYSize/mapinfo[5]
+    yMax = mapinfo[3]
+
+    metadata['extent'] = (xMin,xMax,yMin,yMax)
+
+    raster = dataset.GetRasterBand(1)
+    array_shape = raster.ReadAsArray(0,0,metadata['array_cols'],metadata['array_rows']).astype(np.float).shape
+    metadata['noDataValue'] = raster.GetNoDataValue()
+    metadata['scaleFactor'] = raster.GetScale() or 1
+
+    array = np.zeros((array_shape[0],array_shape[1],dataset.RasterCount),'uint8') #pre-allocate stackedArray matrix
+
+    if metadata['bands'] == 1:
+        raster = dataset.GetRasterBand(1)
+        metadata['noDataValue'] = raster.GetNoDataValue()
+        metadata['scaleFactor'] = raster.GetScale() or 1
+
+        array = dataset.GetRasterBand(1).ReadAsArray(0,0,metadata['array_cols'],metadata['array_rows']).astype(np.float)
+        #array[np.where(array==metadata['noDataValue'])]=np.nan
+        array = array/metadata['scaleFactor']
+
+    elif metadata['bands'] > 1:
+        for i in range(1, dataset.RasterCount+1):
+            band = dataset.GetRasterBand(i).ReadAsArray(0,0,metadata['array_cols'],metadata['array_rows']).astype(np.float)
+            #band[np.where(band==metadata['noDataValue'])]=np.nan
+            band = band/metadata['scaleFactor']
+            array[...,i-1] = band
+
+    return array, metadata
