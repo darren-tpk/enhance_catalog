@@ -14,12 +14,13 @@ from toolbox import get_local_stations, prepare_catalog_stream, reader, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
+main_dir = '/home/ptan/enhance_catalog/'
 data_dir = '/home/data/redoubt/'  # redoubt data directory
-catalog_dir = main_dir + 'output/convert_redpy/'
+output_dir ='/home/ptan/enhance_catalog/output/'
+convert_redpy_output_dir = output_dir + 'convert_redpy/'
 sitelist_dir = main_dir + 'data/avo/'
-output_dir = main_dir + 'output/create_tribe/'
-tribe_filename = 'tribe_redoubt.tgz'
+create_tribe_output_dir = main_dir + 'output/create_tribe/'
+tribe_filename = 'tribe_test.tgz'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
 resampling_frequency = 50  # for resampling traces prior to final merge
 tolerance = 4e4            # tolerance for boxcar removal from data (as a factor to median)
@@ -30,7 +31,7 @@ length = 10.0              # template length (s), Wech et al. (2018) chose 30s
 filt_order = 4             # number of corners for filter
 prepick = 1.0              # pre-pick time (s), Wech et al. (2018) chose 5s
 process_len = 86400        # length to process data in (s)
-min_snr = None             # minimum SNR, Jeremy's recommendation was 5.0 (same as EQcorrscan tutorial)
+min_snr = 3                # minimum SNR, Jeremy's recommendation was 5.0 (same as EQcorrscan tutorial)
 local_volcano = 'redoubt'  # for get_local_stations function, since we only take picks from stations near Redoubt
 local_radius = 25          # for get_local_stations function; radius around volcano to accept stations
 
@@ -41,8 +42,8 @@ local_radius = 25          # for get_local_stations function; radius around volc
 #%% Prepare desired catalog to undergo tribe creation
 
 # Read in, and combine, the picked core catalog and unmatched PEC catalog
-core_catalog_picked = reader(catalog_dir+'core_catalog_picked.xml')
-unmatched_PEC_events = reader(catalog_dir+'unmatched_PEC_events.xml')
+core_catalog_picked = reader(convert_redpy_output_dir + 'core_catalog_picked.xml')
+unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events.xml')
 catalog = core_catalog_picked + unmatched_PEC_events
 
 # Clean catalog to only include picks from local stations
@@ -109,7 +110,7 @@ print('\nTemplate creation complete. Time taken: %.2f s' % (time_end-time_start)
 print('%d out of %d events in the catalog were converted to templates.' % (sum(valid_event),len(catalog)))
 
 # Write tribe out into output directory
-writer(output_dir + tribe_filename, tribe)
+writer(create_tribe_output_dir + tribe_filename, tribe)
 
 #%% Option to execute bulk EQcorrscan instead (problematic as of Mar 29)
 

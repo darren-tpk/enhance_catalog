@@ -26,16 +26,16 @@
    MODULE grow_params
 
    ! ----------- Array size parameters ----------------------------------
-   integer, parameter :: nsta0 = 25000            !max number of stations
-   integer, parameter :: nq0 = 1500000           !max number of quakes
-   integer, parameter :: npair0 = 20000000        !max total number of event pairs
-   integer, parameter :: ntmax = 1500000           !maximum number of trees (clusters), normally should be same as nq0
-   integer, parameter :: nbmax = 1500000           !max number of events (branches) per tree, should be of order nq0
-   integer, parameter :: n0 = 10000              !max number of differential times for each event pair
-   integer, parameter :: ndif0 = 100000000        !max total number of differential times
-   integer, parameter :: n08 = 100000          !max number of diff. times for 10 event pairs
-   integer, parameter :: maxboot = 1000        ! max number of bootstrap resamples
-   integer, parameter :: maxevid = 1000000000 ! maximum event id number
+   integer, parameter :: nsta0=2500            !max number of stations
+   integer, parameter :: nq0=150000           !max number of quakes
+   integer, parameter :: npair0=2000000        !max total number of event pairs
+   integer, parameter :: ntmax=150000           !maximum number of trees (clusters), normally should be same as nq0
+   integer, parameter :: nbmax=150000           !max number of events (branches) per tree, should be of order nq0
+   integer, parameter :: n0=1000              !max number of differential times for each event pair
+   integer, parameter :: ndif0=10000000        !max total number of differential times
+   integer, parameter :: n08 = 10000          !max number of diff. times for 10 event pairs
+   integer, parameter :: maxboot = 100        ! max number of bootstrap resamples
+   integer, parameter :: maxevid = 100000000 ! maximum event id number
 
     ! ------- GrowClust algorithm control parameters -------------------------------
    real, parameter    :: conparam = 0.001        ! minimum connection fraction to join clusters (usually a small number is fine)

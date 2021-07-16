@@ -19,19 +19,20 @@ from toolbox import reader, prepare_stream_dict, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
+main_dir = '/home/ptan/enhance_catalog/'
 data_dir = '/home/data/redoubt/'
-tribe_dir = main_dir + 'output/create_tribe/'
-tribe_filename = 'tribe_redoubt.tgz'
-catalog_dir = main_dir + 'output/scan_data/'
-catalog_filename = 'redoubt_detected_catalog.xml'
-output_dir = main_dir + 'output/relocate_catalog/'
-relocated_catalog_filename = 'relocated_catalog.xml'
+output_dir = '/home/ptan/enhance_catalog/output/'
+create_tribe_output_dir = output_dir + 'create_tribe/'
+tribe_filename = 'tribe_test.tgz'
+scan_data_output_dir = output_dir + 'scan_data/'
+catalog_filename = 'party_catalog_test.xml'
+relocate_catalog_output_dir = output_dir + 'relocate_catalog/'
+relocated_catalog_filename = 'relocated_catalog_test.xml'
 raw_station_list_dir = main_dir + 'data/avo/'
 raw_station_list_filename = 'station_list.csv'
 raw_vzmodel_dir = main_dir + 'data/avo/'
-raw_vzmodel_filename = 'redoubt_vzmodel.txt'
-growclust_exe = main_dir + '/growclust/SRC/growclust'
+raw_vzmodel_filename = raw_vzmodel_dir + 'redoubt_vzmodel.txt'
+growclust_exe = main_dir + 'growclust/SRC/growclust'
 
 length_actual = 10      # same as template
 length_excess = 30      # in excess for stream_dict
@@ -47,9 +48,9 @@ min_cc = 0.4            # minimum cc to be considered pick
 #%% Prepare GrowClust .inp file (configurations)
 
 # define GrowClust input, travel time and output directories
-growclust_in = output_dir + 'IN/'
-growclust_tt = output_dir + 'TT/'
-growclust_out = output_dir + 'OUT/'
+growclust_in = relocate_catalog_output_dir + 'IN/'
+growclust_tt = relocate_catalog_output_dir + 'TT/'
+growclust_out = relocate_catalog_output_dir + 'OUT/'
 
 # Event list format & name
 # (0 = evlist, 1 = phase, 2 = GrowClust, 3 = HypoInverse)
@@ -116,8 +117,8 @@ nboot_nbranch = '10 1'
 # Note that some detections in the detected party catalog are obtained from location-less templates
 
 # Load in tribe and catalog
-tribe = reader(tribe_dir + tribe_filename)
-catalog = reader(catalog_dir + catalog_filename)
+tribe = reader(create_tribe_output_dir + tribe_filename)
+catalog = reader(scan_data_output_dir + catalog_filename)
 
 # Use the tribe to get a list of template names
 template_names = [template.name for template in tribe]
@@ -193,14 +194,14 @@ event_id_mapper = write_correlations(catalog=catalog, stream_dict=stream_dict, e
 #%% Prepare all files for GrowClust
 
 # Craft the .inp file
-inp_file = open(output_dir + 'config.inp', 'w')
+inp_file = open(relocate_catalog_output_dir + 'config.inp', 'w')
 inp_file.write(evlist_format + '\n' +
                evlist_filename + '\n' +
                stlist_format + '\n' +
                stlist_filename + '\n' +
                xcordata_format + '\n' +
                xcordata_filename + '\n' +
-               raw_vzmodel_filename + '\n' +
+               vzmodel_filename + '\n' +
                vzmodel_fileout + '\n' +
                output_travel_time_table_P + '\n' +
                output_travel_time_table_S + '\n' +
@@ -217,9 +218,13 @@ inp_file.write(evlist_format + '\n' +
 inp_file.close()
 
 # Create all necessary sub-directories for GrowClust
-os.mkdir(growclust_in)
-os.mkdir(growclust_tt)
-os.mkdir(growclust_out)
+print('Creating subdirectories for growclust run...')
+try:
+    os.mkdir(growclust_in)
+    os.mkdir(growclust_tt)
+    os.mkdir(growclust_out)
+except FileExistsError:
+    print('Subdirectories already exist')
 
 # Copy dt.cc file to its appropriate directory and rename
 original_dt_dir = main_dir + 'dt.cc'
@@ -292,7 +297,7 @@ evlist_file.close()
 #%% Run GrowClust
 
 # Craft command and call subprocess in shell
-growclust_command = growclust_exe + ' ' + output_dir + 'config.inp'
+growclust_command = growclust_exe + ' ' + relocate_catalog_output_dir + 'config.inp'
 subprocess.call(growclust_command, shell=True)
 
 #%% Get GrowClust events in catalog form and save
@@ -309,6 +314,6 @@ for i in range(len(relocated_event_table)):
     time = UTCDateTime(relocated_event_table.yr[i],relocated_event_table.mon[i],relocated_event_table.day[i],relocated_event_table.hr[i],relocated_event_table.mm[i],relocated_event_table.sec[i])
     event = Event(origins=[Origin(time=time,latitude=relocated_event_table.lat[i],longitude=relocated_event_table.lon[i],depth=relocated_event_table.dep[i]*1000)])
     relocated_catalog += event
-writer(output_dir + relocated_catalog_filename, relocated_catalog)
+writer(relocate_catalog_output_dir + relocated_catalog_filename, relocated_catalog)
 
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="ptan@tamarack.gi.alaska.edu:22" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="ptan@tamarack.gi.alaska.edu:22" remoteFilesAllowedToDisappearOnAutoupload="false" autoUploadExternalChanges="true">
     <serverData>
       <paths name="ptan@tamarack.gi.alaska.edu:22">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/ptan/attempt_eqcorrscan" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/ptan/enhance_catalog" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>

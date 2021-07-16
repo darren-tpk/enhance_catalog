@@ -19,17 +19,18 @@ from toolbox import remove_boxcars, reader, writer
 # Define variables
 main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
 data_dir = '/home/data/redoubt/'
-unassociated_list_dir = main_dir + 'output/convert_redpy/'
-tribe_dir = main_dir + 'output/create_tribe/'
-tribe_filename = 'tribe_redoubt.tgz'
-output_dir = main_dir + 'output/scan_data/'
-party_filename = 'party_redoubt.tgz'
-catalog_filename = 'party_catalog_redoubt.xml'
+output_dir ='/home/ptan/enhance_catalog/output/'
+convert_redpy_output_dir = output_dir + 'convert_redpy/'
+create_tribe_output_dir = output_dir + 'create_tribe/'
+tribe_filename = 'tribe_test.tgz'
+scan_data_output_dir = output_dir + 'scan_data/'
+party_filename = 'party_test.tgz'
+catalog_filename = 'party_catalog_test.xml'
 repicked_catalog_filename = None
 min_stations = 3                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
-start_time = UTCDateTime(2009, 1, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
-end_time = UTCDateTime(2009, 5, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
+start_time = UTCDateTime(2009, 3, 20, 0, 0, 0) # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
+end_time = UTCDateTime(2009, 3, 21, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
 samp_rate = 50                                 # to resample streams to match tribes
 tolerance = 4e4                                # for boxcar removal
 threshold_type = 'av_chan_corr'                # also consider 'MAD', Jeremy uses 12
@@ -45,7 +46,7 @@ generate_repicked_catalog = False              # option to use lag_calc to do ca
 #%% Read in tribe and clean using min_stations and min_picks
 
 # Read in tribe
-tribe = reader(tribe_dir + tribe_filename)
+tribe = reader(create_tribe_output_dir + tribe_filename)
 
 # Clean tribe using min_stations and min_picks
 print('\nBefore cleaning:')
@@ -69,7 +70,7 @@ print(tribe)
 if generate_repicked_catalog:
 
     # Unpickle the list of unassociated template numbers for comparison
-    with open(unassociated_list_dir + 'unassociated_clusters.txt', 'rb') as cluster_pickle:
+    with open(convert_redpy_output_dir + 'unassociated_clusters.txt', 'rb') as cluster_pickle:
         unassociated_clusters = pickle.load(cluster_pickle)
         #associated_clusters = pickle.load(cluster_pickle)
 
@@ -189,7 +190,7 @@ for i in range(num_days):
 time_end = time.time()
 print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_start)/3600))
 if generate_repicked_catalog:
-    writer(output_dir + repicked_catalog_filename, master_repicked_catalog)
+    writer(scan_data_output_dir + repicked_catalog_filename, master_repicked_catalog)
     print('Number of relocated events with picks: %d out of %d total' % (len([1 for event in master_repicked_catalog if (event.picks != [])]), len(master_repicked_catalog)))
 
 #%% Clean the party off of repeats (different templates that detect the "same" event)
@@ -198,8 +199,8 @@ party_all = party_all.decluster(trig_int=trig_int)
 #%% Write our results in party form and in catalog form
 
 # Write out party
-writer(output_dir + party_filename, party_all)
+writer(scan_data_output_dir + party_filename, party_all)
 
 # Write out catalog
 detected_catalog = party_all.get_catalog()
-writer(output_dir + catalog_filename,detected_catalog)
+writer(scan_data_output_dir + catalog_filename, detected_catalog)

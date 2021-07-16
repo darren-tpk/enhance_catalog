@@ -1,0 +1,2903 @@
+<?xml version='1.0' encoding='utf-8'?>
+<q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2">
+  <eventParameters publicID="smi:local/7291f4db-3a4c-4fa2-bac3-48004fafadcf">
+    <event publicID="smi:local/2009_03_20t12_20_02_20090320T122002.561000">
+      <comment id="smi:local/0d8cd763-cff8-42f2-af15-ad53733ae9dd">
+        <text>Template: 2009_03_20t12_20_02</text>
+      </comment>
+      <comment id="smi:local/a519188a-e81c-478c-8f90-392797111a5c">
+        <text>threshold=3.5999999046325684</text>
+      </comment>
+      <comment id="smi:local/d1421797-89ef-440f-8394-4ccaea2d4acc">
+        <text>detect_val=5.999999523162842</text>
+      </comment>
+      <comment id="smi:local/1d8d5ecd-00ce-4dcf-a3c3-d7b140493a6c">
+        <text>channels used: ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.320294Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/046dd1a1-7152-44c7-83d6-508f1d09449d">
+        <time>
+          <value>2009-03-20T12:20:03.800000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a8135fb8-71dc-4a35-aeff-7710cb43113a">
+        <time>
+          <value>2009-03-20T12:20:04.200000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d9a49521-01bb-4116-ada4-afb95f625f47">
+        <time>
+          <value>2009-03-20T12:20:03.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/bda75587-1d75-4803-9284-2c8f1197422c">
+        <time>
+          <value>2009-03-20T12:20:04.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7072bf98-6ab8-4ba4-9275-0d2fbf7d5ec2">
+        <time>
+          <value>2009-03-20T12:20:03.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a6e37a0d-fe2c-45ff-bd24-37060a127efe">
+        <time>
+          <value>2009-03-20T12:20:03.561000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t22_32_48_20090320T223248.861000">
+      <comment id="smi:local/bf6fd601-8000-420f-9dce-a7dabf65a4c4">
+        <text>Template: 2009_03_20t22_32_48</text>
+      </comment>
+      <comment id="smi:local/1909fcf3-85b5-49c0-bbd3-f85013d24e66">
+        <text>threshold=3.5999999046325684</text>
+      </comment>
+      <comment id="smi:local/6c1d13fe-cae3-4beb-b64e-5cbc302674f3">
+        <text>detect_val=5.999999046325684</text>
+      </comment>
+      <comment id="smi:local/d053233d-46f5-4313-a429-679a800a9fbb">
+        <text>channels used: ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHE') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.502704Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/c8c203ee-9bba-4fa0-b06c-6ee64b05addb">
+        <time>
+          <value>2009-03-20T22:32:50.020000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/95f58ce6-a1c2-478b-b7a1-392e50e2448e">
+        <time>
+          <value>2009-03-20T22:32:50.720000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/519b7432-8aec-42e4-a489-a84f2f993031">
+        <time>
+          <value>2009-03-20T22:32:50.040000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4e07fe99-d83f-4104-9bac-5c3eebf03bd5">
+        <time>
+          <value>2009-03-20T22:32:51.500000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3a2bd302-8f5e-4d6e-938b-3ed8f7ab9c9f">
+        <time>
+          <value>2009-03-20T22:32:50.060000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/196492ec-6621-4c45-9371-1b5b1277ab18">
+        <time>
+          <value>2009-03-20T22:32:49.861000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t17_59_41_20090320T175941.841000">
+      <comment id="smi:local/79df02ac-9159-463c-8658-b50d7d353939">
+        <text>Template: 2009_03_20t17_59_41</text>
+      </comment>
+      <comment id="smi:local/2f685650-e5e4-4047-85a3-de255638c5e2">
+        <text>threshold=3.0</text>
+      </comment>
+      <comment id="smi:local/25395045-9502-4225-b955-ede3f3789b24">
+        <text>detect_val=4.999999046325684</text>
+      </comment>
+      <comment id="smi:local/38486fb8-a828-42a4-a82f-006a5c875938">
+        <text>channels used: ('DFR', 'EHZ') ('NCT', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.347160Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/c8345c03-5dbf-4cd2-85af-abc8899aecf5">
+        <time>
+          <value>2009-03-20T17:59:45.001000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="DFR" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ea3a76ec-4b68-4e1b-9657-391fb16b193d">
+        <time>
+          <value>2009-03-20T17:59:44.701000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0e47e317-54c1-48c6-9c68-81961beda458">
+        <time>
+          <value>2009-03-20T17:59:43.960000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/34a7d3c5-0a6b-4e41-a646-25e679961f43">
+        <time>
+          <value>2009-03-20T17:59:42.940000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5a22046e-bf82-4f8b-bcb3-68c080635fbc">
+        <time>
+          <value>2009-03-20T17:59:42.841000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t17_59_41_20090320T175642.161000">
+      <comment id="smi:local/86f39229-3e94-4f63-acda-4ec695062cfb">
+        <text>Template: 2009_03_20t17_59_41</text>
+      </comment>
+      <comment id="smi:local/a5a20b79-4059-44dd-b81b-ff35e94832f3">
+        <text>threshold=3.0</text>
+      </comment>
+      <comment id="smi:local/2ee87f8d-9766-4a5a-a951-184cfa596abc">
+        <text>detect_val=3.23726224899292</text>
+      </comment>
+      <comment id="smi:local/a2eebd3e-c04d-4ac7-9d5a-2126f43b43f3">
+        <text>channels used: ('DFR', 'EHZ') ('NCT', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.345596Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/b45645f5-43d4-46d4-b360-b8269286f16c">
+        <time>
+          <value>2009-03-20T17:56:45.321000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="DFR" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/30990e32-8e31-4bb5-87a5-afb45e321078">
+        <time>
+          <value>2009-03-20T17:56:45.021000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/518491e6-46aa-4e64-ae69-895a664e3ab1">
+        <time>
+          <value>2009-03-20T17:56:44.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/67cdc9fa-3182-463d-95be-b28f0fa71b69">
+        <time>
+          <value>2009-03-20T17:56:43.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/53df9f4b-5b23-47b6-92cb-7c8fb6268f9f">
+        <time>
+          <value>2009-03-20T17:56:43.161000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_35_10_20090320T203510.061000">
+      <comment id="smi:local/298fdb21-985d-4956-b4fb-43fff9113d63">
+        <text>Template: 2009_03_20t20_35_10</text>
+      </comment>
+      <comment id="smi:local/f39f9f91-a051-4674-95ad-9f56be2b6668">
+        <text>threshold=3.5999999046325684</text>
+      </comment>
+      <comment id="smi:local/c0a96b47-bb27-43ea-b29b-f1985f02a3dd">
+        <text>detect_val=5.999999523162842</text>
+      </comment>
+      <comment id="smi:local/66c14155-6b31-46af-bf4e-11ac7161e889">
+        <text>channels used: ('RDN', 'EHZ') ('RDWB', 'BHE') ('RDWB', 'BHZ') ('REF', 'EHE') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.368679Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/fcd49100-374b-49c0-9cf1-e0f558cd4b3d">
+        <time>
+          <value>2009-03-20T20:35:11.300000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/1e956a65-a47e-4684-9fe2-aeb314c42e49">
+        <time>
+          <value>2009-03-20T20:35:12.220000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/de262f78-58e3-4a15-acb6-39e7991a34ff">
+        <time>
+          <value>2009-03-20T20:35:11.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/84948c46-edbc-400d-aadb-152128e7bc72">
+        <time>
+          <value>2009-03-20T20:35:12.400000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ff4c43ca-2b87-4e40-83cb-cdd819fb6cac">
+        <time>
+          <value>2009-03-20T20:35:11.220000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/cdba7a77-5c29-46d7-99ac-f155f77c025a">
+        <time>
+          <value>2009-03-20T20:35:11.061000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t07_48_53_20090320T074853.021000">
+      <comment id="smi:local/67e24570-4433-4b5e-8443-c20e0ac58ca8">
+        <text>Template: 2009_03_20t07_48_53</text>
+      </comment>
+      <comment id="smi:local/b6bb809e-ca7c-4b81-9246-993a611a2f04">
+        <text>threshold=6.0</text>
+      </comment>
+      <comment id="smi:local/a9e11335-e677-4f8f-91ca-16172ea27600">
+        <text>detect_val=9.999999046325684</text>
+      </comment>
+      <comment id="smi:local/ea1dabaa-c533-4325-9f8f-e35575bf74da">
+        <text>channels used: ('DFR', 'EHZ') ('NCT', 'EHZ') ('RDE', 'EHZ') ('RDJH', 'BHN') ('RDJH', 'BHZ') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.314390Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/e06a73ef-6513-4432-b379-982677661da8">
+        <time>
+          <value>2009-03-20T07:48:56.482000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="DFR" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b9dc3a6e-f758-476d-8c3a-95c68aab44bc">
+        <time>
+          <value>2009-03-20T07:48:56.342000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ab13a82c-7e0c-4ebb-a367-d3e7231fc14f">
+        <time>
+          <value>2009-03-20T07:48:56.682000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDE" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b9547893-2067-4297-9a5d-f8cfc30e6881">
+        <time>
+          <value>2009-03-20T07:48:58.461000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/48884de9-e60c-4e04-908f-febeec783e84">
+        <time>
+          <value>2009-03-20T07:48:56.461000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/46a496d8-40db-4521-877d-fb0c02d5cc84">
+        <time>
+          <value>2009-03-20T07:48:54.981000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7c447f86-a6ec-4286-8c9c-887c25b98436">
+        <time>
+          <value>2009-03-20T07:48:55.721000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d8948f9b-236a-4f85-967a-66516111efcb">
+        <time>
+          <value>2009-03-20T07:48:55.081000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/84e2a413-7fa8-49b9-b24b-1eb587c39629">
+        <time>
+          <value>2009-03-20T07:48:55.741000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/1e85c95d-483c-47df-b66d-49a6625805a0">
+        <time>
+          <value>2009-03-20T07:48:54.021000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T203650.521000">
+      <comment id="smi:local/fe4af2ae-d118-4ff0-8154-9e6472f92a69">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/5dcbd0e5-78b9-428e-b6a9-9c9b0e0549fb">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/bce85070-b6de-43a7-9c69-a6df4570b4c7">
+        <text>detect_val=7.999998569488525</text>
+      </comment>
+      <comment id="smi:local/9106d7e0-6b41-4709-9a2b-97a584ba7342">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.420016Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/970c7f15-f5eb-406c-b706-8ba0b0edea0d">
+        <time>
+          <value>2009-03-20T20:36:54.001000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e03deec0-7369-48fe-9bc2-605a0c5a6292">
+        <time>
+          <value>2009-03-20T20:36:55.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0dfcd2fd-e3e7-4ff1-a2b8-7b58a457d087">
+        <time>
+          <value>2009-03-20T20:36:51.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f434ddd9-f6a4-4da9-b8b3-a0fee38ce26c">
+        <time>
+          <value>2009-03-20T20:36:52.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e8ac9b8c-fb16-4356-a6d9-1f18824b8a03">
+        <time>
+          <value>2009-03-20T20:36:51.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/03d9098d-06fc-48d1-999d-c33ffde4dd5e">
+        <time>
+          <value>2009-03-20T20:36:52.300000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/8ec16b49-1d30-400b-a9b1-aa4939159786">
+        <time>
+          <value>2009-03-20T20:36:51.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5473fdae-3c08-4128-bb5f-8471b0a88831">
+        <time>
+          <value>2009-03-20T20:36:51.521000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T210044.841000">
+      <comment id="smi:local/65c4d983-7e2f-42fa-920b-147bdf56c214">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/9895321b-6239-45da-a0fd-ec9071d91d15">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/2b65ddab-af8c-47aa-bfd6-58c3ab9012d6">
+        <text>detect_val=7.633127212524414</text>
+      </comment>
+      <comment id="smi:local/bb849abb-b9a9-4888-83ab-2dd103529af6">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.421989Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/1b09309f-19fd-4797-9d80-03219077c914">
+        <time>
+          <value>2009-03-20T21:00:48.321000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/549cdda9-769e-4bd6-8257-edffc7311168">
+        <time>
+          <value>2009-03-20T21:00:49.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7473b021-0b12-450d-9680-36d587cc152d">
+        <time>
+          <value>2009-03-20T21:00:45.860000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/da382342-e266-4822-83b5-6d540ee0a2cd">
+        <time>
+          <value>2009-03-20T21:00:46.980000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0f16740d-a8aa-4467-a71c-425ebeeacf09">
+        <time>
+          <value>2009-03-20T21:00:46.000000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/06d50233-d4bb-4a79-a9b1-d8c957cee6b0">
+        <time>
+          <value>2009-03-20T21:00:46.620000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/790a9d2d-2670-4f87-b486-6a4a1d69c612">
+        <time>
+          <value>2009-03-20T21:00:46.000000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/62bd3c0f-7d19-4acb-b520-31c0b31aff3e">
+        <time>
+          <value>2009-03-20T21:00:45.841000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T165147.121000">
+      <comment id="smi:local/998249e6-4026-42e0-87a1-6ca1acd45318">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/e5488c2b-f347-4a1e-b6f1-dfbe0490af3f">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/f45ebb33-8cf5-4fc8-b0ba-2e2585670a3f">
+        <text>detect_val=7.5071210861206055</text>
+      </comment>
+      <comment id="smi:local/de7bfc01-eced-4e0b-bf8c-08a0e2aa4297">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.400028Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/63eb1dbe-6587-4ccf-a567-fb0c88f3c938">
+        <time>
+          <value>2009-03-20T16:51:50.601000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5800af56-8b11-4d99-b32f-c59da61c69cb">
+        <time>
+          <value>2009-03-20T16:51:51.880000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/76348d72-4a66-44f9-affd-a94c2b53659c">
+        <time>
+          <value>2009-03-20T16:51:48.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5b28e335-971b-4ff1-acb7-f8457acdc804">
+        <time>
+          <value>2009-03-20T16:51:49.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/8a15c831-19b4-45d5-baec-bde2c30ee681">
+        <time>
+          <value>2009-03-20T16:51:48.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/8bb414d8-83cf-4b98-a373-e19628098636">
+        <time>
+          <value>2009-03-20T16:51:48.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ca950e62-fd8d-4f6f-a2ac-88d530dfc60b">
+        <time>
+          <value>2009-03-20T16:51:48.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3dc0c060-f4f4-4d55-8894-1736723b37b3">
+        <time>
+          <value>2009-03-20T16:51:48.121000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T200249.141000">
+      <comment id="smi:local/9f6949dd-4d4c-4362-8aef-39dc8041e693">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/3829f737-0a9d-4ff8-bf79-2c25dbab9206">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/bd158b8e-8e7d-4cfb-959e-4593d1ca2e3d">
+        <text>detect_val=7.443662643432617</text>
+      </comment>
+      <comment id="smi:local/c5f93075-12d3-44f0-aaeb-06181eec159d">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.416039Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/31209d3c-447a-41ef-8581-2e09ea2ef0aa">
+        <time>
+          <value>2009-03-20T20:02:52.621000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5907a04d-0ce4-459c-911b-ef2dd0dd2cc2">
+        <time>
+          <value>2009-03-20T20:02:53.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c47c2221-9681-48da-b26d-967c6f1c347f">
+        <time>
+          <value>2009-03-20T20:02:50.160000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/eda1030a-9341-46db-b5cd-60c67726b2de">
+        <time>
+          <value>2009-03-20T20:02:51.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/92c23c0a-d64b-4cb3-8c51-eb61c4899487">
+        <time>
+          <value>2009-03-20T20:02:50.300000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/980afc0b-f880-40a2-86bd-28041c6fca18">
+        <time>
+          <value>2009-03-20T20:02:50.920000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4bc45c56-f0a1-48c0-8aa4-456baa4b4bc9">
+        <time>
+          <value>2009-03-20T20:02:50.300000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f47f7fdb-b967-4ac2-be1e-e67f0f58ccb9">
+        <time>
+          <value>2009-03-20T20:02:50.141000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T223930.301000">
+      <comment id="smi:local/c98eef26-0dcb-43ea-a46c-30cb94f567ea">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/9fe8ff45-7ff5-4ce5-96db-32192e9253ab">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/895a45eb-f44d-4298-b0dc-a683a1671dbe">
+        <text>detect_val=7.404773712158203</text>
+      </comment>
+      <comment id="smi:local/bf3443b6-4774-4d10-bab1-0cd5c52ebd94">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.435966Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/f712c37f-5d9d-4554-8d48-2448aeccd8ec">
+        <time>
+          <value>2009-03-20T22:39:33.781000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5e74b54d-5771-4101-a0c3-64ad590898e5">
+        <time>
+          <value>2009-03-20T22:39:35.060000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/aa86e68f-a5d8-4a8a-b41a-d505f4b43485">
+        <time>
+          <value>2009-03-20T22:39:31.320000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/017aa71c-252b-473e-b335-167dcd9ac089">
+        <time>
+          <value>2009-03-20T22:39:32.440000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ed5da351-0597-45b4-a59b-833458c4e048">
+        <time>
+          <value>2009-03-20T22:39:31.460000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a4a5dabc-88e1-423e-b6cb-85afae0fdfb1">
+        <time>
+          <value>2009-03-20T22:39:32.080000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5348b18b-2034-46af-a453-5e8eebefbefe">
+        <time>
+          <value>2009-03-20T22:39:31.460000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f4eb0ed1-d28b-46b9-bdb7-f8f84b7155ec">
+        <time>
+          <value>2009-03-20T22:39:31.301000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T194411.381000">
+      <comment id="smi:local/84d4cd44-da90-4337-8712-a640fb78ced4">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/b544cb58-e631-4dc5-bfa0-0ccba1be0f40">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/70295133-aa53-409c-88d9-12e053790a45">
+        <text>detect_val=7.318296432495117</text>
+      </comment>
+      <comment id="smi:local/33e9cc2d-e0c9-48eb-82f3-8e3403a58ff2">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.414068Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/e31ec8b2-4822-48e5-b7c6-cc1d16417a68">
+        <time>
+          <value>2009-03-20T19:44:14.861000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5e349a2a-04cf-41bb-afdc-185c107889fc">
+        <time>
+          <value>2009-03-20T19:44:16.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ba32c852-3ce7-4eac-b30a-c82994e5eeeb">
+        <time>
+          <value>2009-03-20T19:44:12.400000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c78936ce-f910-4b17-bb2a-06de36642da9">
+        <time>
+          <value>2009-03-20T19:44:13.520000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c71c1b70-ecc4-4286-80a5-21606e6b4e2a">
+        <time>
+          <value>2009-03-20T19:44:12.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/981398ee-2ade-47b0-a849-d640704688cb">
+        <time>
+          <value>2009-03-20T19:44:13.160000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7d42e742-cbb6-482a-b2be-268dab82e2cf">
+        <time>
+          <value>2009-03-20T19:44:12.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/75674f10-e034-4ead-aa9d-a300f1d858cf">
+        <time>
+          <value>2009-03-20T19:44:12.381000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T132105.961000">
+      <comment id="smi:local/190bb094-1818-4813-af85-df4ce1ff797b">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/937fc484-842e-4f26-9a15-c4c7d5e918be">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/0927bc02-67d7-46bd-a1f0-25ba40fc77d2">
+        <text>detect_val=7.291410446166992</text>
+      </comment>
+      <comment id="smi:local/36fc6590-9076-4970-8b42-8fb732d6efe6">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.387940Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/427b384e-60f7-4f6c-98f6-e13fec664d32">
+        <time>
+          <value>2009-03-20T13:21:09.441000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0cc0cd22-9bc4-45f3-93f1-f5cc2b871489">
+        <time>
+          <value>2009-03-20T13:21:10.720000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4167f596-7d7d-4efa-921b-f7e61555a802">
+        <time>
+          <value>2009-03-20T13:21:06.980000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/cb347714-a373-45df-8fbc-c976c503f9bd">
+        <time>
+          <value>2009-03-20T13:21:08.100000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4a009dd4-ca5d-4d0c-aa9c-e10345ca102e">
+        <time>
+          <value>2009-03-20T13:21:07.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d31db5cd-748b-454e-9011-8490afc59dcb">
+        <time>
+          <value>2009-03-20T13:21:07.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f8bcc69a-d721-4e2e-8f48-59155cce8e29">
+        <time>
+          <value>2009-03-20T13:21:07.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/65f5c6c3-9ed1-4534-9353-2b666f5b9516">
+        <time>
+          <value>2009-03-20T13:21:06.961000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T152539.241000">
+      <comment id="smi:local/531f8498-f931-409c-bc8d-6e24f26994c0">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/43987b69-80b9-45ca-9717-0d36d9d4d99d">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/8cfd5293-a2d6-48a9-a884-ed91ea41b239">
+        <text>detect_val=7.2868242263793945</text>
+      </comment>
+      <comment id="smi:local/a4a1a7a1-8e2e-42f1-898f-0706867132b8">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.396002Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/05d543e1-2e00-4ca4-aee4-fd81a599ee86">
+        <time>
+          <value>2009-03-20T15:25:42.721000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/8621405e-632c-4fa1-ba55-4319efd95342">
+        <time>
+          <value>2009-03-20T15:25:44.000000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/03c82dde-c6c7-41e1-820b-e9490fd56fb6">
+        <time>
+          <value>2009-03-20T15:25:40.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/13d95182-e3d0-415c-90ea-48d6c3a7f8f0">
+        <time>
+          <value>2009-03-20T15:25:41.380000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/fac5b12f-4406-4d96-ab12-2f2ab00ea46a">
+        <time>
+          <value>2009-03-20T15:25:40.400000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a82eb6a0-dfa8-4f80-8fa2-f42202748543">
+        <time>
+          <value>2009-03-20T15:25:41.020000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0cd67a05-f603-4c5d-8480-b63d84687f5a">
+        <time>
+          <value>2009-03-20T15:25:40.400000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b4a7a954-dd7e-4d00-8a75-85014a34d801">
+        <time>
+          <value>2009-03-20T15:25:40.241000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T175329.901000">
+      <comment id="smi:local/095c5b44-393e-4f45-9b21-90643107e571">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/5aaa66f1-525d-4375-927b-4a7e9ccb7ab2">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/cb73fc93-58ac-4209-b61c-8e6bc7c46deb">
+        <text>detect_val=7.240331649780273</text>
+      </comment>
+      <comment id="smi:local/1dd2e38d-0bbd-4b00-938e-a5a8298df147">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.410058Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/effe750f-0cd2-4bdd-8d3b-ab9d37e079d8">
+        <time>
+          <value>2009-03-20T17:53:33.381000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0cdf6ffd-876b-4491-9c4b-60151f8621b0">
+        <time>
+          <value>2009-03-20T17:53:34.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b99df4f1-dedf-4bc7-b123-604d1d786342">
+        <time>
+          <value>2009-03-20T17:53:30.920000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/9aff9e7d-33ec-4d2e-856a-3d1bdf73489b">
+        <time>
+          <value>2009-03-20T17:53:32.040000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b95f0937-6c1f-4a47-abd2-3da1eb8e82d5">
+        <time>
+          <value>2009-03-20T17:53:31.060000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/25f6452d-a8bf-4b8c-9140-306ba3dce7d5">
+        <time>
+          <value>2009-03-20T17:53:31.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/9f2cd29e-b93c-40e3-8da8-00cfec264d4d">
+        <time>
+          <value>2009-03-20T17:53:31.060000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/74bff09e-f038-459e-a4dd-2ed547f66d25">
+        <time>
+          <value>2009-03-20T17:53:30.901000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T232029.721000">
+      <comment id="smi:local/e7201b91-ab05-4dc4-b831-61fdbd4f5fbc">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/9865cae2-378b-4256-ba04-0cf5518f73ef">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/d042074a-60a6-4817-8202-038c42659384">
+        <text>detect_val=7.210005283355713</text>
+      </comment>
+      <comment id="smi:local/8761bd38-583d-49bc-bc7b-9e8a0d6d69d5">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.441927Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/6acfe903-c28e-4b78-bbc6-32afffad76f2">
+        <time>
+          <value>2009-03-20T23:20:33.201000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5786cf2e-d2ac-4d67-99fb-61287ab22ccd">
+        <time>
+          <value>2009-03-20T23:20:34.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2d940ba2-9606-4c2f-a19b-562e57caf7f6">
+        <time>
+          <value>2009-03-20T23:20:30.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b5c65cdc-44d1-4aaa-8e4d-adc4a51090ef">
+        <time>
+          <value>2009-03-20T23:20:31.860000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/61a460ec-518f-485f-995b-322de3906e00">
+        <time>
+          <value>2009-03-20T23:20:30.880000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3ef9d601-9af5-441d-bf0b-c41155512e7a">
+        <time>
+          <value>2009-03-20T23:20:31.500000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/57cb7aa8-a776-43dc-a27f-7ed76e7b41e9">
+        <time>
+          <value>2009-03-20T23:20:30.880000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e32cdbab-698a-4c57-b769-b9aadf952117">
+        <time>
+          <value>2009-03-20T23:20:30.721000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T234354.581000">
+      <comment id="smi:local/40c5a37a-e2e7-4b17-9673-26ef0db0a9e9">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/20681c46-413f-470b-918d-4779afc29897">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/419a058a-fcdf-45f6-bc02-8d2a67ef8c5b">
+        <text>detect_val=7.057154655456543</text>
+      </comment>
+      <comment id="smi:local/656a2ddd-cf61-42a3-9367-f4c157e7c552">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.443899Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/085a8eab-1fca-473b-9553-5a42262d7a0e">
+        <time>
+          <value>2009-03-20T23:43:58.061000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/40ec9330-8e9d-4078-89d5-dcce692220e9">
+        <time>
+          <value>2009-03-20T23:43:59.340000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/cdc74b52-3995-41b8-8d58-710deff0e771">
+        <time>
+          <value>2009-03-20T23:43:55.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a1cf9a47-6ffa-4fdf-9f6b-ab3077a8a024">
+        <time>
+          <value>2009-03-20T23:43:56.720000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d8255bbc-0341-4aee-bf58-73fa99a7a0bc">
+        <time>
+          <value>2009-03-20T23:43:55.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/feb5d5ad-3b4a-4923-9f0d-14628658b23e">
+        <time>
+          <value>2009-03-20T23:43:56.360000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a550b4e5-90c1-4192-9d15-89197c2c71b9">
+        <time>
+          <value>2009-03-20T23:43:55.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d2ffe141-f095-4df5-b056-6ececed90f51">
+        <time>
+          <value>2009-03-20T23:43:55.581000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T162739.661000">
+      <comment id="smi:local/7d00148f-9ffe-4a2b-8836-ba63e80c6a74">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/141fc770-b562-40f9-ada1-7cc203e38236">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/22ae4c09-75fd-4bc1-ad75-5d5f0208ecfb">
+        <text>detect_val=6.913102149963379</text>
+      </comment>
+      <comment id="smi:local/7edb1776-c5b1-43a5-91c4-2775e49672f6">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.398064Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/9e491525-264d-4741-9e3e-86d4c463f6b4">
+        <time>
+          <value>2009-03-20T16:27:43.141000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5f1b9184-1aa6-4977-9c32-af655ba22b2e">
+        <time>
+          <value>2009-03-20T16:27:44.420000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/78dfdc2f-2963-42e0-bb12-7c424d119144">
+        <time>
+          <value>2009-03-20T16:27:40.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0f8f952b-06f4-4ff0-8348-e11d4bcadf28">
+        <time>
+          <value>2009-03-20T16:27:41.800000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/cbbfc7a5-d876-49a0-9170-76ce4c76cd32">
+        <time>
+          <value>2009-03-20T16:27:40.820000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e414a5fa-47f1-44f9-afb2-81e9d90728ac">
+        <time>
+          <value>2009-03-20T16:27:41.440000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/13dfafd3-321b-402c-bb5c-22d5df9f281b">
+        <time>
+          <value>2009-03-20T16:27:40.820000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3b4d857b-8edb-455b-81b0-03af081c8d5d">
+        <time>
+          <value>2009-03-20T16:27:40.661000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T222940.121000">
+      <comment id="smi:local/ef4dde04-9bab-4baa-84fe-b378e3b50deb">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/395e6f39-0513-4979-b7e9-da3c7965fed5">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/a097c301-9341-4b44-a72d-569a85fb9df9">
+        <text>detect_val=6.911671161651611</text>
+      </comment>
+      <comment id="smi:local/28fbc438-5b24-491a-822f-28dd7e9564b9">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.433949Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/29b08e31-125b-4c41-8447-ae07d1da7c3b">
+        <time>
+          <value>2009-03-20T22:29:43.601000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e737784c-ad7e-4f86-82a1-1a4dda935b79">
+        <time>
+          <value>2009-03-20T22:29:44.880000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3e31f236-a9d7-4b5b-9a09-3795445782ea">
+        <time>
+          <value>2009-03-20T22:29:41.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/97cd9d29-894d-48c2-bf09-e9c2e7602091">
+        <time>
+          <value>2009-03-20T22:29:42.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/356a8c26-fe18-44d1-a33b-c6451b7a90ad">
+        <time>
+          <value>2009-03-20T22:29:41.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/83a0c8fe-0dc6-41cb-b2be-18177616ec8f">
+        <time>
+          <value>2009-03-20T22:29:41.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/294aea28-3c3a-4f96-9139-abf084f57add">
+        <time>
+          <value>2009-03-20T22:29:41.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ba69626b-9f78-46b8-ae40-5fd06f139cfb">
+        <time>
+          <value>2009-03-20T22:29:41.121000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T074340.601000">
+      <comment id="smi:local/e12788eb-59c6-4a77-a713-f17273f6ee5f">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/6a7454f4-58f5-4f21-8780-49e8cfc727d9">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/f29d536e-d845-475b-ab6c-7cc47c476b57">
+        <text>detect_val=6.866430759429932</text>
+      </comment>
+      <comment id="smi:local/5eb0971c-fc5f-490a-8b07-e96f2590cb26">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.374852Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/97e722d4-6d7e-4989-86e4-4d8c13212237">
+        <time>
+          <value>2009-03-20T07:43:44.081000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/9fef49e9-a979-4b3a-bb0d-d54d273bd03a">
+        <time>
+          <value>2009-03-20T07:43:45.360000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ffc957b5-89b7-411d-99dd-919fe43e54b3">
+        <time>
+          <value>2009-03-20T07:43:41.620000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c3e0bf22-0277-463e-9950-188c39b48df2">
+        <time>
+          <value>2009-03-20T07:43:42.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2559645d-13ef-4b80-9059-90497ecd41f4">
+        <time>
+          <value>2009-03-20T07:43:41.760000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/90908f59-ca50-43d1-af8c-ddf7a2ea9fe4">
+        <time>
+          <value>2009-03-20T07:43:42.380000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/be44a321-e713-4d29-8dc5-6ebe226a5d92">
+        <time>
+          <value>2009-03-20T07:43:41.760000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3b62e9db-dfff-40e2-b1a5-863d864ce607">
+        <time>
+          <value>2009-03-20T07:43:41.601000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T140439.701000">
+      <comment id="smi:local/b432d59c-bc71-4a90-a05e-d913a4c6a673">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/8b2b0545-2c70-4ce7-b62d-ac0032a3f241">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/d4bebdb4-cb5c-494b-b7ec-564ffba0051a">
+        <text>detect_val=6.753491401672363</text>
+      </comment>
+      <comment id="smi:local/9de5d78d-8cff-47d8-90e9-215544549332">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.391923Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/23f2b131-4223-4a5f-a6bf-b08145771eb4">
+        <time>
+          <value>2009-03-20T14:04:43.181000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/8f303ad0-ec6c-4041-93b6-18d73efd1f0e">
+        <time>
+          <value>2009-03-20T14:04:44.460000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/590970cb-5d4a-48f6-ac1c-60ba52f2810e">
+        <time>
+          <value>2009-03-20T14:04:40.720000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/80520e8a-ecb3-4b8b-8c86-a1fdc97a397c">
+        <time>
+          <value>2009-03-20T14:04:41.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/21f6895e-56ef-4191-9145-3b2e856a886d">
+        <time>
+          <value>2009-03-20T14:04:40.860000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/54e52ac1-abd3-4c1e-9f2f-326d1dd8980a">
+        <time>
+          <value>2009-03-20T14:04:41.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/251f4d35-8e3e-4885-81fa-c6f1105bd157">
+        <time>
+          <value>2009-03-20T14:04:40.860000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c85a0e7f-7ee6-4f31-91c7-7b1ebade9e78">
+        <time>
+          <value>2009-03-20T14:04:40.701000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T174638.981000">
+      <comment id="smi:local/a4cfc679-7141-431b-9408-d52729484217">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/2ed5797c-c48b-4ce3-b5ef-84b5af158dec">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/57ac342b-bbd0-420b-b2f9-22b491c4ce97">
+        <text>detect_val=6.738292217254639</text>
+      </comment>
+      <comment id="smi:local/b38ddb72-f3b7-41e9-954c-d19cf672a2cf">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.408072Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/1b08a940-bb82-41aa-9012-3a6c247f80bc">
+        <time>
+          <value>2009-03-20T17:46:42.461000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/cf96c359-008b-40ea-b77c-d2e97c7919da">
+        <time>
+          <value>2009-03-20T17:46:43.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2f1b837e-ce72-42a2-a447-3caf0b8d2330">
+        <time>
+          <value>2009-03-20T17:46:40.000000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/896db807-34bd-4508-9d4a-5f4533bb3684">
+        <time>
+          <value>2009-03-20T17:46:41.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e5332357-ae29-4782-a9ae-f01a12125aa0">
+        <time>
+          <value>2009-03-20T17:46:40.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/1a8481c3-2135-4824-9af8-26583f0cbacf">
+        <time>
+          <value>2009-03-20T17:46:40.760000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/9e1dbede-a96e-4cd7-85a2-edd8babc5814">
+        <time>
+          <value>2009-03-20T17:46:40.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/373a27ae-c085-4182-9cfa-cc86961b095e">
+        <time>
+          <value>2009-03-20T17:46:39.981000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T111042.921000">
+      <comment id="smi:local/c6789f95-b56d-4208-a1bd-833ba97a6b9d">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/b5568ca2-d10a-4760-9542-808c2a8af3f3">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/2d7f0708-4b88-4fac-92e6-a4045c2c92fb">
+        <text>detect_val=6.731423377990723</text>
+      </comment>
+      <comment id="smi:local/474a548a-f180-458e-933d-2e7da93e6924">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.381922Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/91f2203d-7a65-46d1-b302-668fe9078283">
+        <time>
+          <value>2009-03-20T11:10:46.401000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3928294b-97cb-40c1-b044-c2f14079a6be">
+        <time>
+          <value>2009-03-20T11:10:47.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/81b80575-6f80-45d2-bd0c-3a8128dbbe81">
+        <time>
+          <value>2009-03-20T11:10:43.940000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/6c2e45ef-d7f0-4849-8b3a-8995b1796ebb">
+        <time>
+          <value>2009-03-20T11:10:45.060000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/dc912f95-5afd-4f1c-b989-3c936b725075">
+        <time>
+          <value>2009-03-20T11:10:44.080000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a1914559-5b26-468e-9f69-c4adcd521283">
+        <time>
+          <value>2009-03-20T11:10:44.700000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f7f90ab0-d2a1-48de-a509-ed8f484dfd35">
+        <time>
+          <value>2009-03-20T11:10:44.080000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ae7102a8-548a-45eb-bb34-4000ada7a640">
+        <time>
+          <value>2009-03-20T11:10:43.921000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T224749.741000">
+      <comment id="smi:local/4e382242-dbfb-4238-8756-ddf81a86850a">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/39ecc136-ac9b-4ca7-a8cc-7d0d72c6b463">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/a51bf61f-e3ef-4f15-b3f1-24c4b6e2b039">
+        <text>detect_val=6.704808712005615</text>
+      </comment>
+      <comment id="smi:local/8eb4a5a7-2a91-4883-8e0a-291751fb8383">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.439965Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/0fe1bdf3-6ce3-4f5d-8bc6-573a17142c6e">
+        <time>
+          <value>2009-03-20T22:47:53.221000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/9999cf97-880d-49f8-b992-baa36a69f145">
+        <time>
+          <value>2009-03-20T22:47:54.500000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/396c8f33-1da3-4739-9f16-63b11704f122">
+        <time>
+          <value>2009-03-20T22:47:50.760000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/de6da9e8-f58a-4d5c-95dc-316451a4785b">
+        <time>
+          <value>2009-03-20T22:47:51.880000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ade4bb99-0f57-4670-8f54-bc2d85383948">
+        <time>
+          <value>2009-03-20T22:47:50.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d7364044-716a-4df2-928b-8e295a17c68c">
+        <time>
+          <value>2009-03-20T22:47:51.520000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f4397ce4-f668-477a-9826-7b6eeb93c0c0">
+        <time>
+          <value>2009-03-20T22:47:50.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b843ecd4-b8c9-4ce3-bbce-a22809734258">
+        <time>
+          <value>2009-03-20T22:47:50.741000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T130502.501000">
+      <comment id="smi:local/bc31681a-38a6-44c2-bf98-d3da5f3e4e93">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/c258b7a2-789b-4c30-b76e-e28fdb4db822">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/a0e82d60-47bb-429f-a10d-962128b05c90">
+        <text>detect_val=6.3973517417907715</text>
+      </comment>
+      <comment id="smi:local/359502d8-bb28-4bdd-818b-a12b03151c95">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.385885Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/93bd00e5-47a9-4529-90b1-6d83ef166028">
+        <time>
+          <value>2009-03-20T13:05:05.981000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/70c2ddc9-1d1e-4e9c-9138-8b44dfbeed68">
+        <time>
+          <value>2009-03-20T13:05:07.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f7cd7940-5c9d-43a6-838f-1e3a9bd73a65">
+        <time>
+          <value>2009-03-20T13:05:03.520000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c8a9a4bb-1ffa-484a-980a-b5f646841cee">
+        <time>
+          <value>2009-03-20T13:05:04.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/024163f5-c0ab-40e3-a7d7-32ae515d2674">
+        <time>
+          <value>2009-03-20T13:05:03.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2cdfde52-c082-4fc3-85a9-df9b00e6b555">
+        <time>
+          <value>2009-03-20T13:05:04.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2828c91f-56a3-4b9d-ad96-d331da725821">
+        <time>
+          <value>2009-03-20T13:05:03.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e78d660f-60d7-4b3e-9b04-1c9e0b4c6893">
+        <time>
+          <value>2009-03-20T13:05:03.501000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T165554.781000">
+      <comment id="smi:local/8d8fc498-d785-44d7-a0a8-16bc2c96b0a1">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/a638e281-b516-47e9-a3bd-d43ceabb490b">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/7332be93-a190-4eeb-bc50-832ab91de1fb">
+        <text>detect_val=6.313344478607178</text>
+      </comment>
+      <comment id="smi:local/23f58446-cc64-473c-968c-610a936616d4">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.402047Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/d9c29cf9-8ec9-41bc-9fd2-fc7108fff068">
+        <time>
+          <value>2009-03-20T16:55:58.261000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/49d38378-eff5-446e-be9b-ab9df82bb1b3">
+        <time>
+          <value>2009-03-20T16:55:59.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0979ddfc-2d5e-491c-a1ad-af773cadc3a1">
+        <time>
+          <value>2009-03-20T16:55:55.800000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7c75dcb9-4f4a-4e94-b637-79094d20b412">
+        <time>
+          <value>2009-03-20T16:55:56.920000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2e8fbc17-3855-47fc-b601-c58df1ebadbb">
+        <time>
+          <value>2009-03-20T16:55:55.940000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/11611ab7-b06a-4d46-b56c-98852d0c40c0">
+        <time>
+          <value>2009-03-20T16:55:56.560000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/36d9866b-facb-40ce-9cf0-eda7b11edffe">
+        <time>
+          <value>2009-03-20T16:55:55.940000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/34e7c12e-1eff-4873-a123-cdd483ec3cbb">
+        <time>
+          <value>2009-03-20T16:55:55.781000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T202729.481000">
+      <comment id="smi:local/cca5b01d-2d78-4dc2-9a37-b86efcb9004f">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/a0050c33-ca47-4e5e-a438-c2026d6ec91d">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/4d789134-b1b9-4eac-bb56-ccc246847227">
+        <text>detect_val=5.981868267059326</text>
+      </comment>
+      <comment id="smi:local/41abee98-e160-427b-b704-27c39a760173">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.417995Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/bd384ee6-23a9-491a-aee0-1cf64fb55955">
+        <time>
+          <value>2009-03-20T20:27:32.961000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d1e3bcbe-d7d1-497b-8e38-3c768c8de55c">
+        <time>
+          <value>2009-03-20T20:27:34.240000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/daf202a5-d92f-415c-8fc8-d9f906c0c637">
+        <time>
+          <value>2009-03-20T20:27:30.500000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f0928a37-3adf-4d80-af0a-d3f477b86e1e">
+        <time>
+          <value>2009-03-20T20:27:31.620000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/cf1926b2-321c-4d14-9ed0-29a5db9f3f79">
+        <time>
+          <value>2009-03-20T20:27:30.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/8a1c9469-3c5a-4a8d-b57d-238744c8b655">
+        <time>
+          <value>2009-03-20T20:27:31.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b4995e8f-b3bb-4ef4-bd9f-b19a6dde5333">
+        <time>
+          <value>2009-03-20T20:27:30.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a515ed7f-6988-464b-acd5-11209ba3f1cd">
+        <time>
+          <value>2009-03-20T20:27:30.481000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T151314.501000">
+      <comment id="smi:local/6f2cf9e8-2acb-4390-ac83-642562e2b0e5">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/c4680317-d8bb-4f7b-b10a-5f12286ec447">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/803ca6f7-6e91-4fe5-b87d-9606cf4a80c7">
+        <text>detect_val=5.962864398956299</text>
+      </comment>
+      <comment id="smi:local/286e5817-0fca-4cf0-83fb-0faac0c300f2">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.394048Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/c12362f9-6d95-4284-9dec-a04848a2373a">
+        <time>
+          <value>2009-03-20T15:13:17.981000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/51dc9c40-67ac-463c-b128-bb3991aa82e8">
+        <time>
+          <value>2009-03-20T15:13:19.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/1a555899-dd4e-4e93-a2f1-d8ac13b761a1">
+        <time>
+          <value>2009-03-20T15:13:15.520000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b09a8027-d787-4921-a294-dc2802b61fad">
+        <time>
+          <value>2009-03-20T15:13:16.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e97a5bdd-70cf-40a6-acce-f7940a643efa">
+        <time>
+          <value>2009-03-20T15:13:15.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/24824c74-f17f-4807-9334-563e35ec375b">
+        <time>
+          <value>2009-03-20T15:13:16.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/40e1b40b-a43b-4629-999c-6cdc136876fa">
+        <time>
+          <value>2009-03-20T15:13:15.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5aa863a6-80d4-469d-8ff7-b9dd15bcb3b8">
+        <time>
+          <value>2009-03-20T15:13:15.501000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T135559.761000">
+      <comment id="smi:local/c0a67f09-040e-42b6-94fe-5b98c3015da4">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/9465996e-4cd6-41b6-9157-88ed2325d9a5">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/4f4420eb-90af-4db4-aef8-3db07e25dbb3">
+        <text>detect_val=5.9538140296936035</text>
+      </comment>
+      <comment id="smi:local/aceeaca4-8d7e-481d-81d5-c5551fed2980">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.389979Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/5b461d1a-d987-4a5b-b42a-0f168ff99647">
+        <time>
+          <value>2009-03-20T13:56:03.241000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/da57030e-c308-44ef-826b-e2846cbdf703">
+        <time>
+          <value>2009-03-20T13:56:04.520000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b7ba81dd-5e5e-4a20-bc88-3e3df513152b">
+        <time>
+          <value>2009-03-20T13:56:00.780000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c3db0cbe-0ea6-4d77-84b8-4faa9b12cb1a">
+        <time>
+          <value>2009-03-20T13:56:01.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e6ecf0e1-8774-4d6d-8d36-30a0a2c1f376">
+        <time>
+          <value>2009-03-20T13:56:00.920000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/1c298099-6f19-4dae-94cc-d8ddb6020c3a">
+        <time>
+          <value>2009-03-20T13:56:01.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/6378f9f7-b706-4277-b57c-7e54eede474f">
+        <time>
+          <value>2009-03-20T13:56:00.920000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2fa56395-8177-454e-8174-ca8d7e93a02f">
+        <time>
+          <value>2009-03-20T13:56:00.761000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T211158.441000">
+      <comment id="smi:local/67355205-4f95-4046-b22e-a38792c3fe30">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/f1e21d7c-7bf2-4a0c-93db-9b5cb8413b0d">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/cf248266-cc35-4712-839d-12b75b2c8814">
+        <text>detect_val=5.876368045806885</text>
+      </comment>
+      <comment id="smi:local/f67220b7-7bdc-4c61-9c5b-fc7d482edd5f">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.424013Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/5746bcd5-113b-431f-91ff-5b501d7e1ad3">
+        <time>
+          <value>2009-03-20T21:12:01.921000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e9c7ab89-ed62-4b00-9887-08f3ba732740">
+        <time>
+          <value>2009-03-20T21:12:03.200000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/369b5116-96e5-4146-8dd1-be21172a69b6">
+        <time>
+          <value>2009-03-20T21:11:59.460000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d40d3afa-611b-4103-b537-8412aad4f967">
+        <time>
+          <value>2009-03-20T21:12:00.580000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4af29e89-7859-4831-b692-7db1f45a0507">
+        <time>
+          <value>2009-03-20T21:11:59.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/dabfd25d-4d9f-4302-9ed2-431c04f8aadf">
+        <time>
+          <value>2009-03-20T21:12:00.220000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/6c3fc153-1920-4a3b-a3d2-95a1cedb9c72">
+        <time>
+          <value>2009-03-20T21:11:59.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/1e42698a-680b-4b51-b42a-1e3841d1741c">
+        <time>
+          <value>2009-03-20T21:11:59.441000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T173450.461000">
+      <comment id="smi:local/5c615f74-5091-4a16-ba5d-be74dd1ffd91">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/09331db9-bee9-4172-8bcd-f8443baba671">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/87b1ac33-aa56-47ec-a39b-9b205e863a53">
+        <text>detect_val=5.855636119842529</text>
+      </comment>
+      <comment id="smi:local/8e3dcbdd-86ca-4217-9175-97dd6eb13502">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.406069Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/2f6c636b-750c-4176-9f29-5ed4834bbb3d">
+        <time>
+          <value>2009-03-20T17:34:53.941000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d62c366f-c1d9-42d2-b227-9396584650cf">
+        <time>
+          <value>2009-03-20T17:34:55.220000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d267e44c-17c1-46c0-b5c4-c6eabae2d12b">
+        <time>
+          <value>2009-03-20T17:34:51.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c9b148f9-643b-4dfa-a93b-6adb1c152f9f">
+        <time>
+          <value>2009-03-20T17:34:52.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/70821ab0-d70a-4d82-bd24-72c4eee3d754">
+        <time>
+          <value>2009-03-20T17:34:51.620000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e1a11982-51ec-4002-af76-1d46830c52df">
+        <time>
+          <value>2009-03-20T17:34:52.240000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4fb3ed9c-8af5-4323-8fcc-eee26e9cdd63">
+        <time>
+          <value>2009-03-20T17:34:51.620000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/12365b07-8395-4eae-a68d-7242c0f0812c">
+        <time>
+          <value>2009-03-20T17:34:51.461000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T214512.521000">
+      <comment id="smi:local/2ab889a7-c692-4648-8df4-755303a4b590">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/a89ae5a5-e037-4e9b-b7bd-138e2609623b">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/7f02f93f-7073-4485-9357-e21018f4055d">
+        <text>detect_val=5.808350563049316</text>
+      </comment>
+      <comment id="smi:local/62889726-98b8-487d-8de1-dfa3c7da389a">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.427959Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/a08ace97-1803-491c-984a-77a1e52943c4">
+        <time>
+          <value>2009-03-20T21:45:16.001000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/dd54983f-cbbe-48c5-8ba3-ee104e341032">
+        <time>
+          <value>2009-03-20T21:45:17.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4122a761-df0f-4b22-9333-f2125a40eb54">
+        <time>
+          <value>2009-03-20T21:45:13.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5e056bfd-90a0-4acf-9a18-67334788344d">
+        <time>
+          <value>2009-03-20T21:45:14.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/66336725-471d-4ef1-83f6-1357c400b3c9">
+        <time>
+          <value>2009-03-20T21:45:13.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d59dc94a-4b9b-4b3f-bc56-9c511435cca9">
+        <time>
+          <value>2009-03-20T21:45:14.300000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/8e5f1760-c6ad-4c47-b752-86879acf2b29">
+        <time>
+          <value>2009-03-20T21:45:13.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f0aa0084-93dc-4ed2-ae31-f5a81f9df61d">
+        <time>
+          <value>2009-03-20T21:45:13.521000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T235838.641000">
+      <comment id="smi:local/826275c7-717e-4b78-932d-07d3411fc931">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/81f4ea28-f426-4f6c-87b7-1d0fda56c7f7">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/d7a3f802-2d45-44f6-aa33-09f59310c4af">
+        <text>detect_val=5.627955913543701</text>
+      </comment>
+      <comment id="smi:local/63e498e4-507b-4dbe-bd9c-1366481ad8c7">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.448341Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/57e3539f-eee5-4c99-bfb6-00350f9bd94a">
+        <time>
+          <value>2009-03-20T23:58:42.121000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3b33cc0c-fecc-48ee-9cbf-c1208eb5ddf1">
+        <time>
+          <value>2009-03-20T23:58:43.400000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/632f20c0-900b-416f-8c5d-7abbce1bd153">
+        <time>
+          <value>2009-03-20T23:58:39.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/72fd45ff-8a51-44c6-b952-cfe3fbb3993b">
+        <time>
+          <value>2009-03-20T23:58:40.780000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a336b816-4184-480d-b0cc-ae5e0030ee43">
+        <time>
+          <value>2009-03-20T23:58:39.800000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/dd010458-da61-4ffb-b570-356aac01002a">
+        <time>
+          <value>2009-03-20T23:58:40.420000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/653a793a-75be-4b92-8b30-cc53e2e12442">
+        <time>
+          <value>2009-03-20T23:58:39.800000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/085c5ee2-0cb2-4d91-93e8-f63bce6ce0ae">
+        <time>
+          <value>2009-03-20T23:58:39.641000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T191317.621000">
+      <comment id="smi:local/3f31edcf-77a5-45c7-9cef-662b7b591d24">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/8bb09d02-0d02-4e0e-ac27-82aa2203495e">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/8fc1a45e-dbd4-42d9-9bdd-db9288726111">
+        <text>detect_val=5.615921497344971</text>
+      </comment>
+      <comment id="smi:local/ed9d3021-c807-4916-9fc4-1ea3d3875526">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.412016Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/846eb9fe-5533-42b7-9a85-e30288a56fe1">
+        <time>
+          <value>2009-03-20T19:13:21.101000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f7e0d32c-81a5-4fd8-9418-6785ddee5b24">
+        <time>
+          <value>2009-03-20T19:13:22.380000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a1c22715-2a0f-4e16-9081-1ff05aa7ef04">
+        <time>
+          <value>2009-03-20T19:13:18.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/aa837eab-9d80-4b28-a232-bf802650c961">
+        <time>
+          <value>2009-03-20T19:13:19.760000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2e9b4a64-6214-4f5d-b16a-2d21b15d5eac">
+        <time>
+          <value>2009-03-20T19:13:18.780000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/23975e8b-d95c-4f0b-a6f5-ad9df33da30c">
+        <time>
+          <value>2009-03-20T19:13:19.400000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7520bff6-c0bc-4ea1-845d-37208b97f902">
+        <time>
+          <value>2009-03-20T19:13:18.780000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ef4689a4-d995-4236-8ff4-21abf98ae7d1">
+        <time>
+          <value>2009-03-20T19:13:18.621000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T220642.361000">
+      <comment id="smi:local/1473f64d-d380-4f2c-adf9-ab4a859d1cfa">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/5db86797-3e3c-46a0-8d44-60d05455b13a">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/cf3adc0b-b3a3-458a-9b61-3a009702b33c">
+        <text>detect_val=5.4044904708862305</text>
+      </comment>
+      <comment id="smi:local/98514970-a29e-4685-81d1-c5e92adaca68">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.430017Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/86cc7403-5a1c-439d-8590-2c8100a0f0ee">
+        <time>
+          <value>2009-03-20T22:06:45.841000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/44e06a4e-2ec5-4272-9e57-0687e03da256">
+        <time>
+          <value>2009-03-20T22:06:47.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b5e4b12a-7dfa-438f-a2ca-bfb0c5308fba">
+        <time>
+          <value>2009-03-20T22:06:43.380000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/798ceb55-a221-4926-80c1-898267b9d356">
+        <time>
+          <value>2009-03-20T22:06:44.500000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/437e4607-e231-432b-98d6-bbe9b33e7e62">
+        <time>
+          <value>2009-03-20T22:06:43.520000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/817b311b-0b64-4fbf-ad41-2be47eb30452">
+        <time>
+          <value>2009-03-20T22:06:44.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7340245a-e765-40be-a066-74a09345598b">
+        <time>
+          <value>2009-03-20T22:06:43.520000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/9f3216d6-bb49-4603-bbb3-a5569600909d">
+        <time>
+          <value>2009-03-20T22:06:43.361000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T110448.341000">
+      <comment id="smi:local/dd895bc0-7282-497f-93b0-64ee93d1986b">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/f69a0320-e97f-475e-9e0b-db3f4323b96b">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/bd64d4e8-4091-4f69-b177-e31466b4fb98">
+        <text>detect_val=5.400479316711426</text>
+      </comment>
+      <comment id="smi:local/a48bf634-449e-48d5-9be5-2dc7ce5ae7e9">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.378887Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/840336fe-3f49-4a64-8a96-708a0540dc4e">
+        <time>
+          <value>2009-03-20T11:04:51.821000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/341586eb-114c-4bf5-acd0-1f0ca62f81ff">
+        <time>
+          <value>2009-03-20T11:04:53.100000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7e5cfe52-1489-4065-a6d9-90b21f79f9a1">
+        <time>
+          <value>2009-03-20T11:04:49.360000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e373c192-a943-4236-bf41-40f6a678c1d5">
+        <time>
+          <value>2009-03-20T11:04:50.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/80494563-84d7-48ad-a669-8ae31d199ff4">
+        <time>
+          <value>2009-03-20T11:04:49.500000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/6c5dd3f2-a09f-4f66-9893-8653cdaa8b59">
+        <time>
+          <value>2009-03-20T11:04:50.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5b5403a1-44bf-4f10-bfa8-0bf30d754602">
+        <time>
+          <value>2009-03-20T11:04:49.500000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/6122cf83-e642-4eed-8256-efadd3250ba8">
+        <time>
+          <value>2009-03-20T11:04:49.341000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T234854.821000">
+      <comment id="smi:local/9ccef820-31a9-4154-b36f-4c24e7fc5e44">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/d39b5c06-d704-483c-aa60-4371fcd13df4">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/a9d632fc-cecb-49cc-81a7-06fc1d24be51">
+        <text>detect_val=5.397685527801514</text>
+      </comment>
+      <comment id="smi:local/34084e94-c608-427b-bfc2-2196b7292e40">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.446394Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/a933de1d-11a0-46b2-86f1-33d302eb32b7">
+        <time>
+          <value>2009-03-20T23:48:58.301000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a43b345a-41b7-45f8-9495-c710da224979">
+        <time>
+          <value>2009-03-20T23:48:59.580000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/91f508e4-4a89-4574-9db6-b56b6137e63c">
+        <time>
+          <value>2009-03-20T23:48:55.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f82e3ed7-7d30-4cce-8f3b-2a444bc71670">
+        <time>
+          <value>2009-03-20T23:48:56.960000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4b6f96a9-77f4-41a3-96f0-4d9e4a27a1c7">
+        <time>
+          <value>2009-03-20T23:48:55.980000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7feb9090-c22f-4b88-a5d2-9c8b73d8b08e">
+        <time>
+          <value>2009-03-20T23:48:56.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5833867b-0219-456a-b8fa-293be0a44367">
+        <time>
+          <value>2009-03-20T23:48:55.980000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b769d8d8-179f-44e9-b4ba-ddd6a2d942ba">
+        <time>
+          <value>2009-03-20T23:48:55.821000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T171349.681000">
+      <comment id="smi:local/7f6791ae-76f4-4507-bf7a-c63423de9527">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/0a71c88a-1980-4cef-92b7-85f093493c83">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/cfb2d066-98ea-4ba2-adb1-f6f6f37aa2e6">
+        <text>detect_val=5.32528018951416</text>
+      </comment>
+      <comment id="smi:local/ef600bf2-fd2a-40f5-b209-6760dba560ca">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.404089Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/bf444c9b-a2ce-4e5b-ae22-1dbc06eb4691">
+        <time>
+          <value>2009-03-20T17:13:53.161000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2233bbec-04e0-4aac-9a3f-0d5caf2b672f">
+        <time>
+          <value>2009-03-20T17:13:54.440000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e78822c2-0017-4851-b3b1-1d9a1737ebfd">
+        <time>
+          <value>2009-03-20T17:13:50.700000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/5c3ef91d-ebb4-4511-83ba-e116b68da275">
+        <time>
+          <value>2009-03-20T17:13:51.820000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/af1b85e1-b4b5-4f80-9b26-2b3ac2c62b43">
+        <time>
+          <value>2009-03-20T17:13:50.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f25b14c8-e7ef-4f11-a6b0-e5d7b7c0f9e7">
+        <time>
+          <value>2009-03-20T17:13:51.460000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4c8c9e7f-c584-4d63-8ea4-acd5125f4bba">
+        <time>
+          <value>2009-03-20T17:13:50.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/965bc862-e743-4fb7-af53-ef0e7a6c428f">
+        <time>
+          <value>2009-03-20T17:13:50.681000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T095418.101000">
+      <comment id="smi:local/cc3cdf96-7021-4ed2-8d4e-8055d5bb0f27">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/ef01e0ce-0caf-43ad-b0dd-04da77a0b018">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/c6c98ea5-ce2b-483c-a6ac-3d6dd2eecefe">
+        <text>detect_val=5.296045780181885</text>
+      </comment>
+      <comment id="smi:local/1c484d47-8c4b-4f75-b341-24812177dcfc">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.376928Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/2691beb2-8cd2-4fc8-aeab-bb4fb1a00631">
+        <time>
+          <value>2009-03-20T09:54:21.581000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/04999959-425e-456e-b3cc-bdaafaa123a2">
+        <time>
+          <value>2009-03-20T09:54:22.860000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0daf8fd6-0ad0-40d8-87f0-95706ffd9b74">
+        <time>
+          <value>2009-03-20T09:54:19.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/dcd5bea7-27d1-4b82-80fc-1e291a10a80e">
+        <time>
+          <value>2009-03-20T09:54:20.240000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b3d116cd-d1ad-4e19-9e2d-cc1f76eeea50">
+        <time>
+          <value>2009-03-20T09:54:19.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/90ed1408-866f-404b-857e-de0b97ced63c">
+        <time>
+          <value>2009-03-20T09:54:19.880000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/1ca9f989-3e12-4647-937b-defc2a9cea5f">
+        <time>
+          <value>2009-03-20T09:54:19.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e5f2c49c-7143-4dd0-a217-ea581dfb4970">
+        <time>
+          <value>2009-03-20T09:54:19.101000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T213243.321000">
+      <comment id="smi:local/c3296103-71bd-4058-8cbe-1825c5dfef90">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/0daec504-2e4b-4199-89a9-921c40c1688f">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/88df4c9e-77af-4435-afe2-cb6fea6c34e5">
+        <text>detect_val=5.263803005218506</text>
+      </comment>
+      <comment id="smi:local/4f2ad77e-c934-471c-b321-80dc1292b56d">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.426007Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/c2f874e9-02ca-40f2-985a-c8a1c0e919a2">
+        <time>
+          <value>2009-03-20T21:32:46.801000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/fd84303e-ead7-43f9-b263-f8f9c43e7bf8">
+        <time>
+          <value>2009-03-20T21:32:48.080000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f2926e97-8110-40f2-9265-ef0ee3597d0b">
+        <time>
+          <value>2009-03-20T21:32:44.340000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/3c8c8c25-f11d-45a4-843e-8b720cba45f2">
+        <time>
+          <value>2009-03-20T21:32:45.460000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d5c1ca14-7d1a-451a-9ccc-64c7802bd3cf">
+        <time>
+          <value>2009-03-20T21:32:44.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b17dad89-1c73-4581-931e-523494b00d2b">
+        <time>
+          <value>2009-03-20T21:32:45.100000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/e98f13ee-5727-4148-83cb-2de585179735">
+        <time>
+          <value>2009-03-20T21:32:44.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0adcb5af-b213-44cc-9d23-5e4fdfa19494">
+        <time>
+          <value>2009-03-20T21:32:44.321000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T121036.681000">
+      <comment id="smi:local/e86b333a-c962-4ff2-9385-8886ab1ec6b5">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/1aa8b585-9524-4cb9-8d4b-39a3856be366">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/117627f0-cd5e-4dcf-82de-0e3cc18b1071">
+        <text>detect_val=5.008101463317871</text>
+      </comment>
+      <comment id="smi:local/ffcc3e4e-2aa2-4409-adef-1f7a7d1ab2a2">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.383912Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/3cd3b8d1-a44a-4770-a902-fb1cbabe6244">
+        <time>
+          <value>2009-03-20T12:10:40.161000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/9990c5c5-07bc-4d87-bafe-55ac25327f9c">
+        <time>
+          <value>2009-03-20T12:10:41.440000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/9c751183-77f0-4777-a143-8a193f1efe3e">
+        <time>
+          <value>2009-03-20T12:10:37.700000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/310112df-fc1a-4e6f-9796-85156e5a0f81">
+        <time>
+          <value>2009-03-20T12:10:38.820000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/688340df-99b7-4e4f-9c1e-675a35022042">
+        <time>
+          <value>2009-03-20T12:10:37.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/8f102973-0d16-4438-ad71-b50772872979">
+        <time>
+          <value>2009-03-20T12:10:38.460000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/06145400-8c4a-44a5-80ef-6b43b0a88d95">
+        <time>
+          <value>2009-03-20T12:10:37.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/aee3141e-2cc6-4abc-8a1b-093d65900c0d">
+        <time>
+          <value>2009-03-20T12:10:37.681000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T002447.401000">
+      <comment id="smi:local/7c3e0392-e2c0-4f3f-b0c7-1c0bb220b822">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/32df2c21-2ae6-4896-b700-8c405a626d4c">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/9bab8d3b-ab79-4859-8615-2a3cd0dcf8d1">
+        <text>detect_val=4.982591152191162</text>
+      </comment>
+      <comment id="smi:local/ca88134a-8024-459c-b12b-86ca51d46f27">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.372799Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/e61172b9-a8da-4b46-b198-7076c373bfcc">
+        <time>
+          <value>2009-03-20T00:24:50.881000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/7b54ef11-9625-4618-a4a5-351035d0d06e">
+        <time>
+          <value>2009-03-20T00:24:52.160000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/257858e3-a349-469f-b574-115a4f93f312">
+        <time>
+          <value>2009-03-20T00:24:48.420000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/6855b7f9-abc2-4159-973a-87706352a2b6">
+        <time>
+          <value>2009-03-20T00:24:49.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b2ac4978-65eb-419a-942e-afe7c101d7b5">
+        <time>
+          <value>2009-03-20T00:24:48.560000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/fe8c27cf-88e8-4a70-81d2-3239a7589a4c">
+        <time>
+          <value>2009-03-20T00:24:49.180000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/575818aa-ce70-4823-8c08-2004f464061e">
+        <time>
+          <value>2009-03-20T00:24:48.560000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/10e430a4-cf33-4bfe-a783-ca00f0e453cb">
+        <time>
+          <value>2009-03-20T00:24:48.401000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t20_36_50_20090320T224024.581000">
+      <comment id="smi:local/1b4979e8-6535-4ff9-83ca-9e720c3848f3">
+        <text>Template: 2009_03_20t20_36_50</text>
+      </comment>
+      <comment id="smi:local/9d44f5ef-9e76-49f4-b5be-df254587d0e2">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/4e0e007d-8745-4414-8538-216550069e3a">
+        <text>detect_val=4.8054304122924805</text>
+      </comment>
+      <comment id="smi:local/57d34d44-73ef-4744-8943-63162e127975">
+        <text>channels used: ('NCT', 'EHZ') ('RDJH', 'BHE') ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHN') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.437932Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/8b249293-4e8d-4bb2-8d77-1a7273fa7b9f">
+        <time>
+          <value>2009-03-20T22:40:28.061000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="NCT" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/4fd294e3-14a6-480f-b496-576bf4a660a7">
+        <time>
+          <value>2009-03-20T22:40:29.340000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/075bd13b-c3e5-4c58-9d8b-f87901a79d9e">
+        <time>
+          <value>2009-03-20T22:40:25.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/77f5e225-64c7-4d35-8440-61d3da4e822a">
+        <time>
+          <value>2009-03-20T22:40:26.720000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/c4204700-e00a-4483-8123-b2d3145bf282">
+        <time>
+          <value>2009-03-20T22:40:25.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/46bc5eb2-a690-4fc1-b09f-b6ae1d2574ba">
+        <time>
+          <value>2009-03-20T22:40:26.360000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/b5bc0e47-e24d-485e-9e45-2706d5b8c60b">
+        <time>
+          <value>2009-03-20T22:40:25.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/18973db1-b508-42e6-9249-7dc9ae70b88b">
+        <time>
+          <value>2009-03-20T22:40:25.581000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t21_45_52_20090320T214552.241000">
+      <comment id="smi:local/d4567b6d-9a82-4d74-ba10-52960d3fb55a">
+        <text>Template: 2009_03_20t21_45_52</text>
+      </comment>
+      <comment id="smi:local/c2e24ab3-4120-4798-96ee-6787429a6bff">
+        <text>threshold=4.800000190734863</text>
+      </comment>
+      <comment id="smi:local/7725dbd0-367c-4308-8f4d-004a58430870">
+        <text>detect_val=8.0</text>
+      </comment>
+      <comment id="smi:local/8a935160-7242-4002-944a-fcd51cf22d4b">
+        <text>channels used: ('DFR', 'EHZ') ('RDJH', 'BHN') ('RDJH', 'BHZ') ('RDWB', 'BHE') ('RDWB', 'BHZ') ('REF', 'EHE') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.452838Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/e35e881e-dd62-4a8a-b7a3-04e88f628397">
+        <time>
+          <value>2009-03-20T21:45:55.901000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="DFR" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0f565a39-b49e-4083-a95a-0e5a9dac5798">
+        <time>
+          <value>2009-03-20T21:45:57.560000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d7e7dffe-a44e-4ff0-b424-528dafad77ee">
+        <time>
+          <value>2009-03-20T21:45:55.040000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDJH" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/1df17a68-8378-464b-a534-ca59889e4b99">
+        <time>
+          <value>2009-03-20T21:45:54.400000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/82621adb-f7c2-432d-9f9b-a8f936e5f24a">
+        <time>
+          <value>2009-03-20T21:45:53.420000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/0ddf9f16-34d6-46e2-acaf-25b1a5117763">
+        <time>
+          <value>2009-03-20T21:45:54.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/2870bf87-8e73-46a0-92fa-5c58a8331828">
+        <time>
+          <value>2009-03-20T21:45:53.400000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/bb84066f-937d-46f1-ae62-dc4edde54513">
+        <time>
+          <value>2009-03-20T21:45:53.241000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+    <event publicID="smi:local/2009_03_20t22_13_19_20090320T221319.761000">
+      <comment id="smi:local/a67874d8-6d56-4d29-b1f2-87a3a42ae8f7">
+        <text>Template: 2009_03_20t22_13_19</text>
+      </comment>
+      <comment id="smi:local/bc3938ea-3e59-4ff7-ab72-5ea8b993ed57">
+        <text>threshold=3.5999999046325684</text>
+      </comment>
+      <comment id="smi:local/a452eafd-bbad-45f7-838d-7112e8eae46f">
+        <text>detect_val=5.999999523162842</text>
+      </comment>
+      <comment id="smi:local/a85fba7e-305d-4b2a-a899-ecdd5729abad">
+        <text>channels used: ('RDN', 'EHZ') ('RDWB', 'BHN') ('RDWB', 'BHZ') ('REF', 'EHE') ('REF', 'EHZ') ('RSO', 'EHZ')</text>
+      </comment>
+      <creationInfo>
+        <author>EQcorrscan</author>
+        <creationTime>2021-07-16T23:01:03.488709Z</creationTime>
+      </creationInfo>
+      <pick publicID="smi:local/144cc0f0-e65b-45e0-a85c-267224e8ce6d">
+        <time>
+          <value>2009-03-20T22:13:21.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDN" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/a5004bb9-23e4-4b91-b175-803b8fa137c7">
+        <time>
+          <value>2009-03-20T22:13:21.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHN"></waveformID>
+      </pick>
+      <pick publicID="smi:local/d35282a2-3481-45f1-ab0e-ff26b7c6770a">
+        <time>
+          <value>2009-03-20T22:13:20.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RDWB" locationCode="" channelCode="BHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/f88a5136-17cc-4f6f-8f13-9f4644bdf8e5">
+        <time>
+          <value>2009-03-20T22:13:21.860000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHE"></waveformID>
+      </pick>
+      <pick publicID="smi:local/421ec8e7-71a6-415b-bc50-f5c27027a0f1">
+        <time>
+          <value>2009-03-20T22:13:20.800000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="REF" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+      <pick publicID="smi:local/ecb0eff9-4abf-4b45-a685-aa5413c70afd">
+        <time>
+          <value>2009-03-20T22:13:20.761000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="RSO" locationCode="" channelCode="EHZ"></waveformID>
+      </pick>
+    </event>
+  </eventParameters>
+</q:quakeml>

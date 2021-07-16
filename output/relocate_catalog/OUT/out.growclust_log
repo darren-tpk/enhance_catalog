@@ -1,0 +1,91 @@
+ ************************ Input files ************************
+      control file:   /Users/darrentpk/Documents/GitHub/enhance_catalog/output/relocate_catalog/config.inp
+        event list:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/IN/evlist.txt
+      station list:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/IN/stlist.txt
+      xcordat file:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/IN/xcordata.txt
+      velocity mdl:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/IN/vzmodel.txt
+ ******************** Travel Time Tables *********************
+           P-phase:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/TT/tt.pg
+           S-phase:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/TT/tt.sg
+ *********************** Output files ************************
+      catalog file:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/OUT/out.growclust_cat
+      cluster file:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/OUT/out.growclust_clust
+          log file:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/OUT/out.growclust_log
+    bootstrap file:   /Users/darrentpk/Documents/Github/enhance_catalog/output/relocate_catalog/OUT/out.growclust_boot
+ **************** GROWCLUST Run Parameters *******************
+  (min rxcor value for evpair similarity coeff.): rmin =  0.60
+  (max sta. dist for evpair similarity coeff.): delmax =  80.0
+           (max rms residual to join clusters): rmsmax =  0.20
+        (num. bootstrap uncertainty iterations): nboot =    10
+ **************** Auxiliary Run Parameters *******************
+              min connection fraction to join clusters: 0.0010
+                     max catalog dist to join clusters:   5.00
+                   max relocated dist to join clusters:   3.00
+             min number in cluster to apply shift test:      1
+               max permitted horizontal cluster shifts:   2.00
+                 max permitted vertical cluster shifts:   2.00
+         max median absolute residual to join clusters:   0.05
+ *************************************************************
+  
+ *************************************   Cluster GrowLog   ****************************************
+  
+   CID1   CID2    NB1   NB2   CID    NB NPR NDT   dLATC     dLONC     dDEPC     dDISTC   RMSC  RMEDC
+     11      8     1     1     11     2  2  14   0.00000   0.00000   0.00000   0.00000   0.02   0.00
+     11     12     2     1     11     3  4  28   0.00000   0.00000   0.00000   0.00000   0.01   0.00
+     17     11     1     3     17     4  6  42   0.00039   0.00020  -0.05503   0.00000   0.01   0.00
+     17      9     4     1     17     5  8  56   0.00000  -0.00030   0.00916   0.00000   0.01   0.00
+      7     17     1     5      7     6 10  70  -0.00025  -0.00030   0.04698   0.00000   0.01   0.00
+      7     14     6     1      7     7 10  70  -0.00012  -0.00010   0.02991   0.00000   0.01   0.00
+     10      7     1     7     10     8 10  70  -0.00021   0.00000   0.03141   0.00000   0.01   0.00
+     10     16     8     1     10     9 10  70   0.00000   0.00000  -0.00951   0.00000   0.01   0.00
+     15     10     1     9     15    10 10  70  -0.00010   0.00045   0.05246   0.00000   0.01   0.00
+     20     15     1    10     20    11 10  70  -0.00021  -0.00020   0.04575   0.00000   0.02   0.00
+     22     20     1    11     22    12 10  70  -0.00022   0.00000   0.01734   0.00000   0.01   0.00
+     22     13    12     1     22    13 10  70   0.00000   0.00000  -0.03883   0.00000   0.01   0.00
+     22     21    13     1     22    14 10  70   0.00010  -0.00010   0.01646   0.00000   0.02   0.00
+     32     22     1    14     32    15 10  60   0.00117  -0.00030  -0.17253   0.00000   0.02   0.01
+     32     27    15     1     32    16 10  70   0.00049   0.00000  -0.04778   0.00000   0.01   0.00
+     32     18    16     1     32    17 10  70   0.00000   0.00000   0.00181   0.00000   0.01   0.00
+     19     32     1    17     19    18 10  70   0.00010   0.00000  -0.02685   0.00000   0.02   0.00
+     31     19     1    18     31    19 10  76   0.00000   0.00000   0.07282   0.00000   0.02   0.00
+     26     31     1    19     26    20 10  62   0.00006   0.00010  -0.16977   0.00000   0.01   0.00
+     23     26     1    20     23    21 10  68  -0.00041   0.00010   0.08692   0.00000   0.01   0.00
+     24     23     1    21     24    22 10  70  -0.00022   0.00030   0.01734   0.00000   0.01   0.00
+     24     29    22     1     24    23 10  59  -0.00010   0.00000  -0.06331   0.00000   0.01   0.00
+     33     24     1    23     33    24 10  70   0.00010   0.00020   0.04431   0.00000   0.01   0.00
+     34     33     1    24     34    25 10  60  -0.00027   0.00025  -0.09533   0.00000   0.01   0.00
+     34     30    25     1     34    26 10  66   0.00000   0.00000   0.02137   0.00000   0.01   0.00
+     35     34     1    26     35    27 10  60  -0.00007   0.00000  -0.23039   0.00000   0.02   0.00
+     35     39    27     1     35    28 10  55  -0.00016   0.00000  -0.08172   0.00000   0.01   0.00
+     25     35     1    28     25    29 10  60  -0.00037   0.00000  -0.07001   0.00000   0.01   0.00
+     28     25     1    29     28    30 10  58   0.00037   0.00035   0.18794   0.00000   0.01   0.00
+     28     40    30     1     28    31 10  59  -0.00114   0.00035   0.10634   0.00000   0.01   0.00
+     28     41    31     1     28    32 10  50   0.00032   0.00000   0.08515   0.00000   0.01   0.00
+     28     38    32     1     28    33 10  52   0.00034  -0.00030  -0.00156   0.00000   0.01   0.00
+     37     28     1    33     37    34 10  70  -0.00022   0.00000   0.02955   0.00000   0.01   0.00
+     37     36    34     1     37    35 10  61  -0.00057   0.00000  -0.14650   0.00000   0.16   0.00
+     43     37     1    35     43    36 10  52   0.00055   0.00000   0.22419   0.00000   0.01   0.00
+     43     42    36     1     43    37 10  59   0.00026   0.00000  -0.05379   0.00000   0.15   0.00
+      4      3     1     1      4     2  1   4   0.00000   0.00000   0.00000   0.00000   0.01   0.00
+ **************************************************************************************************
+  
+ ************************************  GROWCLUST Run Summary  *************************************
+  
+                             Number of catalog events:         45
+                           Number of relocated events:         39
+                          Number of input event pairs:       1564
+                           Number of event pairs used:       1175
+                Number of xcor data used (total, P+S):       5096
+                   Number of xcor data used (P-phase):       2793
+             RMS differential time residual (P-phase):     0.0146
+   Mean (signed) differential time residual (P-phase):    -0.0000
+                   Number of xcor data used (S-phase):       2303
+             RMS differential time residual (S-phase):     0.0131
+   Mean (signed) differential time residual (S-phase):     0.0000
+  
+                Number of clusters with >=   2 events:         2
+                Number of clusters with >=   5 events:         1
+                Number of clusters with >=  10 events:         1
+                Number of clusters with >=  20 events:         1
+                Number of clusters with >=  50 events:         0
+                Number of clusters with >= 100 events:         0

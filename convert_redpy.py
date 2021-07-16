@@ -22,10 +22,11 @@ from toolbox import read_trace, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
+main_dir = '/home/ptan/enhance_catalog/'
 data_dir = '/home/data/redoubt/'  # redoubt data directory on local
-output_dir = main_dir + 'output/convert_redpy/'
-redpy_dir = main_dir + 'output/execute_redpy/redoubt/'
+output_dir ='/home/ptan/enhance_catalog/output/'
+convert_redpy_output_dir = output_dir + 'convert_redpy/'
+redpy_results_dir = main_dir + 'redpy_results/redoubt/'
 PEC_dir = main_dir + 'data/avo/'
 hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
 hypoddpha_file = 'redoubt_20090101_20090501_hypoddpha.txt'
@@ -71,9 +72,9 @@ def pull_cores(full_catalog):
 #%% Prepare REDPy output for catalog creation
 
 # Read redpy text files using pandas
-redpy_detections = pd.read_csv(redpy_dir + 'catalog.txt', sep=' ', names=['Cluster','DateTime'])
-redpy_cores = pd.read_csv(redpy_dir + 'cores.txt', sep=' ', names=['Cluster','DateTime'])
-redpy_orphans = pd.read_csv(redpy_dir + 'orphancatalog.txt', names=['DateTime'])
+redpy_detections = pd.read_csv(redpy_results_dir + 'catalog.txt', sep=' ', names=['Cluster', 'DateTime'])
+redpy_cores = pd.read_csv(redpy_results_dir + 'cores.txt', sep=' ', names=['Cluster', 'DateTime'])
+redpy_orphans = pd.read_csv(redpy_results_dir + 'orphancatalog.txt', names=['DateTime'])
 
 # Prepare core and orphan datetimes as an array
 core_event_times = np.array([UTCDateTime(t) for t in redpy_cores.DateTime])
@@ -143,7 +144,7 @@ for i in range(len(redpy_detections)):
     redpy_catalog.append(redpy_event)
 
 # Write the redpy catalog to an xml file
-writer(output_dir+'redpy_catalog.xml', redpy_catalog)
+writer(convert_redpy_output_dir + 'redpy_catalog.xml', redpy_catalog)
 
 # Get unique list of AVO-associated clusters and non-associated clusters
 associated_clusters = list(np.unique(np.array(associated_cluster_list)))
@@ -151,10 +152,10 @@ unassociated_clusters = [cluster for cluster in list(np.unique(np.array(redpy_de
                          if cluster not in associated_clusters]
 
 # Write them to text file pickles
-with open(output_dir + 'unassociated_clusters.txt', 'wb') as cluster_pickle:  # Pickling
+with open(convert_redpy_output_dir + 'unassociated_clusters.txt', 'wb') as cluster_pickle:  # Pickling
     pickle.dump(unassociated_clusters, cluster_pickle)
     pickle.dump(associated_clusters, cluster_pickle)
-with open(output_dir + 'unmatched_indices.txt', 'wb') as unmatched_pickle:  # Pickling
+with open(convert_redpy_output_dir + 'unmatched_indices.txt', 'wb') as unmatched_pickle:  # Pickling
     pickle.dump(unmatched_indices, unmatched_pickle)
 
 # Also generate unmatched PEC catalog (that can be used as templates later)
@@ -164,7 +165,7 @@ for j, PEC_event in enumerate(PEC_events):
         unmatched_PEC_events += PEC_event
 
 # Write out unmatched PEC catalog to .xml file
-writer(output_dir+'unmatched_PEC_events.xml', unmatched_PEC_events)
+writer(convert_redpy_output_dir + 'unmatched_PEC_events.xml', unmatched_PEC_events)
 
 # Conclude process
 time_stop = time.time()
@@ -176,7 +177,7 @@ print('Catalog object created, processing time: %.2f s' % (time_stop-time_start)
 core_catalog = pull_cores(redpy_catalog)
 
 # Write core catalog to .xml file
-writer(output_dir+'core_catalog.xml', core_catalog)
+writer(convert_redpy_output_dir + 'core_catalog.xml', core_catalog)
 
 #%% Generate orphan catalog (picks not added)
 
@@ -302,7 +303,7 @@ for unassociated_cluster in unassociated_clusters:
                     redpy_catalog[contribution_index].origins[0].arrivals.append(add_arrival)
 
 # Write the fully picked redpy catalog to an xml file
-writer(output_dir+'redpy_catalog_picked.xml', redpy_catalog)
+writer(convert_redpy_output_dir + 'redpy_catalog_picked.xml', redpy_catalog)
 
 # Conclude process
 time_stop = time.time()
@@ -314,4 +315,4 @@ print('Pick making complete, processing time: %.2f s' % (time_stop-time_start))
 core_catalog = pull_cores(redpy_catalog)
 
 # Write picked core catalog to .xml file
-writer(output_dir+'core_catalog_picked.xml', core_catalog)
+writer(convert_redpy_output_dir + 'core_catalog_picked.xml', core_catalog)
