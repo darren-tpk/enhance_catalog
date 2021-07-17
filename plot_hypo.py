@@ -18,14 +18,14 @@ from pandas import read_csv
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
+main_dir = '/Users/darrentpk/Documents/Github/enhance_catalog/'
 elev_profile_dir = main_dir + 'data/dem/'
 EW_profile_filename = elev_profile_dir + 'ew_profile.csv'
 NS_profile_filename = elev_profile_dir + 'ns_profile.csv'
-PEC_events_filename = main_dir + 'data/avo/?'
+PEC_events_dir = main_dir + 'data/avo/'
 located_cores_filename = main_dir + 'output/convert_redpy/core_catalog_picked.xml'
 unmatched_PEC_events_filename = main_dir + 'output/convert_redpy/unmatched_PEC_events.xml'
-relocated_catalog_filename = main_dir + 'output/relocate_catalog/relocated_catalog.xml'
+relocated_catalog_filename = main_dir + 'output/relocate_catalog/relocated_catalog_test.xml'
 VOLC_LAT = 60.4852
 VOLC_LON = -152.7438
 MAX_DEPTH = 15  # km
@@ -51,7 +51,9 @@ def projection(region, width, cm=False):
 #%% Read all catalogs
 
 # (1) Pre-existing catalog
-PEC_events = reader(PEC_events_filename)
+PEC_hypoi = PEC_events_dir + 'redoubt_20090101_20090501_hypoi.txt'
+PEC_hypoddpha = PEC_events_dir + 'redoubt_20090101_20090501_hypoddpha.txt'
+PEC_events = read_hypoddpha(PEC_hypoi, PEC_hypoddpha, channel_convention=True)
 
 # (2) All located templates
 located_cores = reader(located_cores_filename)
@@ -83,6 +85,10 @@ times = times[valid_index]
 days = days[valid_index]
 
 #%% Plot hypocenters using PyGMT
+
+# Load EW and NS elevation profiles (from https://apps.nationalmap.gov/elevation/)
+EW = read_csv(EW_profile_filename)
+NS = read_csv(NS_profile_filename)
 
 # Initialize figure
 fig = pygmt.Figure()
@@ -116,8 +122,11 @@ fig.shift_origin(yshift="h+1c")
 # Top-left plot: Top-down view
 with fig.subplot(nrows=1, ncols=1, figsize=("10c", "10c"), autolabel="a)"):
 
-    # Create basemap with correct dimensions
-    fig.basemap(region=REGION_CLEAN, projection="X10c/10c", frame=["xa0.2f0.05+lLongitude","ya0.1f0.025+lLatitude", "WsNe"], panel=[0, 0])
+    # Create basemap with correct dimensions2
+    fig.grdimage("@earth_relief_15s",region=REGION_CLEAN,
+                 projection=projection(REGION_CLEAN, MAIN_WIDTH, cm=True),
+                 shading=True, t=30, cmap="geo")
+    #fig.basemap(region=REGION_CLEAN, projection="X10c/10c", frame=["xa0.2f0.05+lLongitude","ya0.1f0.025+lLatitude", "WsNe"], panel=[0, 0])
 
     # Plot earthquakes
     pygmt.makecpt(cmap="viridis", series="2009-01-01T/2009-05-01T/1d")

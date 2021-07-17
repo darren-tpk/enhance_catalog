@@ -2,18 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3842949-c619-4c3b-9c75-c4ebba5b9a0c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/enhance_catalog.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/remote-mappings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/attempt_eqcorrscan.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/enhance_catalog.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/enhance_catalog.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/convert_redpy.py" beforeDir="false" afterPath="$PROJECT_DIR$/convert_redpy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create_tribe.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_tribe.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/growclust/EXAMPLE/IN/evlist.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/growclust/EXAMPLE/IN/stlist.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/growclust/EXAMPLE/IN/vzmodel.txt" beforeDir="false" />
@@ -31,22 +22,7 @@
       <change beforePath="$PROJECT_DIR$/growclust/SRC/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/growclust/SRC/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/growclust/SRC/grow_params.f90" beforeDir="false" afterPath="$PROJECT_DIR$/growclust/SRC/grow_params.f90" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/growclust/license.txt" beforeDir="false" afterPath="$PROJECT_DIR$/growclust/license.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/core_catalog.xml" beforeDir="false" afterPath="$PROJECT_DIR$/output/convert_redpy/core_catalog.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/core_catalog_picked.xml" beforeDir="false" afterPath="$PROJECT_DIR$/output/convert_redpy/core_catalog_picked.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/redpy_catalog.xml" beforeDir="false" afterPath="$PROJECT_DIR$/output/convert_redpy/redpy_catalog.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/redpy_catalog_picked.xml" beforeDir="false" afterPath="$PROJECT_DIR$/output/convert_redpy/redpy_catalog_picked.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/unmatched_PEC_events.xml" beforeDir="false" afterPath="$PROJECT_DIR$/output/convert_redpy/unmatched_PEC_events.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/execute_redpy/redoubt/catalog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/redpy_results/redoubt/catalog.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/execute_redpy/redoubt/cores.txt" beforeDir="false" afterPath="$PROJECT_DIR$/redpy_results/redoubt/cores.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/execute_redpy/redoubt/matches_redoubt.csv" beforeDir="false" afterPath="$PROJECT_DIR$/redpy_results/redoubt/matches_redoubt.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/execute_redpy/redoubt/orphancatalog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/redpy_results/redoubt/orphancatalog.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/evlist.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/relocate_catalog/IN/evlist.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/stlist.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/relocate_catalog/IN/stlist.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/xcordata.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/relocate_catalog/IN/xcordata.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/TT/vzfine.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/relocate_catalog/TT/vzfine.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/config.inp" beforeDir="false" afterPath="$PROJECT_DIR$/output/relocate_catalog/config.inp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relocate_catalog.py" beforeDir="false" afterPath="$PROJECT_DIR$/relocate_catalog.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scan_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scan_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plot_hypo.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot_hypo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/waveform_collection/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/waveform_collection/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/waveform_collection/LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/waveform_collection/LICENSE.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/waveform_collection/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/waveform_collection/README.md" afterDir="false" />
@@ -93,7 +69,7 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -108,7 +84,11 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1626463446926</updated>
-      <workItem from="1626463454148" duration="8804000" />
+      <workItem from="1626463454148" duration="9571000" />
+      <workItem from="1626479347798" duration="53000" />
+      <workItem from="1626479489622" duration="715000" />
+      <workItem from="1626480293869" duration="176000" />
+      <workItem from="1626480474371" duration="742000" />
     </task>
     <servers />
   </component>
@@ -125,5 +105,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
