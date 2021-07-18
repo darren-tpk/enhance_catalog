@@ -20,18 +20,18 @@ output_dir ='/home/ptan/enhance_catalog/output/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 sitelist_dir = main_dir + 'data/avo/'
 create_tribe_output_dir = main_dir + 'output/create_tribe/'
-tribe_filename = 'tribe_test.tgz'
+tribe_filename = 'tribe_len8_snr2.tgz'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
 resampling_frequency = 50  # for resampling traces prior to final merge
 tolerance = 4e4            # tolerance for boxcar removal from data (as a factor to median)
 lowcut = 1.0               # filter lowcut (Hz), follows Jeremy's recommendation
 highcut = 10.0             # filter highcut (Hz), follows Jeremy's recommendation
 samp_rate = 50.0           # new sampling rate (Hz)
-length = 10.0              # template length (s), Wech et al. (2018) chose 30s
+length = 8.0               # template length (s), Wech et al. (2018) chose 30s
 filt_order = 4             # number of corners for filter
 prepick = 1.0              # pre-pick time (s), Wech et al. (2018) chose 5s
 process_len = 86400        # length to process data in (s)
-min_snr = 3                # minimum SNR, Jeremy's recommendation was 5.0 (same as EQcorrscan tutorial)
+min_snr = 2                # minimum SNR, Jeremy's recommendation was 5.0 (same as EQcorrscan tutorial)
 local_volcano = 'redoubt'  # for get_local_stations function, since we only take picks from stations near Redoubt
 local_radius = 25          # for get_local_stations function; radius around volcano to accept stations
 
@@ -76,24 +76,30 @@ for k in range(len(catalog)):
     day_end = day_start + 86400
     stream = stream.trim(starttime=day_start, endtime=day_end)
 
+    # Start with an empty template
+    template = None
+
     # Try to construct tribe using local data file
     try:
         template = Tribe().construct(
             method="from_meta_file", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
             filt_order=filt_order, prepick=prepick, meta_file=event, st=stream, process=True,
             process_len=process_len, min_snr=min_snr, parallel=True)
+    except AttributeError:
+        print('WARNING: local data failed to produce template, using client method instead.')
 
     # If local data files fail (e.g. too gappy), we construct the tribe using IRIS client downloads
-    except:
-        print('WARNING: local data failed to produce template, using client method instead.')
+    try:
         client = Client('IRIS')
         template = Tribe().construct(
             method="from_client", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
             filt_order=filt_order, prepick=prepick, client_id=client, catalog=event, process=True,
             process_len=process_len, min_snr=min_snr, parallel=True)
+    except Exception:
+        print('WARNING: data not available on client either, skipping.')
 
     # Append template to tribe if successful
-    if len(template) != 0:
+    if template is not None:
         tribe = tribe + template
         time_current = time.time()
         print('Event %d passed.' % (k+1))
