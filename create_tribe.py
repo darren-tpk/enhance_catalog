@@ -94,7 +94,7 @@ for k in range(len(catalog)):
             method="from_meta_file", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
             filt_order=filt_order, prepick=prepick, meta_file=event, st=stream, process=True,
             process_len=process_len, min_snr=min_snr, parallel=True)
-    except AttributeError:
+    except:
         print('WARNING: local data failed to produce template, using client method instead.')
 
         # If local data files fail (e.g. too gappy), we try to construct the tribe using IRIS client downloads
@@ -104,7 +104,7 @@ for k in range(len(catalog)):
                 method="from_client", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
                 filt_order=filt_order, prepick=prepick, client_id=client, catalog=event, process=True,
                 process_len=process_len, min_snr=min_snr, parallel=True)
-        except Exception:
+        except:
             print('WARNING: data not available on client either, skipping.')
 
     # Check if template creation was unsuccessful:
