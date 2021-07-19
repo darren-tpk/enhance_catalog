@@ -76,6 +76,15 @@ for k in range(len(catalog)):
     day_end = day_start + 86400
     stream = stream.trim(starttime=day_start, endtime=day_end)
 
+    # If the stream has traces, check the length of each trace and remove those that are too short for processing
+    # (EQcorrscan produces an error if data is <80% of process_len)
+    if stream is not None:
+        for trace in stream:
+            trace_length = trace.stats.npts / trace.stats.sampling_rate
+            if trace_length < (0.8 * process_len):
+                print('%s.%s got removed due to insufficient length.' % (trace.stats.station,trace.stats.channel))
+                stream.remove(trace)
+
     # Start with an empty template
     template = None
 
@@ -88,27 +97,27 @@ for k in range(len(catalog)):
     except AttributeError:
         print('WARNING: local data failed to produce template, using client method instead.')
 
-    # If local data files fail (e.g. too gappy), we construct the tribe using IRIS client downloads
-    try:
-        client = Client('IRIS')
-        template = Tribe().construct(
-            method="from_client", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
-            filt_order=filt_order, prepick=prepick, client_id=client, catalog=event, process=True,
-            process_len=process_len, min_snr=min_snr, parallel=True)
-    except Exception:
-        print('WARNING: data not available on client either, skipping.')
+        # If local data files fail (e.g. too gappy), we try to construct the tribe using IRIS client downloads
+        try:
+            client = Client('IRIS')
+            template = Tribe().construct(
+                method="from_client", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
+                filt_order=filt_order, prepick=prepick, client_id=client, catalog=event, process=True,
+                process_len=process_len, min_snr=min_snr, parallel=True)
+        except Exception:
+            print('WARNING: data not available on client either, skipping.')
+
+    # Check if template creation was unsuccessful:
+    if template is None or len(template) == 0:
+        print('Event %d failed.' % (k + 1))
+        valid_event.append(0)
 
     # Append template to tribe if successful
-    if template is not None:
+    else:
         tribe = tribe + template
         time_current = time.time()
         print('Event %d passed.' % (k+1))
         valid_event.append(1)
-
-    # Skip if unsuccessful
-    else:
-        print('Event %d failed.' % (k+1))
-        valid_event.append(0)
 
 # Conclude process
 time_end = time.time()

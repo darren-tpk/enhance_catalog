@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e3842949-c619-4c3b-9c75-c4ebba5b9a0c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/enhance_catalog.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/enhance_catalog.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/create_tribe.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_tribe.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/growclust/EXAMPLE/IN/evlist.txt" beforeDir="false" />
@@ -89,7 +87,7 @@
       <workItem from="1626479489622" duration="715000" />
       <workItem from="1626480293869" duration="176000" />
       <workItem from="1626480474371" duration="742000" />
-      <workItem from="1626574882551" duration="4843000" />
+      <workItem from="1626574882551" duration="7002000" />
     </task>
     <servers />
   </component>
