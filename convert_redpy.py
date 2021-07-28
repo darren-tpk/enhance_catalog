@@ -6,7 +6,6 @@
 # All .xml catalog and .txt files created are saved in the user-defined output_dir.
 # Note that [PEC = pre-existing catalog]
 
-
 # Import all dependencies
 import pickle
 import time
@@ -27,13 +26,13 @@ data_dir = '/home/data/redoubt/'  # redoubt data directory on local
 output_dir ='/home/ptan/enhance_catalog/output/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 redpy_results_dir = main_dir + 'redpy_results/redoubt/'
-PEC_dir = main_dir + 'data/avo/'
-hypoi_file = 'redoubt_20090101_20090501_hypoi.txt'
-hypoddpha_file = 'redoubt_20090101_20090501_hypoddpha.txt'
+PEC_dir = main_dir + 'data/ncedc/'
+hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
+hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'
 max_dt = 4  # maximum time difference between REDPy detections and AVO events allowed, in seconds
 adopt_weight = 0.1  # phase weight for adopted picks
-redpy_station_list = ['RDN','REF','RSO']
-redpy_channel_list = [['EHZ'],['EHZ'],['EHZ']]
+redpy_station_list = ['MMP','MRD','MDPB','MINS','OMMB','MDC']
+redpy_channel_list = [['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ']]
 tolerance = 4e4  # tolerance for boxcar removal from data (as a factor to median)
                  # used to be 5e4?
 

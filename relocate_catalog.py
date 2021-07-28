@@ -23,11 +23,11 @@ main_dir = '/home/ptan/enhance_catalog/'
 data_dir = '/home/data/redoubt/'
 output_dir = '/home/ptan/enhance_catalog/output/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
-tribe_filename = 'tribe_test.tgz'
+tribe_filename = 'tribe_len8_snr2.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
-catalog_filename = 'party_catalog_test.xml'
+catalog_filename = 'party_catalog_ACC.xml'
 relocate_catalog_output_dir = output_dir + 'relocate_catalog/'
-relocated_catalog_filename = 'relocated_catalog_test.xml'
+relocated_catalog_filename = 'relocated_catalog_ACC.xml'
 raw_station_list_dir = main_dir + 'data/avo/'
 raw_station_list_filename = 'station_list.csv'
 raw_vzmodel_dir = main_dir + 'data/avo/'
@@ -252,7 +252,7 @@ for station_used in stations_used:
 stlist_file.close()
 
 # Format velocity model to layer cake and write
-# (Current velocity model is from Toth and Kisslinger, 1984)
+# (Current velocity model is from Toth and Kisslinger, 1984 for Adak, and Power et al., 2012 for Redoubt)
 vzmodel = pd.read_csv(raw_vzmodel_dir + raw_vzmodel_filename, header=None)
 vzmodel_file = open(vzmodel_filename, 'w')
 for i in range(len(vzmodel.values)):

@@ -1,0 +1,91 @@
+#%% DOWNLOAD DATA
+
+# This script downloads data from a chosen seismic network across a user-defined duration, using ObsPy's st.read() and st.write().
+
+# Import all dependencies
+import time
+import numpy as np
+from obspy import UTCDateTime, Stream
+from obspy.clients.fdsn import Client
+
+#%% Define variables
+
+# Define variables
+data_destination = '/home/ptan/enhance_catalog/data/mammoth/'
+start_time = UTCDateTime(2012,10,1,0,0,0)
+end_time = UTCDateTime(2013,2,1,0,0,0)
+client_name = "NCEDC"
+network = "CI"
+stations = ["MLAC"]
+channels = ["HHZ"]
+common_channels = True
+location = "--"
+
+
+#%% Define functions
+
+# Nil
+
+#%% Loop over sta-chan-loc combinations to download data into user-defined destination
+
+# Set up client for dataselect query
+client = Client(client_name)
+
+# Dissect duration into days
+num_days = int(np.floor((end_time - start_time) / 86400))
+print("\nCommencing data fetch...")
+time_start = time.time()
+
+# Commence loop over days
+for i in range(num_days):
+
+    # Define temporal boundaries for data fetch
+    t1 = start_time + (i * 86400)
+    t2 = start_time + ((i + 1) * 86400)
+    print('\nNow at %s...' % str(t1.date))
+
+    # Loop over stations
+    for j, station in enumerate(stations):
+
+        # If the list of channels is common to all stations, use those channels
+        # Else, use station-specific channel list
+        if common_channels:
+            channel_list = channels
+        else:
+            channel_list = channels[j]
+
+        # Loop over channels
+        for channel in channel_list:
+
+            # Get waveforms by querying client
+            try:
+                st = client.get_waveforms(network,station,location,channel,t1,t2)
+
+                # Save every trace separately
+                for tr in st:
+
+                    # Craft the seed file name
+                    trace_year = str(tr.stats.starttime.year)
+                    trace_julday = str(tr.stats.starttime.julday)
+                    trace_time = str(tr.stats.starttime.time)[0:8]
+                    trace_datetime_str = ":".join([trace_year,trace_julday,trace_time])
+                    seed_filename = station + '.' + channel + '.' + trace_datetime_str
+
+                    # Write to seed file
+                    seed_filepath = data_destination + seed_filename
+                    tr.write(seed_filepath,format="MSEED")
+
+                    # Print success
+                    print('%s successfully saved.' % seed_filename)
+
+            # continue if waveform retrieval fails
+            except:
+                continue
+
+    # Print progression
+    time_current = time.time()
+    print('Data collection for the day complete. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+
+# Conclude process
+time_end = time.time()
+print('\nData collection complete. Time taken: %.2f hours' % ((time_end - time_start)/3600))
