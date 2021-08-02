@@ -1,0 +1,12 @@
+*/
+!redpy/
+*.pyc
+*.csv
+*.cfg
+*.h5
+*.out
+*.sh
+*.txt
+*.html
+*.new
+.DS_Store

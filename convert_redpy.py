@@ -12,6 +12,7 @@ import time
 import pandas as pd
 import numpy as np
 from obspy import Catalog, UTCDateTime, Stream
+from obspy.clients.fdsn import Client
 from obspy.core.event import Event, Origin, Comment, Pick, WaveformStreamID, Arrival, ResourceIdentifier
 from obspy.signal.trigger import coincidence_trigger, classic_sta_lta, trigger_onset
 from phase_processing.ncsn2pha import ncsn2pha
@@ -21,20 +22,20 @@ from toolbox import read_trace, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/data/redoubt/'  # redoubt data directory on local
-output_dir ='/home/ptan/enhance_catalog/output/'
+main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
+data_dir = None #'/home/data/redoubt/'  # redoubt data directory on local
+output_dir = main_dir + 'output/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
-redpy_results_dir = main_dir + 'redpy_results/redoubt/'
-PEC_dir = main_dir + 'data/ncedc/'
-hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
-hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'
+redpy_results_dir = main_dir + 'redpy_results/greatsitkin/'
+PEC_dir = main_dir + 'data/avo/'
+hypoi_file = 'greatsitkin_20210601_20210730_hypoi.txt'
+hypoddpha_file = 'greatsitkin_20210601_20210730_hypoddpha.txt'
 max_dt = 4  # maximum time difference between REDPy detections and AVO events allowed, in seconds
 adopt_weight = 0.1  # phase weight for adopted picks
-redpy_station_list = ['MMP','MRD','MDPB','MINS','OMMB','MDC']
-redpy_channel_list = [['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ']]
+redpy_station_list = ['GSCK','GSIG','GSMY','GSSP','GSTR']
+redpy_channel_list = [['BHZ'],['BHZ'],['BHZ'],['BHZ'],['BHZ']]
 tolerance = 4e4  # tolerance for boxcar removal from data (as a factor to median)
-                 # used to be 5e4?
+local = False
 
 #%% Define functions
 
@@ -143,7 +144,7 @@ for i in range(len(redpy_detections)):
     redpy_catalog.append(redpy_event)
 
 # Write the redpy catalog to an xml file
-writer(convert_redpy_output_dir + 'redpy_catalog.xml', redpy_catalog)
+writer(convert_redpy_output_dir + 'GS_redpy_catalog.xml', redpy_catalog)
 
 # Get unique list of AVO-associated clusters and non-associated clusters
 associated_clusters = list(np.unique(np.array(associated_cluster_list)))
@@ -164,7 +165,7 @@ for j, PEC_event in enumerate(PEC_events):
         unmatched_PEC_events += PEC_event
 
 # Write out unmatched PEC catalog to .xml file
-writer(convert_redpy_output_dir + 'unmatched_PEC_events.xml', unmatched_PEC_events)
+writer(convert_redpy_output_dir + 'GS_unmatched_PEC_events.xml', unmatched_PEC_events)
 
 # Conclude process
 time_stop = time.time()
@@ -176,7 +177,7 @@ print('Catalog object created, processing time: %.2f s' % (time_stop-time_start)
 core_catalog = pull_cores(redpy_catalog)
 
 # Write core catalog to .xml file
-writer(convert_redpy_output_dir + 'core_catalog.xml', core_catalog)
+writer(convert_redpy_output_dir + 'GS_core_catalog.xml', core_catalog)
 
 #%% Generate orphan catalog (picks not added)
 
@@ -227,6 +228,12 @@ print('Orphan catalog created, processing time: %.2f s' % (time_stop-time_start)
 print('\nMaking picks for non-associated cluster events...')
 time_start = time.time()
 
+# Define client if using data from server
+if not local:
+    client = Client('IRIS')
+
+# Define some coincidence_trigger arguments
+
 # Loop through unassociated clusters
 for unassociated_cluster in unassociated_clusters:
 
@@ -252,16 +259,25 @@ for unassociated_cluster in unassociated_clusters:
         stream = Stream()
         for k, redpy_station in enumerate(redpy_stations):
             for redpy_channel in redpy_channel_list[k]:
-                station_tr = read_trace(data_dir=data_dir, station=redpy_station, channel=redpy_channel,
-                                        starttime=starttime, endtime=endtime, tolerance=tolerance)
+                if local:
+                    station_tr = read_trace(data_dir=data_dir, station=redpy_station, channel=redpy_channel,
+                                            starttime=starttime, endtime=endtime, tolerance=tolerance)
+                else:
+                    station_tr = client.get_waveforms("AV", redpy_station, "*", redpy_channel, starttime, endtime)
                 stream = stream + station_tr
         stream = stream.split()
         stream = stream.filter('bandpass',freqmin=1.0, freqmax=10.0, corners=2, zerophase=True)
         stream = stream.taper(0.05, type='hann', max_length=(0.75*1024/100))  # [HARD CODED]
         stream = stream.merge(method=1, fill_value=0)
+        stream = stream.trim(starttime=starttime,endtime=endtime)
 
         # Use coincidence trigger to get a pick time estimate
-        coin_trigger = coincidence_trigger('classicstalta', 3, 2, stream, 2, sta=0.7, lta=8, details=True)
+        try:
+            coin_trigger = []
+            coin_trigger = coincidence_trigger('classicstalta', 3, 2, stream, 2, sta=0.7, lta=8, details=True)
+        # If it fails (usually due to data being too gappy), move to next event
+        except:
+            continue
 
         # If there are no coincidence triggers, move to next event
         if not coin_trigger:
@@ -302,7 +318,7 @@ for unassociated_cluster in unassociated_clusters:
                     redpy_catalog[contribution_index].origins[0].arrivals.append(add_arrival)
 
 # Write the fully picked redpy catalog to an xml file
-writer(convert_redpy_output_dir + 'redpy_catalog_picked.xml', redpy_catalog)
+writer(convert_redpy_output_dir + 'GS_redpy_catalog_picked.xml', redpy_catalog)
 
 # Conclude process
 time_stop = time.time()
@@ -314,4 +330,4 @@ print('Pick making complete, processing time: %.2f s' % (time_stop-time_start))
 core_catalog = pull_cores(redpy_catalog)
 
 # Write picked core catalog to .xml file
-writer(convert_redpy_output_dir + 'core_catalog_picked.xml', core_catalog)
+writer(convert_redpy_output_dir + 'GS_core_catalog_picked.xml', new_core_catalog)

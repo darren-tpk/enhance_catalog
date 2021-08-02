@@ -483,11 +483,12 @@ def client_download(stream_in,source='IRIS'):
     return(stream_out)
 
 # [get_detection] get stream related to detection by downloading necessary streams
-def get_detection(detection,data_dir='/home/data/redoubt/',length=10,resampling_frequency=50,tolerance=4e4,lowcut=1,highcut=10,plot=False):
+def get_detection(detection,data_dir='/home/data/redoubt/',client_name='IRIS',length=10,resampling_frequency=50,tolerance=4e4,lowcut=1,highcut=10,plot=False):
 
     # Import dependencies
     import glob
     from obspy import Stream, read
+    from obspy.clients.fdsn import Client
     from toolbox import remove_boxcars
 
     # Extract detection time and sta-chan combinations
@@ -496,36 +497,56 @@ def get_detection(detection,data_dir='/home/data/redoubt/',length=10,resampling_
     julday = detect_time.julday
     stachans = detection.chans
 
-    # Initialize data filename list
-    data_filenames = []
+    # If a data directory is provided,
+    if data_dir is not None:
 
-    # Loop through sta-chan combinations
-    for sta, chan in stachans:
+        # Initialize data filename list
+        data_filenames = []
 
-        # Stitch data filename and append
-        data_filename = data_dir + sta + '.' + chan + '.' + str(year) + ':' + f'{julday:03}' + ':*'
-        data_filenames.append(data_filename)
+        # Loop through sta-chan combinations
+        for sta, chan in stachans:
 
-    # Read in all required streams
-    stream = Stream()
-    for data_filename in data_filenames:
-        matching_filenames = (glob.glob(data_filename))
-        for matching_filename in matching_filenames:
-            try:
-                stream_contribution = read(matching_filename)
-                stream = stream + stream_contribution
-            except:
-                continue
+            # Stitch data filename and append
+            data_filename = data_dir + sta + '.' + chan + '.' + str(year) + ':' + f'{julday:03}' + ':*'
+            data_filenames.append(data_filename)
 
-    # Trim stream to desired length
+        # Read in all required streams
+        stream = Stream()
+        for data_filename in data_filenames:
+            matching_filenames = (glob.glob(data_filename))
+            for matching_filename in matching_filenames:
+                try:
+                    stream_contribution = read(matching_filename)
+                    stream = stream + stream_contribution
+                except:
+                    continue
+
+    # Otherwise, download data from IRIS
+    else:
+
+        # Define client and target network
+        client = Client(client_name)
+        net = detection.event.picks[0].waveform_id.network_code
+
+        # Get waveforms
+        stream = Stream()
+
+        # Download all waveforms needed
+        for sta, chan in stachans:
+            stream_contribution = client.get_waveforms(net, sta, "*", chan, detect_time, detect_time+length)
+            stream = stream + stream_contribution
+
+
+    # Enforce desired length
     stream.trim(starttime=detect_time,endtime=detect_time+length)
 
     # Resample all traces to prevent inconsistencies
     stream.resample(resampling_frequency)
 
     # Remove boxcar and spikes, detrend and merge
-    stream = remove_boxcars(stream, tolerance)
-    stream = stream.detrend("simple")
+    if data_dir is None:
+        stream = remove_boxcars(stream, tolerance)
+        stream = stream.detrend("simple")
 
     # Filter and taper
     stream = stream.filter('bandpass',freqmax=highcut,freqmin=lowcut)

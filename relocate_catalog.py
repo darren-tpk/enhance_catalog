@@ -19,26 +19,27 @@ from toolbox import reader, prepare_stream_dict, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/data/redoubt/'
-output_dir = '/home/ptan/enhance_catalog/output/'
+main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
+data_dir = None
+output_dir = main_dir + 'output/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
-tribe_filename = 'tribe_len8_snr2.tgz'
+tribe_filename = 'tribe_GS.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
-catalog_filename = 'party_catalog_ACC.xml'
+catalog_filename = 'party_catalog_GS.xml'
 relocate_catalog_output_dir = output_dir + 'relocate_catalog/'
-relocated_catalog_filename = 'relocated_catalog_ACC.xml'
+relocated_catalog_filename = 'relocated_catalog_GS.xml'
 raw_station_list_dir = main_dir + 'data/avo/'
 raw_station_list_filename = 'station_list.csv'
 raw_vzmodel_dir = main_dir + 'data/avo/'
-raw_vzmodel_filename = raw_vzmodel_dir + 'redoubt_vzmodel.txt'
+raw_vzmodel_filename = 'adak_vzmodel.txt'
+ratio_provided = False
 growclust_exe = main_dir + 'growclust/SRC/growclust'
 
-length_actual = 10      # same as template
-length_excess = 30      # in excess for stream_dict
-pre_pick_actual = 2     # same as template
-pre_pick_excess = 10    # in excess for stream_dict
-shift_len = 3           # width of search for max_cc
+length_actual = 8       # same as template
+length_excess = 10      # in excess for stream_dict
+pre_pick_actual = 1     # same as template
+pre_pick_excess = 2     # in excess for stream_dict
+shift_len = 1           # width of search for max_cc
 lowcut = 1              # same as template
 highcut = 10            # same as template
 max_sep = 8             # max separation tolerated (8km)
@@ -94,7 +95,7 @@ outboot_filename = growclust_out + 'out.growclust_boot'
 vpvs_rayparam = '1.732 -1'
 
 # tt_dep0, tt_dep1, tt_ddep
-tt_deps = '0. 26. 1.'
+tt_deps = '0. 50. 1.'
 
 # tt_del0, tt_del1, tt_ddel
 tt_dels = '0. 200. 2.'
@@ -180,7 +181,7 @@ for event in catalog:
 
 # For detailed commenting, refer to toolbox.py
 # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
-stream_dict = prepare_stream_dict(catalog,pre_pick=pre_pick_excess,length=length_excess,local=True,data_dir=data_dir)
+stream_dict = prepare_stream_dict(catalog,pre_pick=pre_pick_excess,length=length_excess,local=False,data_dir=None)
 
 #%% Execute cross correlations and write out a .cc file using write_correlations
 
@@ -189,7 +190,7 @@ stream_dict = prepare_stream_dict(catalog,pre_pick=pre_pick_excess,length=length
 event_id_mapper = write_correlations(catalog=catalog, stream_dict=stream_dict, extract_len=length_actual,
                                      pre_pick=pre_pick_actual, shift_len=shift_len, lowcut=lowcut,
                                      highcut=highcut, max_sep=max_sep, min_link=min_link, min_cc=min_cc,
-                                     interpolate=False, max_workers=None, parallel_process=False)
+                                     interpolate=False, max_workers=None, parallel_process=True)
 
 #%% Prepare all files for GrowClust
 
@@ -255,16 +256,30 @@ stlist_file.close()
 # (Current velocity model is from Toth and Kisslinger, 1984 for Adak, and Power et al., 2012 for Redoubt)
 vzmodel = pd.read_csv(raw_vzmodel_dir + raw_vzmodel_filename, header=None)
 vzmodel_file = open(vzmodel_filename, 'w')
-for i in range(len(vzmodel.values)):
-    if i != len(vzmodel.values)-1:
-        vz_str1 = vzmodel.values[i][0].split(' ')
-        entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
-        vz_str2 = vzmodel.values[i + 1][0].split(' ')
-        entry2 = '%5.1f %4.2f %4.2f' % (float(vz_str2[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
-        vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
-    else:
-        vz_str1 = vzmodel.values[i][0].split(' ')
-        entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+if ratio_provided:
+    for i in range(len(vzmodel.values)):
+        if i != len(vzmodel.values)-1:
+            vz_str1 = vzmodel.values[i][0].split(' ')
+            entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+            vz_str2 = vzmodel.values[i + 1][0].split(' ')
+            entry2 = '%5.1f %4.2f %4.2f' % (float(vz_str2[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+            vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
+        else:
+            vz_str1 = vzmodel.values[i][0].split(' ')
+            entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+            vzmodel_file.write(entry1)
+else:
+    for i in range(len(vzmodel.values)):
+        if i != len(vzmodel.values)-1:
+            vz_str1 = vzmodel.values[i][0].split(' ')
+            entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
+            vz_str2 = vzmodel.values[i + 1][0].split(' ')
+            entry2 = '%5.1f %4.2f 0.0' % (float(vz_str2[0]), float(vz_str1[1]))
+            vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
+        else:
+            vz_str1 = vzmodel.values[i][0].split(' ')
+            entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
+            vzmodel_file.write(entry1)
 vzmodel_file.close()
 
 # Create vzfine file in TT directory

@@ -6,7 +6,8 @@
 
 # Import all dependencies
 import time
-from obspy import UTCDateTime, Catalog
+import obspy
+from obspy import UTCDateTime, Catalog, Stream
 from obspy.clients.fdsn import Client
 from eqcorrscan.core.match_filter.tribe import Tribe
 from toolbox import get_local_stations, prepare_catalog_stream, reader, writer
@@ -14,13 +15,13 @@ from toolbox import get_local_stations, prepare_catalog_stream, reader, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/data/redoubt/'  # redoubt data directory
-output_dir ='/home/ptan/enhance_catalog/output/'
+main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
+data_dir = None #'/home/data/redoubt/'  # redoubt data directory
+output_dir = main_dir + 'output/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 sitelist_dir = main_dir + 'data/avo/'
 create_tribe_output_dir = main_dir + 'output/create_tribe/'
-tribe_filename = 'tribe_len8_snr2.tgz'
+tribe_filename = 'tribe_GS.tgz'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
 resampling_frequency = 50  # for resampling traces prior to final merge
 tolerance = 4e4            # tolerance for boxcar removal from data (as a factor to median)
@@ -32,8 +33,10 @@ filt_order = 4             # number of corners for filter
 prepick = 1.0              # pre-pick time (s), Wech et al. (2018) chose 5s
 process_len = 86400        # length to process data in (s)
 min_snr = 2                # minimum SNR, Jeremy's recommendation was 5.0 (same as EQcorrscan tutorial)
-local_volcano = 'redoubt'  # for get_local_stations function, since we only take picks from stations near Redoubt
+local_volcano = 'great sitkin'  # for get_local_stations function, since we only take picks from stations near Redoubt
 local_radius = 25          # for get_local_stations function; radius around volcano to accept stations
+local = False               # if set to True, use data from local machine
+client_name = 'IRIS'        # client name for back-up or non-local data query
 
 #%% Define functions
 
@@ -42,8 +45,8 @@ local_radius = 25          # for get_local_stations function; radius around volc
 #%% Prepare desired catalog to undergo tribe creation
 
 # Read in, and combine, the picked core catalog and unmatched PEC catalog
-core_catalog_picked = reader(convert_redpy_output_dir + 'core_catalog_picked.xml')
-unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events.xml')
+core_catalog_picked = reader(convert_redpy_output_dir + 'GS_core_catalog_picked.xml')
+unmatched_PEC_events = reader(convert_redpy_output_dir + 'GS_unmatched_PEC_events.xml')
 catalog = core_catalog_picked + unmatched_PEC_events
 
 # Clean catalog to only include picks from local stations
@@ -68,44 +71,60 @@ time_start = time.time()
 print('\nCommencing tribe creation. Reminder: index is -1 from event count.')
 for k in range(len(catalog)):
 
-    # Prepare catalog stream, trim to the start and end of the day to enforce daylong processing
+    # Isolate event in loop
     print('\nNow at event %d out of %d' % (k+1, len(catalog)))
     event = catalog[k:k+1]
-    stream = prepare_catalog_stream(data_dir,event,resampling_frequency,tolerance)
-    day_start = UTCDateTime(event[0].origins[0].time.date)
-    day_end = day_start + 86400
-    stream = stream.trim(starttime=day_start, endtime=day_end)
 
-    # If the stream has traces, check the length of each trace and remove those that are too short for processing
-    # (EQcorrscan produces an error if data is <80% of process_len)
-    if stream is not None:
-        for trace in stream:
-            trace_length = trace.stats.npts / trace.stats.sampling_rate
-            if trace_length < (0.8 * process_len):
-                print('%s.%s got removed due to insufficient length.' % (trace.stats.station,trace.stats.channel))
-                stream.remove(trace)
+    # Prepare catalog stream, trim to the start and end of the day to enforce daylong processing
+    if local:
+        stream = prepare_catalog_stream(data_dir,event,resampling_frequency,tolerance)
+        day_start = UTCDateTime(event[0].origins[0].time.date)
+        day_end = day_start + 86400
+        stream = stream.trim(starttime=day_start, endtime=day_end)
+
+        # If the stream has traces, check the length of each trace and remove those that are too short for processing
+        # (EQcorrscan produces an error if data is <80% of process_len)
+        if stream is not None:
+            for trace in stream:
+                trace_length = trace.stats.npts / trace.stats.sampling_rate
+                if trace_length < (0.8 * process_len):
+                    print('%s.%s got removed due to insufficient length.' % (trace.stats.station,trace.stats.channel))
+                    stream.remove(trace)
 
     # Start with an empty template
     template = None
 
     # Try to construct tribe using local data file
-    try:
-        template = Tribe().construct(
-            method="from_meta_file", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
-            filt_order=filt_order, prepick=prepick, meta_file=event, st=stream, process=True,
-            process_len=process_len, min_snr=min_snr, parallel=True)
-    except:
-        print('WARNING: local data failed to produce template, using client method instead.')
-
-        # If local data files fail (e.g. too gappy), we try to construct the tribe using IRIS client downloads
+    if local:
         try:
-            client = Client('IRIS')
+            template = Tribe().construct(
+                method="from_meta_file", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
+                filt_order=filt_order, prepick=prepick, meta_file=event, st=stream, process=True,
+                process_len=process_len, min_snr=min_snr, parallel=True)
+        except:
+            print('WARNING: local data failed to produce template, using client method instead.')
+
+            # If local data files fail (e.g. too gappy), we try to construct the tribe using IRIS client downloads
+            try:
+                client = Client(client_name)
+                template = Tribe().construct(
+                    method="from_client", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
+                    filt_order=filt_order, prepick=prepick, client_id=client, catalog=event, process=True,
+                    process_len=process_len, min_snr=min_snr, parallel=True)
+            except:
+                print('WARNING: data not available on client either, skipping.')
+
+    # If we are using downloaded data, go straight into querying the client
+    else:
+        try:
+            client = Client(client_name)
             template = Tribe().construct(
                 method="from_client", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
                 filt_order=filt_order, prepick=prepick, client_id=client, catalog=event, process=True,
                 process_len=process_len, min_snr=min_snr, parallel=True)
         except:
-            print('WARNING: data not available on client either, skipping.')
+            print('WARNING: data not available on client, skipping.')
+
 
     # Check if template creation was unsuccessful:
     if template is None or len(template) == 0:

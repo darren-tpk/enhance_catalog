@@ -18,7 +18,7 @@ from pandas import read_csv
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Documents/Github/enhance_catalog/'
+main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
 elev_profile_dir = main_dir + 'data/dem/'
 EW_profile_filename = elev_profile_dir + 'ew_profile.csv'
 NS_profile_filename = elev_profile_dir + 'ns_profile.csv'
@@ -66,7 +66,7 @@ relocated_catalog = reader(relocated_catalog_filename)
 #%% Extract information from catalog, filtered by max depth
 
 # Choose catalog
-catalog = relocated_catalog
+catalog = PEC_events
 
 # Extract hypocenter and time information
 latitudes = np.array([event.origins[0].latitude for event in catalog])
@@ -122,11 +122,11 @@ fig.shift_origin(yshift="h+1c")
 # Top-left plot: Top-down view
 with fig.subplot(nrows=1, ncols=1, figsize=("10c", "10c"), autolabel="a)"):
 
-    # Create basemap with correct dimensions2
+    # Create basemap with correct dimensions
     fig.grdimage("@earth_relief_15s",region=REGION_CLEAN,
                  projection=projection(REGION_CLEAN, MAIN_WIDTH, cm=True),
                  shading=True, t=30, cmap="geo")
-    #fig.basemap(region=REGION_CLEAN, projection="X10c/10c", frame=["xa0.2f0.05+lLongitude","ya0.1f0.025+lLatitude", "WsNe"], panel=[0, 0])
+    fig.basemap(region=REGION_CLEAN, projection="X10c/10c", frame=["xa0.2f0.05+lLongitude","ya0.1f0.025+lLatitude", "WsNe"], panel=[0, 0])
 
     # Plot earthquakes
     pygmt.makecpt(cmap="viridis", series="2009-01-01T/2009-05-01T/1d")

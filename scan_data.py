@@ -12,32 +12,35 @@ import glob
 import numpy as np
 from eqcorrscan import Party, Tribe
 from obspy import UTCDateTime, Stream, Catalog, read
+from obspy.clients.fdsn import Client
 from toolbox import remove_boxcars, reader, writer
 
 #%% Define variables
 
 # Define variables
 main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
-data_dir = '/home/data/redoubt/'
-output_dir ='/home/ptan/enhance_catalog/output/'
+data_dir = None
+output_dir = main_dir + 'output/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
-tribe_filename = 'tribe_len8_snr2.tgz'
+tribe_filename = 'tribe_GS.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
-party_filename = 'party_ACC.tgz'
-catalog_filename = 'party_catalog_ACC.xml'
+party_filename = 'party_GS.tgz'
+catalog_filename = 'party_catalog_GS.xml'
 repicked_catalog_filename = None
 min_stations = 3                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
-start_time = UTCDateTime(2009, 1, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
-end_time = UTCDateTime(2009, 5, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
+start_time = UTCDateTime(2021, 6, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
+end_time = UTCDateTime(2021, 7, 30, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
 samp_rate = 50                                 # to resample streams to match tribes
 tolerance = 4e4                                # for boxcar removal
 threshold_type = 'av_chan_corr'                # also consider 'MAD', Jeremy uses 12
 threshold = 0.60                               # used to be 0.74 from sensitivity test. Was too high
-trig_int = 10                                  # trigger interval for each template. Also used to remove repeats (decluster)
+trig_int = 8                                   # trigger interval for each template. Also used to remove repeats (decluster)
 parallel_process = 'True'                      # parallel process for speed
 generate_repicked_catalog = False              # option to use lag_calc to do catalog repicking
+local = False                                  # if set to True, use data from local machine
+client_name = 'IRIS'                           # client name for non-local data query
 
 #%% Define functions
 
@@ -93,26 +96,27 @@ if generate_repicked_catalog:
     # Replace tribe in main workflow for next steps (the templates now all point to events with location)
     tribe = new_tribe
 
-#%% Get a unique list of all template station-channel combinations for data fetching later
+#%% If using local data, get a unique list of all template station-channel combinations for data fetching later
+if local:
 
-# Initialize list for data fileheads
-data_fileheads = []
+    # Initialize list for data fileheads
+    data_fileheads = []
 
-# Loop through trace information in every template's stream
-for template in tribe:
-    for trace in template.st:
+    # Loop through trace information in every template's stream
+    for template in tribe:
+        for trace in template.st:
 
-        # Extract station and channel names from trace
-        sta = trace.stats.station
-        chan = trace.stats.channel
+            # Extract station and channel names from trace
+            sta = trace.stats.station
+            chan = trace.stats.channel
 
-        # Craft filehead and append
-        data_filehead = data_dir + sta + '.' + chan + '.'
-        data_fileheads.append(data_filehead)
+            # Craft filehead and append
+            data_filehead = data_dir + sta + '.' + chan + '.'
+            data_fileheads.append(data_filehead)
 
-# Now compile unique and sort
-data_fileheads = list(set(data_fileheads))
-data_fileheads.sort()
+    # Now compile unique and sort
+    data_fileheads = list(set(data_fileheads))
+    data_fileheads.sort()
 
 #%% Brute force scan: load each day's data and scan day-by-day
 
@@ -129,62 +133,86 @@ for i in range(num_days):
     t2 = start_time + ((i + 1) * 86400)
     print('\nNow at %s...' % str(t1))
 
-    # Initialize stream object and fetch data from data_dir
-    stream = Stream()
+    # If using local data, read in data and process stream before creating party
+    if local:
 
-    # Loop over data fileheads, using glob.glob to match data files we want in data_dir
-    for data_filehead in data_fileheads:
-        data_filename = data_filehead + str(t1.year) + ':' + f'{t1.julday :03}' + ':*'
-        matching_filenames = (glob.glob(data_filename))
+        # Initialize stream object and fetch data from data_dir
+        stream = Stream()
 
-        # Try to read the miniseed data file and add it to the stream (occasionally fails)
-        for matching_filename in matching_filenames:
-            try:
-                stream_contribution = read(matching_filename)
-                stream = stream + stream_contribution
-            except:
-                continue
+        # Loop over data fileheads, using glob.glob to match data files we want in data_dir
+        for data_filehead in data_fileheads:
+            data_filename = data_filehead + str(t1.year) + ':' + f'{t1.julday :03}' + ':*'
+            matching_filenames = (glob.glob(data_filename))
 
-    # Process stream (remove spikes, downsample to match tribe, detrend)
-    stream = remove_boxcars(stream,tolerance)
-    stream = stream.resample(sampling_rate=samp_rate)
-    stream = stream.detrend("simple")
-    stream = stream.merge()
-    print('Stream despiked, resampled and merged. Getting party of detections...')
+            # Try to read the miniseed data file and add it to the stream (occasionally fails)
+            for matching_filename in matching_filenames:
+                try:
+                    stream_contribution = read(matching_filename)
+                    stream = stream + stream_contribution
+                except:
+                    continue
 
-    # Attempt to scan the current day
-    try:
-        party = tribe.detect(
-            stream=stream, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int, daylong=True, overlap=None, parallel_process=True)
+        # Process stream (remove spikes, downsample to match tribe, detrend)
+        stream = remove_boxcars(stream,tolerance)
+        stream = stream.resample(sampling_rate=samp_rate)
+        stream = stream.detrend("simple")
+        stream = stream.merge()
+        print('Stream despiked, resampled and merged. Getting party of detections...')
 
-        # Append party to party_all
-        party_all = party_all + party
-        time_current = time.time()
-        print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+        # Attempt to scan the current day
+        try:
+            party = tribe.detect(
+                stream=stream, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int, daylong=True, overlap=None, parallel_process=True)
 
-        # If generating a repicked catalog, we prep the stream differently for lag_calc
-        if generate_repicked_catalog:
-
-            # Copy the party and stream, then re-merge the stream using method 1
-            party_calc = party.copy()
-            stream_gappy = stream.copy()
-            stream_gappy = stream_gappy.split()
-            stream_gappy = stream_gappy.merge(method=1)
-
-            # Use lag_calc to produce the repicked catalog section
-            repicked_catalog = party_calc.lag_calc(stream_gappy, pre_processed=False, shift_len=3, min_cc=0.7,
-                                                   export_cc=True, cc_dir='/home/ptan/attempt_eqcorrscan/output/cc_data')
-
-            # Add the repicked catalog section to the master repicked catalog
-            master_repicked_catalog += repicked_catalog
+            # Append party to party_all
+            party_all = party_all + party
             time_current = time.time()
-            print('Repicked catalog generated. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+            print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
 
-    # If the scan for the day fails, print a notification
-    except:
-        time_current = time.time()
-        print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
-        continue
+            # If generating a repicked catalog, we prep the stream differently for lag_calc
+            if generate_repicked_catalog:
+
+                # Copy the party and stream, then re-merge the stream using method 1
+                party_calc = party.copy()
+                stream_gappy = stream.copy()
+                stream_gappy = stream_gappy.split()
+                stream_gappy = stream_gappy.merge(method=1)
+
+                # Use lag_calc to produce the repicked catalog section
+                repicked_catalog = party_calc.lag_calc(stream_gappy, pre_processed=False, shift_len=3, min_cc=0.7,
+                                                       export_cc=True, cc_dir='/home/ptan/attempt_eqcorrscan/output/cc_data')
+
+                # Add the repicked catalog section to the master repicked catalog
+                master_repicked_catalog += repicked_catalog
+                time_current = time.time()
+                print('Repicked catalog generated. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+
+        # If the scan for the day fails, print a notification
+        except:
+            time_current = time.time()
+            print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+            continue
+
+    # If not using local data, directly query client
+    else:
+
+        # Define client
+        client = Client(client_name)
+
+        # Attempt scan via client downloads
+        try:
+            party = tribe.client_detect(client=client, starttime=t1, endtime=t2, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int)
+
+            # Append party to party_all
+            party_all = party_all + party
+            time_current = time.time()
+            print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+
+        # If the scan for the day fails, print a notification
+        except:
+            time_current = time.time()
+            print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+            continue
 
 # Conclude process
 time_end = time.time()

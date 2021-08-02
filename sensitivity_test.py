@@ -17,33 +17,40 @@ from toolbox import get_detection, reader
 # Define variables
 main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
 party_dir = main_dir + 'output/scan_data/'
-party_filename = 'party_redoubt.tgz'
+party_filename = 'party_GS.tgz'
 plot_hist = False
-plot_cumu = False
+plot_cumu = True
 plot_wave = True
 separate_wave = False
 thres_min = 0.60
-thres_max = 0.76
-thres_vec = np.linspace(thres_min,thres_max,9)
-num_days = 120
+thres_max = 0.75
+thres_vec = np.linspace(thres_min,thres_max,4)
+num_days = 59
 
 # Define a base time for x-axis
-base_time = UTCDateTime(2009, 1, 1, 0, 0, 0)
+base_time = UTCDateTime(2021, 6, 1, 0, 0, 0)
+#base_time = UTCDateTime(2009, 1, 1, 0, 0, 0)
 
 # Define swarm start and swarm end hours for vertical dashed lines
-swarm_times = [(UTCDateTime(2009, 2, 26, 6, 0, 0), UTCDateTime(2009, 2, 27, 13, 0, 0)),
-               (UTCDateTime(2009, 3, 20, 12, 0, 0), UTCDateTime(2009, 3, 23, 6, 34, 0)),
-               (UTCDateTime(2009, 3, 27, 0, 0, 0), UTCDateTime(2009, 3, 27, 8, 28, 0)),
-               (UTCDateTime(2009, 3, 29, 7, 50, 0), UTCDateTime(2009, 3, 29, 9, 0, 0)),
-               (UTCDateTime(2009, 4, 2, 19, 0, 0), UTCDateTime(2009, 4, 4, 13, 58, 0))]
+swarm_times = []
+# swarm_times = [(UTCDateTime(2009, 2, 26, 6, 0, 0), UTCDateTime(2009, 2, 27, 13, 0, 0)),
+#                (UTCDateTime(2009, 3, 20, 12, 0, 0), UTCDateTime(2009, 3, 23, 6, 34, 0)),
+#                (UTCDateTime(2009, 3, 27, 0, 0, 0), UTCDateTime(2009, 3, 27, 8, 28, 0)),
+#                (UTCDateTime(2009, 3, 29, 7, 50, 0), UTCDateTime(2009, 3, 29, 9, 0, 0)),
+#                (UTCDateTime(2009, 4, 2, 19, 0, 0), UTCDateTime(2009, 4, 4, 13, 58, 0))]
                # (UTCDateTime(2009,5,2,21,0,0),UTCDateTime(2009,5,8,1,0,0)) May's swarm
 
 # Define tick marks over span of party
-tick_times = [UTCDateTime(2009, 1, 1), UTCDateTime(2009, 1, 15),
-              UTCDateTime(2009, 2, 1), UTCDateTime(2009, 2, 15),
-              UTCDateTime(2009, 3, 1), UTCDateTime(2009, 3, 15),
-              UTCDateTime(2009, 4, 1), UTCDateTime(2009, 4, 15),
-              UTCDateTime(2009, 5, 1)]
+tick_times = [UTCDateTime(2021, 6, 1), UTCDateTime(2021, 6, 7, 12),
+              UTCDateTime(2021, 6, 15), UTCDateTime(2021, 6, 22, 12),
+              UTCDateTime(2021, 7, 1), UTCDateTime(2021, 7, 7, 12),
+              UTCDateTime(2021, 7, 15), UTCDateTime(2021, 7, 22, 12),
+              UTCDateTime(2021, 7, 30)]
+# tick_times = [UTCDateTime(2009, 1, 1), UTCDateTime(2009, 1, 15),
+#               UTCDateTime(2009, 2, 1), UTCDateTime(2009, 2, 15),
+#               UTCDateTime(2009, 3, 1), UTCDateTime(2009, 3, 15),
+#               UTCDateTime(2009, 4, 1), UTCDateTime(2009, 4, 15),
+#               UTCDateTime(2009, 5, 1)]
 
 #%% Define functions
 
@@ -84,7 +91,7 @@ if plot_hist:
     # Plot histogram
     fig, ax = plt.subplots()
     ax.hist(all_av_chan_corr, bins=40, rwidth=0.8, color='brown')  # density=False would make counts
-    ax.set_ylim([0,2000])
+    ax.set_ylim([0,50])
     ax.set_ylabel('Frequency')
     ax.set_xlabel('Average Channel Correlation')
     ax.set_title('Located Detections (N=%d)' % len(all_av_chan_corr))
@@ -176,9 +183,9 @@ if plot_wave:
         # If plotting the template and detection separately
         if separate_wave:
             family.template.st.plot(equal_scale=False, size=(800, 600))
-            _ = get_detection(marginal_detection, data_dir='/home/data/redoubt/', length=10, plot=True)
+            _ = get_detection(marginal_detection, data_dir=None, client_name='IRIS', length=10, plot=True)
 
         # If plotting the template and detection together
         else:
-            detect_stream = get_detection(marginal_detection)
-            detection_multiplot(detect_stream,family.template.st,[marginal_detection.detect_time])
+            detect_stream = get_detection(marginal_detection, data_dir=None, client_name='IRIS')
+            detection_multiplot(detect_stream,family.template.st.merge(),[marginal_detection.detect_time])
