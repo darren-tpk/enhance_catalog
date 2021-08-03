@@ -23,8 +23,8 @@ plot_cumu = True
 plot_wave = True
 separate_wave = False
 thres_min = 0.60
-thres_max = 0.75
-thres_vec = np.linspace(thres_min,thres_max,4)
+thres_max = 0.74
+thres_vec = np.linspace(thres_min,thres_max,15)
 num_days = 59
 
 # Define a base time for x-axis
