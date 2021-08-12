@@ -23,9 +23,9 @@ elev_profile_dir = main_dir + 'data/dem/'
 EW_profile_filename = elev_profile_dir + 'ew_profile.csv'
 NS_profile_filename = elev_profile_dir + 'ns_profile.csv'
 PEC_events_dir = main_dir + 'data/avo/'
-located_cores_filename = main_dir + 'output/convert_redpy/core_catalog_picked.xml'
-unmatched_PEC_events_filename = main_dir + 'output/convert_redpy/unmatched_PEC_events.xml'
-relocated_catalog_filename = main_dir + 'output/relocate_catalog/relocated_catalog_test.xml'
+located_cores_filename = main_dir + 'output/greatsitkin2/convert_redpy/core_catalog_picked.xml'
+unmatched_PEC_events_filename = main_dir + 'output/greatsitkin2/convert_redpy/unmatched_PEC_events.xml'
+relocated_catalog_filename = main_dir + 'output/greatsitkin2/relocate_catalog/relocated_catalog.xml'
 VOLC_LAT = 60.4852
 VOLC_LON = -152.7438
 MAX_DEPTH = 15  # km
@@ -66,7 +66,7 @@ relocated_catalog = reader(relocated_catalog_filename)
 #%% Extract information from catalog, filtered by max depth
 
 # Choose catalog
-catalog = PEC_events
+catalog = located_templates
 
 # Extract hypocenter and time information
 latitudes = np.array([event.origins[0].latitude for event in catalog])

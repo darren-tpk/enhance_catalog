@@ -1,0 +1,1253 @@
+<?xml version='1.0' encoding='utf-8'?>
+<q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2">
+  <eventParameters publicID="smi:local/18a0129c-328a-4726-ab6b-dcfa2b5f657d">
+    <event publicID="smi:local/d9d51380-86d8-4569-95a7-e5eb7f4af24c">
+      <origin publicID="smi:local/fd949bb0-ac20-416a-b921-208259940318">
+        <time>
+          <value>2021-08-03T12:53:06.120000Z</value>
+        </time>
+        <latitude>
+          <value>52.0308</value>
+        </latitude>
+        <longitude>
+          <value>-176.0837</value>
+        </longitude>
+        <depth>
+          <value>8300.0</value>
+        </depth>
+        <comment id="smi:local/e827f7ac-09dd-4d16-8405-b86d7c3b32ad">
+          <text>CLUSTER 0 CORE EVENT; IN PEC, DT = 1.15</text>
+        </comment>
+        <arrival publicID="smi:local/73bd3bd1-3c17-446a-b541-b9626871a890">
+          <pickID>smi:local/be66cb8d-b2c0-4336-8a12-b128062ebaf4</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/9bd60edf-50ce-46aa-86f3-5261d9e31ccb">
+          <pickID>smi:local/6a21ebf4-215f-4d96-80ad-c66fd4045f34</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/aa508143-54ee-4c8d-8a17-ba5dd382768a">
+          <pickID>smi:local/ff2b99d6-2870-48de-be0c-70822f04b121</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/4e3e2d56-61f5-4bfb-ab7d-493c0fb1253a">
+          <pickID>smi:local/6a45acdd-4c2d-472c-ad13-570fef1fe66d</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/fd64b286-1dfc-434c-b3f9-bfdc1b9ce227">
+          <pickID>smi:local/51a3d932-ecc2-4d7c-8ec4-fe9a7dc4af3e</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/f53b4569-6d0b-431f-9749-c73f8818a652">
+          <pickID>smi:local/7d3d7c2c-0b32-414e-b7db-a3eaec13aea0</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/27a1a870-6372-4b34-97ee-efee60557055">
+          <pickID>smi:local/6b790d8e-e190-481f-8ee4-496ad7c67f2a</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/3b716d06-460d-4f4a-82d6-17a381f84a3a">
+          <pickID>smi:local/38a04844-15f5-4a52-9e11-e67318e59d16</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/46297c59-4133-429d-b71d-a3b32272a147">
+          <pickID>smi:local/b7faa078-131b-419a-a947-e70ac1bc2e6a</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/91328896">
+        <mag>
+          <value>-0.06</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/be66cb8d-b2c0-4336-8a12-b128062ebaf4">
+        <time>
+          <value>2021-08-03T12:53:08.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/6a21ebf4-215f-4d96-80ad-c66fd4045f34">
+        <time>
+          <value>2021-08-03T12:53:06.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/ff2b99d6-2870-48de-be0c-70822f04b121">
+        <time>
+          <value>2021-08-03T12:53:09.520000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/6a45acdd-4c2d-472c-ad13-570fef1fe66d">
+        <time>
+          <value>2021-08-03T12:53:07.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/51a3d932-ecc2-4d7c-8ec4-fe9a7dc4af3e">
+        <time>
+          <value>2021-08-03T12:53:07.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/7d3d7c2c-0b32-414e-b7db-a3eaec13aea0">
+        <time>
+          <value>2021-08-03T12:53:06.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/6b790d8e-e190-481f-8ee4-496ad7c67f2a">
+        <time>
+          <value>2021-08-03T12:53:07.000000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/38a04844-15f5-4a52-9e11-e67318e59d16">
+        <time>
+          <value>2021-08-03T12:53:08.580000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/b7faa078-131b-419a-a947-e70ac1bc2e6a">
+        <time>
+          <value>2021-08-03T12:53:06.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/2ed0d88a-8c52-48d3-8cea-760965e591ec">
+      <origin publicID="smi:local/bb99967f-8777-4394-a459-a31b4ad01cd1">
+        <time>
+          <value>2021-07-31T03:19:18.820000Z</value>
+        </time>
+        <latitude>
+          <value>52.0777</value>
+        </latitude>
+        <longitude>
+          <value>-176.104</value>
+        </longitude>
+        <depth>
+          <value>6530.0</value>
+        </depth>
+        <comment id="smi:local/ad39c092-9f16-417f-b7e4-0c0eab845c3f">
+          <text>CLUSTER 1 CORE EVENT; IN PEC, DT = 0.44</text>
+        </comment>
+        <arrival publicID="smi:local/fb486116-0cbf-417f-b7a2-d7defebb7577">
+          <pickID>smi:local/01ab823e-665f-4760-a73f-e0df7fe2d9ea</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/06cf8a34-bb99-4e76-a1ea-2148cb236073">
+          <pickID>smi:local/43f3a04e-dd19-4c92-baf6-cec808ace2df</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/babb1496-42d6-4f1f-b2ac-c2168b9a428b">
+          <pickID>smi:local/22144968-d9d8-4186-8081-176f5e4e94db</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/d95fb17a-bce1-4e54-b601-062aadf1de37">
+          <pickID>smi:local/72c47d1e-ed74-4e06-8c43-1c171097b66f</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/21f4b73b-d19e-4376-9e01-f463169b68b1">
+          <pickID>smi:local/e69b5c35-1485-48ce-9181-92fb82434940</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/7d2fff23-f9b3-4183-adfc-c175f7fc90bb">
+          <pickID>smi:local/048fef20-60a2-4c95-b57c-54e710155575</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/67ba2afb-7003-4484-aa97-4441a75570de">
+          <pickID>smi:local/3e60ab37-c5df-4a9f-94f3-1fc906cf8c3f</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/ac011d36-6245-4c43-908b-2d6bda296f63">
+          <pickID>smi:local/d1232782-089e-45d4-a771-fc20932a13f6</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/3977a7de-ccab-417a-8ba8-ff97d33dc13e">
+          <pickID>smi:local/1b9140a2-a4b7-4843-8420-10f57dfd909a</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/edbeae9d-01b0-4950-bff9-999e7b275a91">
+          <pickID>smi:local/9d1adebd-ec4b-4e29-8c03-51b21d807e18</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/91325746">
+        <mag>
+          <value>0.63</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/01ab823e-665f-4760-a73f-e0df7fe2d9ea">
+        <time>
+          <value>2021-07-31T03:19:21.780000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/43f3a04e-dd19-4c92-baf6-cec808ace2df">
+        <time>
+          <value>2021-07-31T03:19:20.200000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/22144968-d9d8-4186-8081-176f5e4e94db">
+        <time>
+          <value>2021-07-31T03:19:23.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/72c47d1e-ed74-4e06-8c43-1c171097b66f">
+        <time>
+          <value>2021-07-31T03:19:21.240000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/e69b5c35-1485-48ce-9181-92fb82434940">
+        <time>
+          <value>2021-07-31T03:19:20.700000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/048fef20-60a2-4c95-b57c-54e710155575">
+        <time>
+          <value>2021-07-31T03:19:19.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/3e60ab37-c5df-4a9f-94f3-1fc906cf8c3f">
+        <time>
+          <value>2021-07-31T03:19:21.000000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/d1232782-089e-45d4-a771-fc20932a13f6">
+        <time>
+          <value>2021-07-31T03:19:19.740000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/1b9140a2-a4b7-4843-8420-10f57dfd909a">
+        <time>
+          <value>2021-07-31T03:19:20.940000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/9d1adebd-ec4b-4e29-8c03-51b21d807e18">
+        <time>
+          <value>2021-07-31T03:19:19.620000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/56d9f797-1806-4ad4-9f14-c546c13ce393">
+      <origin publicID="smi:local/a66f5ce7-ea3c-4999-a1ce-4d5997442b77">
+        <time>
+          <value>2021-07-31T08:17:45.650000Z</value>
+        </time>
+        <latitude>
+          <value>52.0508</value>
+        </latitude>
+        <longitude>
+          <value>-176.0807</value>
+        </longitude>
+        <depth>
+          <value>9190.0</value>
+        </depth>
+        <comment id="smi:local/2313e293-c909-4944-a310-1122c43fd0bf">
+          <text>CLUSTER 2 CORE EVENT; IN PEC, DT = 1.37</text>
+        </comment>
+        <arrival publicID="smi:local/47b572b0-bf62-4f47-a538-6c87ec443923">
+          <pickID>smi:local/28140617-4da3-4314-8868-abaaf63a3ae2</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/03b0dced-6968-44ed-9786-64feebdeec6f">
+          <pickID>smi:local/8823ffa9-16f8-4c2c-99cf-01fdc71b17a2</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/4c543560-bf5e-4631-9127-9c83b045cbe8">
+          <pickID>smi:local/4283f169-557c-4747-9285-1b09710ecbbf</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/7f698e15-04d9-44c4-8c55-e28f2cb865a3">
+          <pickID>smi:local/944726f1-b44a-43f0-8802-428c53376b78</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/9c69530a-ad4d-4d0c-908e-c49abee8b2df">
+          <pickID>smi:local/e4bb1063-336d-4bf7-9063-691dc7a8dadf</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/67b28c0e-4d11-452c-a8b8-76a0c7580d02">
+          <pickID>smi:local/6ffd0db6-1f32-4100-81b8-e14632271a2c</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/bbf2c658-53a5-4bb9-8b81-685f07d545f6">
+          <pickID>smi:local/263e456b-67c4-4dbf-af58-f563b723136f</pickID>
+          <phase>S</phase>
+          <timeWeight>0.5</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/a8e535cf-8b83-4c6f-abc2-dfa82361a469">
+          <pickID>smi:local/a31eb5db-06e3-42d0-91d3-62d060359cfd</pickID>
+          <phase>P</phase>
+          <timeWeight>0.5</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/0c076495-00ee-46ae-af47-60c8ac03246f">
+          <pickID>smi:local/ef6b2690-c986-49e7-8040-2851b886e378</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/855aaeb7-9c50-4fe5-be37-f7ecd67d4fba">
+          <pickID>smi:local/13822ea4-ea37-4ae4-b72d-6de15153c1fa</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/91325991">
+        <mag>
+          <value>-0.19</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/28140617-4da3-4314-8868-abaaf63a3ae2">
+        <time>
+          <value>2021-07-31T08:17:47.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/8823ffa9-16f8-4c2c-99cf-01fdc71b17a2">
+        <time>
+          <value>2021-07-31T08:17:46.220000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/4283f169-557c-4747-9285-1b09710ecbbf">
+        <time>
+          <value>2021-07-31T08:17:49.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/944726f1-b44a-43f0-8802-428c53376b78">
+        <time>
+          <value>2021-07-31T08:17:46.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/e4bb1063-336d-4bf7-9063-691dc7a8dadf">
+        <time>
+          <value>2021-07-31T08:17:46.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/6ffd0db6-1f32-4100-81b8-e14632271a2c">
+        <time>
+          <value>2021-07-31T08:17:45.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/263e456b-67c4-4dbf-af58-f563b723136f">
+        <time>
+          <value>2021-07-31T08:17:48.060000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/a31eb5db-06e3-42d0-91d3-62d060359cfd">
+        <time>
+          <value>2021-07-31T08:17:46.340000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/ef6b2690-c986-49e7-8040-2851b886e378">
+        <time>
+          <value>2021-07-31T08:17:47.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/13822ea4-ea37-4ae4-b72d-6de15153c1fa">
+        <time>
+          <value>2021-07-31T08:17:45.960000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/1dfd53f1-db87-4a0c-bdf6-cdf2716d9684">
+      <origin publicID="smi:local/51b3b7fa-3f80-414f-b196-890746f4d50f">
+        <time>
+          <value>2021-07-31T20:46:42.100000Z</value>
+        </time>
+        <latitude>
+          <value>52.0658</value>
+        </latitude>
+        <longitude>
+          <value>-176.0507</value>
+        </longitude>
+        <depth>
+          <value>11280.0</value>
+        </depth>
+        <comment id="smi:local/b0e4a722-0e38-4fbc-944e-9cfb85c91471">
+          <text>CLUSTER 3 CORE EVENT; IN PEC, DT = 3.15</text>
+        </comment>
+        <arrival publicID="smi:local/1c3b2914-78ac-4909-9979-78eb9c78cde5">
+          <pickID>smi:local/37534b13-6d16-406e-a0e2-441aa6efc614</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/3171d922-d2bf-4997-bd1e-83321cdcaf0a">
+          <pickID>smi:local/d404c596-ece4-43e9-acf5-e885f4e283f4</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/23930e13-798d-457e-9e3a-7deb0d0d19db">
+          <pickID>smi:local/4b3a8edf-aecc-4966-8f52-4b389d63591a</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/25f2d3fc-dccf-447c-a130-82d980d5981c">
+          <pickID>smi:local/7bcf0741-e0ea-4b29-9110-676075298c17</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/1594b95c-0969-450a-9c5d-01502fc5481f">
+          <pickID>smi:local/da314caf-5566-413c-8c8d-db658b791056</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/95015606-70b4-4ee2-934b-bfa6ecbe4d56">
+          <pickID>smi:local/8993da72-c15f-48a9-a0c9-92c39628c840</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/229b8e99-584b-473e-a0aa-8a8c78545166">
+          <pickID>smi:local/ac98e445-6561-4e25-a4d0-0f16c4c5aed8</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/fad9aa9d-2539-4cf6-af71-62797ff3b609">
+          <pickID>smi:local/17b542cb-58e4-459a-98a3-838ce2ea36fe</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/14fdbd07-83cb-46d1-b5f2-5177b62dbd1d">
+          <pickID>smi:local/a459ca54-0604-42d0-83d2-2c706f7c526d</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/7ee1b88a-f17a-4feb-b3bc-7d08daa94696">
+          <pickID>smi:local/e680afd6-1c9a-4995-9a1d-c9527f911d17</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/91326561">
+        <mag>
+          <value>0.07</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/37534b13-6d16-406e-a0e2-441aa6efc614">
+        <time>
+          <value>2021-07-31T20:46:43.480000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/d404c596-ece4-43e9-acf5-e885f4e283f4">
+        <time>
+          <value>2021-07-31T20:46:41.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/4b3a8edf-aecc-4966-8f52-4b389d63591a">
+        <time>
+          <value>2021-07-31T20:46:43.960000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/7bcf0741-e0ea-4b29-9110-676075298c17">
+        <time>
+          <value>2021-07-31T20:46:41.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/da314caf-5566-413c-8c8d-db658b791056">
+        <time>
+          <value>2021-07-31T20:46:41.920000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/8993da72-c15f-48a9-a0c9-92c39628c840">
+        <time>
+          <value>2021-07-31T20:46:40.640000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/ac98e445-6561-4e25-a4d0-0f16c4c5aed8">
+        <time>
+          <value>2021-07-31T20:46:43.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/17b542cb-58e4-459a-98a3-838ce2ea36fe">
+        <time>
+          <value>2021-07-31T20:46:41.300000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/a459ca54-0604-42d0-83d2-2c706f7c526d">
+        <time>
+          <value>2021-07-31T20:46:42.880000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/e680afd6-1c9a-4995-9a1d-c9527f911d17">
+        <time>
+          <value>2021-07-31T20:46:40.700000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/1ce36673-a097-43fb-9392-8dc5ad8aa9db">
+      <origin publicID="smi:local/175c6048-5a45-4df6-97f1-0d88aacdca6d">
+        <time>
+          <value>2021-07-31T19:46:49.480000Z</value>
+        </time>
+        <latitude>
+          <value>52.1195</value>
+        </latitude>
+        <longitude>
+          <value>-176.0082</value>
+        </longitude>
+        <depth>
+          <value>3730.0</value>
+        </depth>
+        <comment id="smi:local/5f8aec16-76ca-441f-a882-69f69471c540">
+          <text>CLUSTER 4 CORE EVENT; IN PEC, DT = 0.86</text>
+        </comment>
+        <arrival publicID="smi:local/b779ce1e-8e26-4e49-881a-b09d2deb381e">
+          <pickID>smi:local/06e78a84-e9a5-4426-93f2-c31be5cd15c6</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/727de995-b2c6-49c3-9a18-b5c90b53546d">
+          <pickID>smi:local/e7f2341d-b444-4f70-b49b-09cdc2370b2e</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/9c04c1ed-ae04-44f8-9640-75c7cb76e67e">
+          <pickID>smi:local/55efa7fa-03b7-4f30-8e40-b3a1f2354504</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/92fac8c7-16e5-4447-8f60-d22913748627">
+          <pickID>smi:local/ef19ce1a-9059-4c19-bab2-4a3df0c8263c</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/0740b0e4-5852-43c4-9fd9-6b320d71dabd">
+          <pickID>smi:local/c611d54e-2849-4be9-88da-514e60c36590</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/6ca98fee-b691-4efb-92a4-3649d07553c8">
+          <pickID>smi:local/b72352eb-aaa4-4e17-9ec6-e359c077b4aa</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/d6cd13c0-c606-405b-99e3-9453d2841e4d">
+          <pickID>smi:local/d8cb32a3-6eba-4fc3-97b2-216099831d9c</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/72c34252-bf95-4426-b545-8d3e8ce1225f">
+          <pickID>smi:local/1db60053-ffdd-49df-a095-6229e82f93ae</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/96681704-9f43-4593-8b0d-7a4e26829ddf">
+          <pickID>smi:local/3e61849e-b354-4ed2-9cbd-c8da97879d3a</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/7045af92-5d4a-4546-b3a3-18b3405272cc">
+          <pickID>smi:local/9f30a76e-1858-4056-8920-b844a067587a</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/91326516">
+        <mag>
+          <value>1.16</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/06e78a84-e9a5-4426-93f2-c31be5cd15c6">
+        <time>
+          <value>2021-07-31T19:46:53.720000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/e7f2341d-b444-4f70-b49b-09cdc2370b2e">
+        <time>
+          <value>2021-07-31T19:46:51.420000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/55efa7fa-03b7-4f30-8e40-b3a1f2354504">
+        <time>
+          <value>2021-07-31T19:46:53.940000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/ef19ce1a-9059-4c19-bab2-4a3df0c8263c">
+        <time>
+          <value>2021-07-31T19:46:51.440000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/c611d54e-2849-4be9-88da-514e60c36590">
+        <time>
+          <value>2021-07-31T19:46:51.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/b72352eb-aaa4-4e17-9ec6-e359c077b4aa">
+        <time>
+          <value>2021-07-31T19:46:50.240000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/d8cb32a3-6eba-4fc3-97b2-216099831d9c">
+        <time>
+          <value>2021-07-31T19:46:52.720000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/1db60053-ffdd-49df-a095-6229e82f93ae">
+        <time>
+          <value>2021-07-31T19:46:50.880000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/3e61849e-b354-4ed2-9cbd-c8da97879d3a">
+        <time>
+          <value>2021-07-31T19:46:50.680000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/9f30a76e-1858-4056-8920-b844a067587a">
+        <time>
+          <value>2021-07-31T19:46:49.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/86987028-47ec-4ae3-95ef-6ebf0cf64d5b">
+      <origin publicID="smi:local/eb571e6c-390e-4241-9b3d-7ea515eab2b0">
+        <time>
+          <value>2021-08-02T03:12:54.340000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/b2e6cba5-cd2a-4c59-a492-716edac16d4c">
+          <text>CLUSTER 5 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/759d4218-81b0-4f3d-9b8a-1a61648e883d">
+      <origin publicID="smi:local/bc2a8532-faca-4e9b-90e7-d8ebc0476cea">
+        <time>
+          <value>2021-08-02T23:47:10.070000Z</value>
+        </time>
+        <latitude>
+          <value>52.0872</value>
+        </latitude>
+        <longitude>
+          <value>-176.046</value>
+        </longitude>
+        <depth>
+          <value>3260.0</value>
+        </depth>
+        <comment id="smi:local/71267b9b-5dd1-42a6-a592-89451173c4c0">
+          <text>CLUSTER 6 CORE EVENT; IN PEC, DT = 0.85</text>
+        </comment>
+        <arrival publicID="smi:local/64c912f8-ae40-4cde-b680-855e0dea71d3">
+          <pickID>smi:local/602bffb8-69fa-43d9-8f39-d37df7c23792</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/782f6c5a-cc09-4e69-8ee1-c56712c5cb68">
+          <pickID>smi:local/a508d24f-de25-4c24-a597-2913cb52bfaf</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/f790f8a7-c59a-4ded-b663-0d37ea3811a0">
+          <pickID>smi:local/1f581a1d-7877-448d-bdd0-deef71846fd1</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/a1e18d44-2442-4a19-a34d-41dca8d8b39d">
+          <pickID>smi:local/b71f456f-7d16-4a74-b29c-7221d431a4da</pickID>
+          <phase>P</phase>
+          <timeWeight>0.5</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/81ba9274-03a4-4b23-8722-500ccf3d5f1c">
+          <pickID>smi:local/8e8c78f1-8456-4af1-819b-2146b02e9ad7</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/287ae4d7-1187-4b8d-949f-b14586f8c447">
+          <pickID>smi:local/99185f02-7565-47b0-a23d-64915a97824d</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/4be08f6b-dd31-4f4a-ae8f-2c4911ad48af">
+          <pickID>smi:local/754dd546-365c-41d4-a40e-4bbf4fbfbce0</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/8a3c2ffa-3194-4d4b-8a75-f81ec62c3a56">
+          <pickID>smi:local/2fc33af6-c6bd-4bc3-9530-8723871b2534</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/6eddc13d-292b-44d5-9882-fbf94da89cde">
+          <pickID>smi:local/ba3be273-cbb0-4802-a014-ffd90b53e268</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/fbce7163-1f7b-4924-a725-c7bc592cc6a9">
+          <pickID>smi:local/1405a3f6-6256-4c7e-a8fc-cd0075fa3666</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/91037188">
+        <mag>
+          <value>0.06</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/602bffb8-69fa-43d9-8f39-d37df7c23792">
+        <time>
+          <value>2021-08-02T23:47:13.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/a508d24f-de25-4c24-a597-2913cb52bfaf">
+        <time>
+          <value>2021-08-02T23:47:11.260000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/1f581a1d-7877-448d-bdd0-deef71846fd1">
+        <time>
+          <value>2021-08-02T23:47:13.780000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/b71f456f-7d16-4a74-b29c-7221d431a4da">
+        <time>
+          <value>2021-08-02T23:47:12.040000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/8e8c78f1-8456-4af1-819b-2146b02e9ad7">
+        <time>
+          <value>2021-08-02T23:47:11.120000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/99185f02-7565-47b0-a23d-64915a97824d">
+        <time>
+          <value>2021-08-02T23:47:10.080000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/754dd546-365c-41d4-a40e-4bbf4fbfbce0">
+        <time>
+          <value>2021-08-02T23:47:12.360000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/2fc33af6-c6bd-4bc3-9530-8723871b2534">
+        <time>
+          <value>2021-08-02T23:47:10.840000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/ba3be273-cbb0-4802-a014-ffd90b53e268">
+        <time>
+          <value>2021-08-02T23:47:10.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/1405a3f6-6256-4c7e-a8fc-cd0075fa3666">
+        <time>
+          <value>2021-08-02T23:47:09.800000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/a6b7f786-5cbf-436f-b7ee-322d97ccd9f3">
+      <origin publicID="smi:local/fc76aa04-90dd-4d2d-9353-1babbef40046">
+        <time>
+          <value>2021-08-05T00:00:02.390000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/bcfd9cdc-bd48-49a5-a0b0-a7eec27e8907">
+          <text>CLUSTER 7 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/ad1080b3-bc4d-4fc7-b2dc-7e739340c6a6">
+      <origin publicID="smi:local/2d367484-ee39-443a-b42b-b2c69b987f5d">
+        <time>
+          <value>2021-08-07T17:58:05.890000Z</value>
+        </time>
+        <latitude>
+          <value>52.0548</value>
+        </latitude>
+        <longitude>
+          <value>-176.0377</value>
+        </longitude>
+        <depth>
+          <value>1210.0</value>
+        </depth>
+        <comment id="smi:local/68227b39-7c88-474e-9f94-52c527282b92">
+          <text>CLUSTER 8 CORE EVENT; IN PEC, DT = 0.18</text>
+        </comment>
+        <arrival publicID="smi:local/01c22f37-1014-43e1-8669-cdbe57fda84a">
+          <pickID>smi:local/7a5b2fe8-d394-462c-a466-99fdb38f7f6a</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/832f7121-1135-49c8-85c6-8d59aae9af74">
+          <pickID>smi:local/c808c0fd-ca1a-42f5-9ecf-4e872a61e2df</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/0db8960e-2908-4cbd-8cae-b4e6c88a06a8">
+          <pickID>smi:local/7cb85f33-1609-4cf5-b1d7-ad33b310a697</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/2feb1ad0-3cc6-498d-9b9a-2fef4413d6f1">
+          <pickID>smi:local/f5762594-302c-4e56-8cd7-94fce0634f16</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/9409c737-1020-4f23-829f-c2180896f1ab">
+          <pickID>smi:local/71c0045c-6ab8-4814-be05-5f79c77b23e1</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/697bbdeb-5f69-43f3-9c14-c13a3e7f9d9e">
+          <pickID>smi:local/091d980d-cff2-4342-80a9-fdfcebf7dc32</pickID>
+          <phase>S</phase>
+          <timeWeight>0.5</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/8ece2055-fee8-4937-8043-900ee6c41658">
+          <pickID>smi:local/3b2e14f8-14a6-4895-8ba6-ca6ba71c34e0</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/6ccb4dc0-fbeb-409a-8c86-71728ced283f">
+          <pickID>smi:local/5c025d8f-ed27-43d3-86d0-e199209942e5</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/3854e015-1652-4893-b63a-ade1cacbf878">
+          <pickID>smi:local/2db38cae-471e-4f49-87fa-89e74b45b8f0</pickID>
+          <phase>P</phase>
+          <timeWeight>0.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/492a0409-1210-4ec8-9aa0-b8234fc911bd">
+          <pickID>smi:local/ca67fd54-e1e6-4d83-8526-ed645136a4af</pickID>
+          <phase>P</phase>
+          <timeWeight>0.0</timeWeight>
+        </arrival>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/91037688">
+        <mag>
+          <value>-0.06</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/7a5b2fe8-d394-462c-a466-99fdb38f7f6a">
+        <time>
+          <value>2021-08-07T17:58:09.180000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/c808c0fd-ca1a-42f5-9ecf-4e872a61e2df">
+        <time>
+          <value>2021-08-07T17:58:07.320000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/7cb85f33-1609-4cf5-b1d7-ad33b310a697">
+        <time>
+          <value>2021-08-07T17:58:09.380000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/f5762594-302c-4e56-8cd7-94fce0634f16">
+        <time>
+          <value>2021-08-07T17:58:06.560000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/71c0045c-6ab8-4814-be05-5f79c77b23e1">
+        <time>
+          <value>2021-08-07T17:58:05.900000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/091d980d-cff2-4342-80a9-fdfcebf7dc32">
+        <time>
+          <value>2021-08-07T17:58:09.160000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/3b2e14f8-14a6-4895-8ba6-ca6ba71c34e0">
+        <time>
+          <value>2021-08-07T17:58:07.600000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/5c025d8f-ed27-43d3-86d0-e199209942e5">
+        <time>
+          <value>2021-08-07T17:58:06.200000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/2db38cae-471e-4f49-87fa-89e74b45b8f0">
+        <time>
+          <value>2021-08-07T17:58:05.710000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSSP" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/ca67fd54-e1e6-4d83-8526-ed645136a4af">
+        <time>
+          <value>2021-08-07T17:58:05.710000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/a5a9f19d-c37e-4863-8f37-87a9af5e11f1">
+      <origin publicID="smi:local/b380c8d3-7662-4fe3-8b06-bf8108902657">
+        <time>
+          <value>2021-08-05T01:49:49.940000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/e0094af0-e14d-4e62-8a52-18217bd1c2aa">
+          <text>CLUSTER 9 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/18e233aa-1536-4346-a85a-911a435fd297">
+      <origin publicID="smi:local/b1b735bb-1d73-4b31-ae47-13b66a0a7f3d">
+        <time>
+          <value>2021-08-05T23:15:44.610000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/e6867c71-fc03-48dd-88eb-b4f457d43776">
+          <text>CLUSTER 10 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/6390740a-7ed5-47c8-bc01-d7ba33e0b0e6">
+      <origin publicID="smi:local/62841331-2d01-424b-b188-02737e909b3c">
+        <time>
+          <value>2021-08-04T13:18:39.200000Z</value>
+        </time>
+        <latitude>
+          <value>52.0335</value>
+        </latitude>
+        <longitude>
+          <value>-176.0803</value>
+        </longitude>
+        <depth>
+          <value>8360.0</value>
+        </depth>
+        <comment id="smi:local/758c4995-fa25-4074-8175-4b29e0ec6b71">
+          <text>CLUSTER 11 CORE EVENT; IN PEC, DT = 1.26</text>
+        </comment>
+        <arrival publicID="smi:local/5cd3cc2e-0ca5-408f-9a8c-bdda627e23e2">
+          <pickID>smi:local/4afd653e-dd62-43b3-8ac4-ba3d7795a330</pickID>
+          <phase>P</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/35cf18a9-5632-48f9-8013-7bd122df7d4f">
+          <pickID>smi:local/4bde214f-95b6-43f7-a46b-d56076e838c6</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/49ff52ca-a793-4653-a2e2-9446c030665b">
+          <pickID>smi:local/7cbaaa19-e507-496b-bf45-ff0b63e308f7</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/fd15e485-1379-46e6-aa76-dcd6ee610a0e">
+          <pickID>smi:local/8f730a5b-839e-49a5-8d13-8674b087a4f9</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/7673a952-cb35-4916-a4f5-619480b1b476">
+          <pickID>smi:local/ba546245-74d4-479f-a41f-7db26fc5fc22</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/e79f51fc-e60b-4e69-a832-869c5073187b">
+          <pickID>smi:local/6d976e1a-228f-46b0-b7cd-64546de15215</pickID>
+          <phase>S</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/4f93c5c3-d522-4cb5-bc47-804e92326d1f">
+          <pickID>smi:local/a289c0a7-c272-4425-9e92-d59bcc401202</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/b0ff715f-1939-4bae-93d5-515077d3753b">
+          <pickID>smi:local/9b902d03-8ba6-4cc8-9a7b-6a6a372467c1</pickID>
+          <phase>S</phase>
+          <timeWeight>-1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/1284ba14-f420-41d5-835b-ede361178625">
+          <pickID>smi:local/53186f52-9202-4cf8-b419-7cd23a3ae4d5</pickID>
+          <phase>P</phase>
+          <timeWeight>1.0</timeWeight>
+        </arrival>
+        <arrival publicID="smi:local/e40923a2-1090-4c2d-9ef9-2713b76e6ca5">
+          <pickID>smi:local/fc3c99e8-c662-4d9e-b5f3-cc2c67623ef1</pickID>
+          <phase>P</phase>
+          <timeWeight>0.5</timeWeight>
+        </arrival>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/91330051">
+        <mag>
+          <value>-0.09</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/4afd653e-dd62-43b3-8ac4-ba3d7795a330">
+        <time>
+          <value>2021-08-04T13:18:42.960000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="ETKA" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/4bde214f-95b6-43f7-a46b-d56076e838c6">
+        <time>
+          <value>2021-08-04T13:18:41.220000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/7cbaaa19-e507-496b-bf45-ff0b63e308f7">
+        <time>
+          <value>2021-08-04T13:18:39.660000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSCK" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/8f730a5b-839e-49a5-8d13-8674b087a4f9">
+        <time>
+          <value>2021-08-04T13:18:42.460000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/ba546245-74d4-479f-a41f-7db26fc5fc22">
+        <time>
+          <value>2021-08-04T13:18:40.240000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSIG" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/6d976e1a-228f-46b0-b7cd-64546de15215">
+        <time>
+          <value>2021-08-04T13:18:40.280000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHE"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/a289c0a7-c272-4425-9e92-d59bcc401202">
+        <time>
+          <value>2021-08-04T13:18:39.140000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSMY" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/9b902d03-8ba6-4cc8-9a7b-6a6a372467c1">
+        <time>
+          <value>2021-08-04T13:18:41.620000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/53186f52-9202-4cf8-b419-7cd23a3ae4d5">
+        <time>
+          <value>2021-08-04T13:18:39.540000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="GSTR" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/fc3c99e8-c662-4d9e-b5f3-cc2c67623ef1">
+        <time>
+          <value>2021-08-04T13:18:50.060000Z</value>
+        </time>
+        <waveformID networkCode="AV" stationCode="KICM" locationCode="" channelCode="BHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/27546bb8-77bf-4acd-adac-de94f91b0913">
+      <origin publicID="smi:local/1ca45485-f54c-44b2-b79d-1243e7109b15">
+        <time>
+          <value>2021-08-06T15:30:05.810000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/34b10894-cec7-40ef-bac5-2575c15eeaf1">
+          <text>CLUSTER 12 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/de8054fb-0038-4582-ac4d-ffd37ccb3656">
+      <origin publicID="smi:local/1fa3e83f-b4f3-4d1f-87fb-4ce824ee4cc3">
+        <time>
+          <value>2021-08-06T13:54:36.780000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/35b8c453-b66c-4ecd-ac77-7f4d997f64bb">
+          <text>CLUSTER 13 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/9e7e9571-ffe4-451d-9314-223001eb3b42">
+      <origin publicID="smi:local/619e20ab-f003-4901-9ab6-ff8f587f30e3">
+        <time>
+          <value>2021-08-07T05:18:50.540000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/d1da98d9-3568-4b72-900c-b2f160b7ea79">
+          <text>CLUSTER 14 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/8375ad91-2084-45f9-be34-5b3c3221004d">
+      <origin publicID="smi:local/f6060153-7a97-4bf0-ab24-5525b044d969">
+        <time>
+          <value>2021-08-08T06:32:44.570000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/0d43e9a9-3c2f-487a-ac45-0331e837b5dd">
+          <text>CLUSTER 15 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/a8be6e71-7319-4335-acac-3d9349a0aeaf">
+      <origin publicID="smi:local/94e110c2-75e1-4aea-bfaa-aad36dbd4a6b">
+        <time>
+          <value>2021-08-08T08:18:10.310000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/ca33ec47-78dd-4d66-96cd-dd87793bf753">
+          <text>CLUSTER 16 CORE EVENT; NOT IN PEC</text>
+        </comment>
+      </origin>
+    </event>
+  </eventParameters>
+</q:quakeml>

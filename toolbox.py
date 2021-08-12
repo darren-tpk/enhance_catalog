@@ -561,12 +561,16 @@ def get_detection(detection,data_dir='/home/data/redoubt/',client_name='IRIS',le
     return stream
 
 # [prepare_stream_dict] prepare stream dictionary pertaining to input catalog
-def prepare_stream_dict(catalog,pre_pick,length,local=False,data_dir=None,resampling_frequency=50):
+def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",data_dir=None,resampling_frequency=50):
 
     # Import dependencies
     from toolbox import read_trace
     from obspy import Stream
-    from waveform_collection import gather_waveforms
+    from obspy.clients.fdsn import Client
+
+    # Define client if not using local
+    if not local:
+        client = Client(client_name)
 
     # Initialize list to contain tuples
     stream_tuples = []
@@ -592,8 +596,7 @@ def prepare_stream_dict(catalog,pre_pick,length,local=False,data_dir=None,resamp
             if local:
                 tr = read_trace(data_dir, station, channel, starttime, endtime, tolerance=4e4)
             else:
-                tr = gather_waveforms(source='IRIS', network=network, station=station,location='*',
-                                      channel=channel, starttime=starttime,endtime=endtime)
+                tr = client.get_waveforms(network, station, '*', channel, starttime, endtime)
                 tr = tr.resample(resampling_frequency)  # for my EQcorrscan attempt
 
             # Add trace to stream object

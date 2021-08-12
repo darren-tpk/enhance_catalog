@@ -21,13 +21,13 @@ from toolbox import reader, prepare_stream_dict, writer
 # Define variables
 main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
 data_dir = None
-output_dir = main_dir + 'output/'
+output_dir = main_dir + 'output/greatsitkin2/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
-tribe_filename = 'tribe_GS.tgz'
+tribe_filename = 'tribe.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
-catalog_filename = 'party_catalog_GS.xml'
+catalog_filename = 'party_catalog.xml'
 relocate_catalog_output_dir = output_dir + 'relocate_catalog/'
-relocated_catalog_filename = 'relocated_catalog_GS.xml'
+relocated_catalog_filename = 'relocated_catalog.xml'
 raw_station_list_dir = main_dir + 'data/avo/'
 raw_station_list_filename = 'station_list.csv'
 raw_vzmodel_dir = main_dir + 'data/avo/'
@@ -36,9 +36,9 @@ ratio_provided = False
 growclust_exe = main_dir + 'growclust/SRC/growclust'
 
 length_actual = 8       # same as template
-length_excess = 10      # in excess for stream_dict
+length_excess = 15      # in excess for stream_dict
 pre_pick_actual = 1     # same as template
-pre_pick_excess = 2     # in excess for stream_dict
+pre_pick_excess = 3     # in excess for stream_dict
 shift_len = 1           # width of search for max_cc
 lowcut = 1              # same as template
 highcut = 10            # same as template
@@ -228,7 +228,7 @@ except FileExistsError:
     print('Subdirectories already exist')
 
 # Copy dt.cc file to its appropriate directory and rename
-original_dt_dir = main_dir + 'dt.cc'
+original_dt_dir = os.getcwd() + '/dt.cc'
 target_dt_dir = xcordata_filename
 shutil.copyfile(original_dt_dir, target_dt_dir)
 

@@ -11,20 +11,24 @@ import matplotlib.pyplot as plt
 from eqcorrscan.utils.plotting import detection_multiplot
 from obspy import UTCDateTime
 from toolbox import get_detection, reader
+from phase_processing.read_hypoddpha import read_hypoddpha
 
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
-party_dir = main_dir + 'output/scan_data/'
+main_dir = '/home/ptan/enhance_catalog/'
+party_dir = main_dir + 'output/greatsitkin/scan_data/'
 party_filename = 'party_GS.tgz'
+PEC_dir = main_dir + 'data/avo/'
+hypoi_file = 'greatsitkin_20210601_20210730_hypoi.txt'
+hypoddpha_file = 'greatsitkin_20210601_20210730_hypoddpha.txt'
 plot_hist = False
 plot_cumu = True
-plot_wave = True
+plot_wave = False
 separate_wave = False
 thres_min = 0.60
 thres_max = 0.74
-thres_vec = np.linspace(thres_min,thres_max,15)
+thres_vec = np.linspace(thres_min,thres_max,8)
 num_days = 59
 
 # Define a base time for x-axis
@@ -101,6 +105,22 @@ if plot_hist:
 # If a cumulative event count plot for different thresholds is desired
 if plot_cumu:
 
+    # Get AVO catalog information for plotting later
+    hypoi_path = PEC_dir + hypoi_file
+    hypoddpha_path = PEC_dir + hypoddpha_file
+    PEC_events = read_hypoddpha(hypoi_path, hypoddpha_path, channel_convention=True)
+    PEC_detect_time = [event.origins[0].time for event in PEC_events]
+    PEC_detect_time = np.array(PEC_detect_time)
+    PEC_detect_hours = (PEC_detect_time - base_time) / 3600
+
+    # Get cumulative numbers for plotting PEC
+    PEC_detect_num = []
+    PEC_hours = []
+    for i in range(num_days * 24 + 1):
+        detect_num = sum(PEC_detect_hours <= i)
+        PEC_detect_num.append(detect_num)
+        PEC_hours.append(i)
+
     # Start plot
     fig, ax = plt.subplots(figsize=(9,6))
 
@@ -128,6 +148,9 @@ if plot_cumu:
 
         # Plot cumulative trend in a stepwise fashion
         ax.step(plot_hours,plot_detect_num,label=str(thres))
+
+    # Add PEC's cumulative trend in black
+    ax.step(PEC_hours,PEC_detect_num,color='k',linestyle='--',linewidth=2,label='Original AVO catalog')
 
     # Add vertical spans indicating swarms
     for swarm_time in swarm_times:

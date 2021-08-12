@@ -4,6 +4,7 @@
 
 # Import all dependencies
 import time
+import pandas
 import numpy as np
 from obspy import UTCDateTime, Stream
 from obspy.clients.fdsn import Client
@@ -15,11 +16,7 @@ data_destination = '/home/ptan/enhance_catalog/data/mammoth/'
 start_time = UTCDateTime(2012,10,1,0,0,0)
 end_time = UTCDateTime(2013,2,1,0,0,0)
 client_name = "NCEDC"
-network = "CI"
-stations = ["MLAC"]
-channels = ["HHZ"]
-common_channels = True
-location = "--"
+station_list_filename = '/home/ptan/enhance_catalog/data/mammoth_stations.csv'
 
 
 #%% Define functions
@@ -30,6 +27,9 @@ location = "--"
 
 # Set up client for dataselect query
 client = Client(client_name)
+
+# Get list of station info
+station_list = pandas.read_csv(station_list_filename)
 
 # Dissect duration into days
 num_days = int(np.floor((end_time - start_time) / 86400))
@@ -44,42 +44,42 @@ for i in range(num_days):
     t2 = start_time + ((i + 1) * 86400)
     print('\nNow at %s...' % str(t1.date))
 
-    # Loop over stations
-    for j, station in enumerate(stations):
+    for j in range(len(station_list.Station)):
 
-        # If the list of channels is common to all stations, use those channels
-        # Else, use station-specific channel list
-        if common_channels:
-            channel_list = channels
-        else:
-            channel_list = channels[j]
+        station = station_list.Station[j]
+        network = station_list.Network[j]
+        channels = [channel.strip() for channel in station_list.Channels[j].split(',')]
+        location = station_list.Location[j]
+        downloaded = station_list.Downloaded[j]
 
-        # Loop over channels
-        for channel in channel_list:
+        if downloaded == 'no':
+            continue
+
+        for channel in channels:
 
             # Get waveforms by querying client
             try:
-                st = client.get_waveforms(network,station,location,channel,t1,t2)
+                st = client.get_waveforms(network, station, location, channel, t1, t2)
 
                 # Save every trace separately
                 for tr in st:
-
                     # Craft the seed file name
                     trace_year = str(tr.stats.starttime.year)
                     trace_julday = str(tr.stats.starttime.julday)
                     trace_time = str(tr.stats.starttime.time)[0:8]
-                    trace_datetime_str = ":".join([trace_year,trace_julday,trace_time])
+                    trace_datetime_str = ":".join([trace_year, trace_julday, trace_time])
                     seed_filename = station + '.' + channel + '.' + trace_datetime_str
 
                     # Write to seed file
                     seed_filepath = data_destination + seed_filename
-                    tr.write(seed_filepath,format="MSEED")
+                    tr.write(seed_filepath, format="MSEED")
 
                     # Print success
                     print('%s successfully saved.' % seed_filename)
 
             # continue if waveform retrieval fails
             except:
+                print('%s.%s failed.' % (station,channel))
                 continue
 
     # Print progression
@@ -88,4 +88,4 @@ for i in range(num_days):
 
 # Conclude process
 time_end = time.time()
-print('\nData collection complete. Time taken: %.2f hours' % ((time_end - time_start)/3600))
+print('\nData collection complete. Time taken: %.2f hours' % ((time_end - time_start) / 3600))

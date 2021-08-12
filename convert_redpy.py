@@ -22,20 +22,23 @@ from toolbox import read_trace, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
-data_dir = None #'/home/data/redoubt/'  # redoubt data directory on local
-output_dir = main_dir + 'output/'
+main_dir = '/home/ptan/enhance_catalog/'
+data_dir = '/home/ptan/enhance_catalog/data/mammoth/'  # redoubt data directory on local
+output_dir = main_dir + 'output/mammoth/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
-redpy_results_dir = main_dir + 'redpy_results/greatsitkin/'
-PEC_dir = main_dir + 'data/avo/'
-hypoi_file = 'greatsitkin_20210601_20210730_hypoi.txt'
-hypoddpha_file = 'greatsitkin_20210601_20210730_hypoddpha.txt'
+redpy_results_dir = main_dir + 'redpy_results/mammoth/'
+PEC_dir = main_dir + 'data/ncedc/'
+hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
+hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'
 max_dt = 4  # maximum time difference between REDPy detections and AVO events allowed, in seconds
 adopt_weight = 0.1  # phase weight for adopted picks
-redpy_station_list = ['GSCK','GSIG','GSMY','GSSP','GSTR']
-redpy_channel_list = [['BHZ'],['BHZ'],['BHZ'],['BHZ'],['BHZ']]
+redpy_network_list = ['NC','NC','NN','NC','NC','NC','NC','NC','NC','8E','8E','8E','8E','8E','8E','8E','8E','8E','8E']
+redpy_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11']
+redpy_channel_list = [['HHZ'],['HHZ'],['HHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ']]
+redpy_location_list = ['--','--','--','02','02','02','--','--','--','--','--','--','--','--','--','--','--','--','--']
 tolerance = 4e4  # tolerance for boxcar removal from data (as a factor to median)
-local = False
+local = True
+client_name = None # IRIS/NCEDC
 
 #%% Define functions
 
@@ -88,6 +91,17 @@ PEC_events = read_hypoddpha(hypoi_path, hypoddpha_path, channel_convention=True)
 PEC_event_times = np.array([PEC_event.origins[0].time for PEC_event in PEC_events])
 
 #%% Create ObsPy catalog for REDPy results
+
+# Prepare output directory
+print('Creating subdirectories for workflow outputs...')
+output_subdirs = [output_dir, output_dir + 'convert_redpy/', output_dir + 'create_tribe/',
+                  output_dir + 'scan_data/', output_dir + 'relocate_catalog/']
+for output_subdir in output_subdirs:
+    try:
+        os.mkdir(output_subdir)
+    except FileExistsError:
+        print('%s already exists. Resuming...' % output_subdir)
+print('All output subdirectories created.')
 
 # Initialize catalog object and lists before commencing loop
 redpy_catalog = Catalog()  # empty catalog to populate\
@@ -144,7 +158,7 @@ for i in range(len(redpy_detections)):
     redpy_catalog.append(redpy_event)
 
 # Write the redpy catalog to an xml file
-writer(convert_redpy_output_dir + 'GS_redpy_catalog.xml', redpy_catalog)
+writer(convert_redpy_output_dir + 'redpy_catalog.xml', redpy_catalog)
 
 # Get unique list of AVO-associated clusters and non-associated clusters
 associated_clusters = list(np.unique(np.array(associated_cluster_list)))
@@ -165,7 +179,7 @@ for j, PEC_event in enumerate(PEC_events):
         unmatched_PEC_events += PEC_event
 
 # Write out unmatched PEC catalog to .xml file
-writer(convert_redpy_output_dir + 'GS_unmatched_PEC_events.xml', unmatched_PEC_events)
+writer(convert_redpy_output_dir + 'unmatched_PEC_events.xml', unmatched_PEC_events)
 
 # Conclude process
 time_stop = time.time()
@@ -177,7 +191,7 @@ print('Catalog object created, processing time: %.2f s' % (time_stop-time_start)
 core_catalog = pull_cores(redpy_catalog)
 
 # Write core catalog to .xml file
-writer(convert_redpy_output_dir + 'GS_core_catalog.xml', core_catalog)
+writer(convert_redpy_output_dir + 'core_catalog.xml', core_catalog)
 
 #%% Generate orphan catalog (picks not added)
 
@@ -230,7 +244,7 @@ time_start = time.time()
 
 # Define client if using data from server
 if not local:
-    client = Client('IRIS')
+    client = Client(client_name)
 
 # Define some coincidence_trigger arguments
 
@@ -250,10 +264,11 @@ for unassociated_cluster in unassociated_clusters:
         starttime = contribution_time - 12
         endtime = contribution_time + 12
 
-        # REMOVE RSO AFTER FIRST EXPLOSION [HARD CODED]
+        # Remove some stations if necessary
         redpy_stations = redpy_station_list
-        if UTCDateTime(2009, 3, 24, 0, 0, 0) < starttime < UTCDateTime(2009, 4, 16, 0, 0, 0):
-            redpy_stations = ['RDN', 'REF']
+        # # REMOVE RSO AFTER FIRST EXPLOSION [HARD CODED]
+        # if UTCDateTime(2009, 3, 24, 0, 0, 0) < starttime < UTCDateTime(2009, 4, 16, 0, 0, 0):
+        #     redpy_stations = ['RDN', 'REF']
 
         # Gather data from local machine in a +/- 12s window, filter, and taper
         stream = Stream()
@@ -263,7 +278,7 @@ for unassociated_cluster in unassociated_clusters:
                     station_tr = read_trace(data_dir=data_dir, station=redpy_station, channel=redpy_channel,
                                             starttime=starttime, endtime=endtime, tolerance=tolerance)
                 else:
-                    station_tr = client.get_waveforms("AV", redpy_station, "*", redpy_channel, starttime, endtime)
+                    station_tr = client.get_waveforms(redpy_network_list[k], redpy_station, redpy_location_list[k], redpy_channel, starttime, endtime)
                 stream = stream + station_tr
         stream = stream.split()
         stream = stream.filter('bandpass',freqmin=1.0, freqmax=10.0, corners=2, zerophase=True)
@@ -318,7 +333,7 @@ for unassociated_cluster in unassociated_clusters:
                     redpy_catalog[contribution_index].origins[0].arrivals.append(add_arrival)
 
 # Write the fully picked redpy catalog to an xml file
-writer(convert_redpy_output_dir + 'GS_redpy_catalog_picked.xml', redpy_catalog)
+writer(convert_redpy_output_dir + 'redpy_catalog_picked.xml', redpy_catalog)
 
 # Conclude process
 time_stop = time.time()
@@ -330,4 +345,4 @@ print('Pick making complete, processing time: %.2f s' % (time_stop-time_start))
 core_catalog = pull_cores(redpy_catalog)
 
 # Write picked core catalog to .xml file
-writer(convert_redpy_output_dir + 'GS_core_catalog_picked.xml', new_core_catalog)
+writer(convert_redpy_output_dir + 'core_catalog_picked.xml', core_catalog)

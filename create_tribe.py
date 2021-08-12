@@ -15,13 +15,13 @@ from toolbox import get_local_stations, prepare_catalog_stream, reader, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
-data_dir = None #'/home/data/redoubt/'  # redoubt data directory
-output_dir = main_dir + 'output/'
+main_dir = '/home/ptan/enhance_catalog/'
+data_dir = '/home/ptan/enhance_catalog/data/mammoth/'  #'/home/data/redoubt/'
+output_dir = main_dir + 'output/mammoth/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 sitelist_dir = main_dir + 'data/avo/'
-create_tribe_output_dir = main_dir + 'output/create_tribe/'
-tribe_filename = 'tribe_GS.tgz'
+create_tribe_output_dir = main_dir + 'output/mammoth/create_tribe/'
+tribe_filename = 'tribe.tgz'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
 resampling_frequency = 50  # for resampling traces prior to final merge
 tolerance = 4e4            # tolerance for boxcar removal from data (as a factor to median)
