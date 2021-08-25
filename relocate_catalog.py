@@ -9,6 +9,7 @@
 # Import all dependencies
 import os
 import shutil
+import pickle
 import pandas as pd
 import subprocess
 from eqcorrscan.utils.catalog_to_dd import write_correlations
@@ -19,19 +20,19 @@ from toolbox import reader, prepare_stream_dict, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
-data_dir = None
-output_dir = main_dir + 'output/greatsitkin2/'
+main_dir = '/home/ptan/enhance_catalog/'
+data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
+output_dir = main_dir + 'output/mammoth/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
 catalog_filename = 'party_catalog.xml'
 relocate_catalog_output_dir = output_dir + 'relocate_catalog/'
 relocated_catalog_filename = 'relocated_catalog.xml'
-raw_station_list_dir = main_dir + 'data/avo/'
-raw_station_list_filename = 'station_list.csv'
-raw_vzmodel_dir = main_dir + 'data/avo/'
-raw_vzmodel_filename = 'adak_vzmodel.txt'
+raw_station_list_dir = main_dir + 'data/stations/'
+raw_station_list_filename = 'mammoth_station_list.csv'
+raw_vzmodel_dir = main_dir + 'data/vz/'
+raw_vzmodel_filename = 'mammoth_vzmodel.txt'
 ratio_provided = False
 growclust_exe = main_dir + 'growclust/SRC/growclust'
 
@@ -39,7 +40,7 @@ length_actual = 8       # same as template
 length_excess = 15      # in excess for stream_dict
 pre_pick_actual = 1     # same as template
 pre_pick_excess = 3     # in excess for stream_dict
-shift_len = 1           # width of search for max_cc
+shift_len = 1.5         # width of search for max_cc
 lowcut = 1              # same as template
 highcut = 10            # same as template
 max_sep = 8             # max separation tolerated (8km)
@@ -181,7 +182,7 @@ for event in catalog:
 
 # For detailed commenting, refer to toolbox.py
 # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
-stream_dict = prepare_stream_dict(catalog,pre_pick=pre_pick_excess,length=length_excess,local=False,data_dir=None)
+stream_dict = prepare_stream_dict(catalog,pre_pick=pre_pick_excess,length=length_excess,local=True,data_dir=data_dir)
 
 #%% Execute cross correlations and write out a .cc file using write_correlations
 
@@ -190,7 +191,11 @@ stream_dict = prepare_stream_dict(catalog,pre_pick=pre_pick_excess,length=length
 event_id_mapper = write_correlations(catalog=catalog, stream_dict=stream_dict, extract_len=length_actual,
                                      pre_pick=pre_pick_actual, shift_len=shift_len, lowcut=lowcut,
                                      highcut=highcut, max_sep=max_sep, min_link=min_link, min_cc=min_cc,
-                                     interpolate=False, max_workers=None, parallel_process=True)
+                                     interpolate=False, max_workers=None, parallel_process=False)
+
+# # Write event_id_mapper
+# with open(relocate_catalog_output_dir + 'event_id_mapper.pkl', 'wb') as evid_pickle:  # Pickling
+#     pickle.dump(event_id_mapper, evid_pickle)
 
 #%% Prepare all files for GrowClust
 
@@ -220,12 +225,21 @@ inp_file.close()
 
 # Create all necessary sub-directories for GrowClust
 print('Creating subdirectories for growclust run...')
-try:
-    os.mkdir(growclust_in)
-    os.mkdir(growclust_tt)
-    os.mkdir(growclust_out)
-except FileExistsError:
-    print('Subdirectories already exist')
+for dir in [growclust_in, growclust_tt, growclust_out]:
+    try:
+        os.mkdir(dir)
+    except FileExistsError:
+        print('Subdirectory %s already exists.' % dir)
+
+# Also create all necessary output destinations for GrowClust
+print('Creating necessary output destinations for growclust run...')
+
+for output_file in ['growclust_boot', 'growclust_cat', 'growclust_clust', 'growclust_log']:
+    output_fullfile = growclust_out + output_file
+    try:
+        open(output_fullfile, 'a').close()
+    except FileExistsError:
+        print('Output file %s already exists.' % output_file)
 
 # Copy dt.cc file to its appropriate directory and rename
 original_dt_dir = os.getcwd() + '/dt.cc'

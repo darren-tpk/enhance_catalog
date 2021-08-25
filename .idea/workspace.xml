@@ -2,172 +2,35 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1943cdd-1119-47ca-b324-a0d776c30328" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/remote-mappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/avo/greatsitkin_20210731_20210810_hypoi.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/mammoth_stations.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/ncedc/mammoth_20121001_20130131_hypoddpha.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gs_code.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/convert_redpy/GS_core_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/convert_redpy/GS_core_catalog_picked.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/convert_redpy/GS_redpy_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/convert_redpy/GS_redpy_catalog_picked.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/convert_redpy/GS_unmatched_PEC_events.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/convert_redpy/unassociated_clusters.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/convert_redpy/unmatched_indices.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/create_tribe/tribe_GS.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/IN/evlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/IN/stlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/IN/vzmodel.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/IN/xcordata.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/IN/xcordata2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/OUT/out.growclus" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/OUT/out.growclust_boot" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/OUT/out.growclust_cat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/OUT/out.growclust_clust" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/OUT/out.growclust_log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/TT/tt.pg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/TT/tt.sg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/TT/vzfine.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/config.inp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/relocated_catalog_GS.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/scan_data/party_GS.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin/scan_data/party_catalog_GS.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/convert_redpy/core_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/convert_redpy/core_catalog_picked.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/convert_redpy/redpy_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/convert_redpy/redpy_catalog_picked.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/convert_redpy/unassociated_clusters.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/convert_redpy/unmatched_PEC_events.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/convert_redpy/unmatched_indices.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/create_tribe/tribe.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/IN/evlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/IN/stlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/IN/vzmodel.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/IN/xcordata.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/OUT/out.growclust_boot" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/OUT/out.growclust_cat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/OUT/out.growclust_clust" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/OUT/out.growclust_log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/TT/tt.pg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/TT/tt.sg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/TT/vzfine.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/relocate_catalog/config.inp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/scan_data/party.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/greatsitkin2/scan_data/party_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/convert_redpy/core_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/convert_redpy/core_catalog_picked.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/convert_redpy/redpy_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/convert_redpy/redpy_catalog_picked.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/convert_redpy/unassociated_clusters.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/convert_redpy/unmatched_PEC_events.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/convert_redpy/unmatched_indices.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/create_tribe/tribe.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/evlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/stlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/vzmodel.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/xcordata.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/OUT/out.growclu" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/tt.pg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/tt.sg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/vzfine.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/relocate_catalog/config.inp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/scan_data/party.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/gs2/scan_data/party_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/convert_redpy/core_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/convert_redpy/core_catalog_picked.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/convert_redpy/redpy_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/convert_redpy/redpy_catalog_picked.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/convert_redpy/unassociated_clusters.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/convert_redpy/unmatched_PEC_events.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/convert_redpy/unmatched_indices.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/create_tribe/tribe_10.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/create_tribe/tribe_len8_snr2.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/create_tribe/tribe_test.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/IN/evlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/IN/stlist.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/IN/vzmodel.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/IN/xcordata.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/IN/xcordata1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/IN/xcordata2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/OUT/out.growclust_boot" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/OUT/out.growclust_cat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/OUT/out.growclust_clust" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/OUT/out.growclust_log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/TT/tt.pg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/TT/tt.sg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/TT/vzfine.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/config.inp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/relocate_catalog/relocated_catalog_test.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/scan_data/party_ACC.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/scan_data/party_catalog_ACC.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/scan_data/party_catalog_MAD.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/scan_data/party_catalog_test.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/scan_data/party_test.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/scan_data/redoubt_detected_catalog.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/redoubt/scan_data/redoubt_party_final.tgz" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/greatsitkin_0601_0730/catalog.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/greatsitkin_0601_0730/cores.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/greatsitkin_0601_0730/orphancatalog.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/greatsitkin_0731_0810/catalog.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/greatsitkin_0731_0810/cores.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/greatsitkin_0731_0810/orphancatalog.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/mammoth/catalog.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/mammoth/cores.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/redpy_results/mammoth/orphancatalog.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/enhance_catalog.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/enhance_catalog.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plot_mammoth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/convert_redpy.py" beforeDir="false" afterPath="$PROJECT_DIR$/convert_redpy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/create_tribe.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_tribe.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/avo/adak_vzmodel.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/avo/redoubt_vzmodel.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/download_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/download_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dt.cc" beforeDir="false" afterPath="$PROJECT_DIR$/output/greatsitkin/relocate_catalog/IN/xcordata1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/GS_core_catalog.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/GS_core_catalog_picked.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/GS_redpy_catalog.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/GS_redpy_catalog_picked.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/GS_unmatched_PEC_events.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/core_catalog.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/core_catalog_picked.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/redpy_catalog.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/redpy_catalog_picked.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/unassociated_clusters.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/unmatched_PEC_events.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/convert_redpy/unmatched_indices.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/create_tribe/tribe_10.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/create_tribe/tribe_GS.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/create_tribe/tribe_len8_snr2.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/create_tribe/tribe_test.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/evlist.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/stlist.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/vzmodel.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/xcordata.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/xcordata1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/IN/xcordata2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/OUT/out.growclust_boot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/OUT/out.growclust_cat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/OUT/out.growclust_clust" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/OUT/out.growclust_log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/TT/tt.pg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/TT/tt.sg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/TT/vzfine.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/config.inp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/relocated_catalog_GS.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/relocate_catalog/relocated_catalog_test.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/party_ACC.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/party_GS.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/party_catalog_ACC.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/party_catalog_GS.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/party_catalog_MAD.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/party_catalog_test.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/party_test.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/redoubt_detected_catalog.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/scan_data/redoubt_party_final.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/plot_hypo.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot_hypo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/redpy_results/greatsitkin/catalog.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/redpy_results/greatsitkin/cores.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/redpy_results/greatsitkin/orphancatalog.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mammoth.cfg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/core_catalog.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/core_catalog_picked.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/redpy_catalog.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/redpy_catalog_picked.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/unassociated_clusters.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/unmatched_PEC_events.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/unmatched_indices.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/create_tribe/tribe.tgz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/evlist.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/stlist.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/vzmodel.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/xcordata.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/OUT/out.growclu" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/tt.pg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/tt.sg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/vzfine.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/config.inp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/scan_data/party.tgz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/gs2/scan_data/party_catalog.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/relocate_catalog.py" beforeDir="false" afterPath="$PROJECT_DIR$/relocate_catalog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scan_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scan_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sensitivity_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/sensitivity_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/toolbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox.py" afterDir="false" />
     </list>
@@ -176,11 +39,30 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/scan_data.py" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/toolbox.py" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/gs_code.py" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/create_tribe.py" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/convert_redpy.py" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1wbVMCpmAfKbxPJBeYVfprmDaxz" />
   <component name="ProjectViewState">
@@ -191,6 +73,11 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -203,10 +90,28 @@
       <updated>1628727225609</updated>
       <workItem from="1628727227700" duration="415000" />
       <workItem from="1628727681669" duration="5777000" />
+      <workItem from="1628807251451" duration="15162000" />
+      <workItem from="1628898604457" duration="3337000" />
+      <workItem from="1629088862939" duration="3286000" />
+      <workItem from="1629762804740" duration="11292000" />
+      <workItem from="1629914971560" duration="12382000" />
+      <workItem from="1629930576586" duration="2351000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

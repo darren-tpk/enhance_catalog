@@ -98,6 +98,23 @@ def remove_boxcars(st,tolerance):
     # Return de-spiked and de-boxcared trace
     return st_out
 
+# [remove_bad_traces] function to remove traces with too many zeros
+def remove_bad_traces(st,max_zeros=100):
+
+    # Recommended value: max_zeros=100 for 50Hz daylong traces
+
+    # Import dependencies
+    import numpy as np
+
+    # Check traces
+    for tr in st:
+        num_zeros = np.sum(tr.data.data==0)
+        if num_zeros > max_zeros:
+            st.remove(tr)
+
+    # Return filtered stream object
+    return st
+
 # [compare_tr] function to compare the same trace on local data vs its counterpart on IRIS
 def compare_tr(tr):
 

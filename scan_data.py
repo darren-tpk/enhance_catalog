@@ -13,25 +13,25 @@ import numpy as np
 from eqcorrscan import Party, Tribe
 from obspy import UTCDateTime, Stream, Catalog, read
 from obspy.clients.fdsn import Client
-from toolbox import remove_boxcars, reader, writer
+from toolbox import remove_boxcars, remove_bad_traces, reader, writer
 
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
-data_dir = None
-output_dir = main_dir + 'output/'
+main_dir = '/home/ptan/enhance_catalog/'
+data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
+output_dir = main_dir + 'output/mammoth/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
-tribe_filename = 'tribe_GS.tgz'
+tribe_filename = 'tribe.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
-party_filename = 'party_GS.tgz'
-catalog_filename = 'party_catalog_GS.xml'
+party_filename = 'party.tgz'
+catalog_filename = 'party_catalog.xml'
 repicked_catalog_filename = None
 min_stations = 3                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
-start_time = UTCDateTime(2021, 6, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
-end_time = UTCDateTime(2021, 7, 30, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
+start_time = UTCDateTime(2012, 10, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
+end_time = UTCDateTime(2013, 2, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
 samp_rate = 50                                 # to resample streams to match tribes
 tolerance = 4e4                                # for boxcar removal
 threshold_type = 'av_chan_corr'                # also consider 'MAD', Jeremy uses 12
@@ -39,8 +39,8 @@ threshold = 0.60                               # used to be 0.74 from sensitivit
 trig_int = 8                                   # trigger interval for each template. Also used to remove repeats (decluster)
 parallel_process = 'True'                      # parallel process for speed
 generate_repicked_catalog = False              # option to use lag_calc to do catalog repicking
-local = False                                  # if set to True, use data from local machine
-client_name = 'IRIS'                           # client name for non-local data query
+local = True                                  # if set to True, use data from local machine
+client_name = 'NCEDC'                           # client name for non-local data query
 
 #%% Define functions
 
@@ -157,6 +157,7 @@ for i in range(num_days):
         stream = stream.resample(sampling_rate=samp_rate)
         stream = stream.detrend("simple")
         stream = stream.merge()
+        stream = remove_bad_traces(stream,max_zeros=100)
         print('Stream despiked, resampled and merged. Getting party of detections...')
 
         # Attempt to scan the current day
@@ -222,13 +223,14 @@ if generate_repicked_catalog:
     print('Number of relocated events with picks: %d out of %d total' % (len([1 for event in master_repicked_catalog if (event.picks != [])]), len(master_repicked_catalog)))
 
 #%% Clean the party off of repeats (different templates that detect the "same" event)
-party_all = party_all.decluster(trig_int=trig_int)
+party_declustered = party_all.decluster(trig_int=trig_int)
 
 #%% Write our results in party form and in catalog form
 
 # Write out party
-writer(scan_data_output_dir + party_filename, party_all)
+writer(scan_data_output_dir + 'party_not_declustered.tgz', party_all)
+writer(scan_data_output_dir + party_filename, party_declustered)
 
 # Write out catalog
-detected_catalog = party_all.get_catalog()
+detected_catalog = party_declustered.get_catalog()
 writer(scan_data_output_dir + catalog_filename, detected_catalog)

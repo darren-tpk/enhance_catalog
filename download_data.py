@@ -15,7 +15,7 @@ from obspy.clients.fdsn import Client
 data_destination = '/home/ptan/enhance_catalog/data/mammoth/'
 start_time = UTCDateTime(2012,10,1,0,0,0)
 end_time = UTCDateTime(2013,2,1,0,0,0)
-client_name = "NCEDC"
+client_name = "IRIS"
 station_list_filename = '/home/ptan/enhance_catalog/data/mammoth_stations.csv'
 
 

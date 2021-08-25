@@ -17,11 +17,11 @@ from phase_processing.read_hypoddpha import read_hypoddpha
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-party_dir = main_dir + 'output/greatsitkin/scan_data/'
-party_filename = 'party_GS.tgz'
-PEC_dir = main_dir + 'data/avo/'
-hypoi_file = 'greatsitkin_20210601_20210730_hypoi.txt'
-hypoddpha_file = 'greatsitkin_20210601_20210730_hypoddpha.txt'
+party_dir = main_dir + 'output/mammoth/scan_data/'
+party_filename = 'party.tgz'
+PEC_dir = main_dir + 'data/ncedc/'
+hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
+hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'
 plot_hist = False
 plot_cumu = True
 plot_wave = False
@@ -29,10 +29,10 @@ separate_wave = False
 thres_min = 0.60
 thres_max = 0.74
 thres_vec = np.linspace(thres_min,thres_max,8)
-num_days = 59
+num_days = 123
 
 # Define a base time for x-axis
-base_time = UTCDateTime(2021, 6, 1, 0, 0, 0)
+base_time = UTCDateTime(2012, 10, 1, 0, 0, 0)
 #base_time = UTCDateTime(2009, 1, 1, 0, 0, 0)
 
 # Define swarm start and swarm end hours for vertical dashed lines
@@ -45,11 +45,11 @@ swarm_times = []
                # (UTCDateTime(2009,5,2,21,0,0),UTCDateTime(2009,5,8,1,0,0)) May's swarm
 
 # Define tick marks over span of party
-tick_times = [UTCDateTime(2021, 6, 1), UTCDateTime(2021, 6, 7, 12),
-              UTCDateTime(2021, 6, 15), UTCDateTime(2021, 6, 22, 12),
-              UTCDateTime(2021, 7, 1), UTCDateTime(2021, 7, 7, 12),
-              UTCDateTime(2021, 7, 15), UTCDateTime(2021, 7, 22, 12),
-              UTCDateTime(2021, 7, 30)]
+tick_times = [UTCDateTime(2012, 10, 1), UTCDateTime(2012, 10, 15),
+              UTCDateTime(2012, 11, 1), UTCDateTime(2012, 11, 15),
+              UTCDateTime(2012, 12, 1), UTCDateTime(2012, 12, 15),
+              UTCDateTime(2013, 1, 1), UTCDateTime(2013, 1, 15),
+              UTCDateTime(2013, 2, 1)]
 # tick_times = [UTCDateTime(2009, 1, 1), UTCDateTime(2009, 1, 15),
 #               UTCDateTime(2009, 2, 1), UTCDateTime(2009, 2, 15),
 #               UTCDateTime(2009, 3, 1), UTCDateTime(2009, 3, 15),
@@ -150,7 +150,7 @@ if plot_cumu:
         ax.step(plot_hours,plot_detect_num,label=str(thres))
 
     # Add PEC's cumulative trend in black
-    ax.step(PEC_hours,PEC_detect_num,color='k',linestyle='--',linewidth=2,label='Original AVO catalog')
+    ax.step(PEC_hours,PEC_detect_num,color='k',linestyle='--',linewidth=2,label='Original NCEDC catalog')
 
     # Add vertical spans indicating swarms
     for swarm_time in swarm_times:

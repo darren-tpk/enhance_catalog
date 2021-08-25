@@ -19,7 +19,7 @@ main_dir = '/home/ptan/enhance_catalog/'
 data_dir = '/home/ptan/enhance_catalog/data/mammoth/'  #'/home/data/redoubt/'
 output_dir = main_dir + 'output/mammoth/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
-sitelist_dir = main_dir + 'data/avo/'
+# sitelist_dir = main_dir + 'data/avo/'
 create_tribe_output_dir = main_dir + 'output/mammoth/create_tribe/'
 tribe_filename = 'tribe.tgz'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
@@ -33,10 +33,10 @@ filt_order = 4             # number of corners for filter
 prepick = 1.0              # pre-pick time (s), Wech et al. (2018) chose 5s
 process_len = 86400        # length to process data in (s)
 min_snr = 2                # minimum SNR, Jeremy's recommendation was 5.0 (same as EQcorrscan tutorial)
-local_volcano = 'great sitkin'  # for get_local_stations function, since we only take picks from stations near Redoubt
-local_radius = 25          # for get_local_stations function; radius around volcano to accept stations
-local = False               # if set to True, use data from local machine
-client_name = 'IRIS'        # client name for back-up or non-local data query
+# local_volcano = 'great sitkin'  # for get_local_stations function, since we only take picks from stations near Redoubt
+# local_radius = 25          # for get_local_stations function; radius around volcano to accept stations
+local = True               # if set to True, use data from local machine
+client_name = 'NCEDC'        # client name for back-up or non-local data query
 
 #%% Define functions
 
@@ -45,20 +45,31 @@ client_name = 'IRIS'        # client name for back-up or non-local data query
 #%% Prepare desired catalog to undergo tribe creation
 
 # Read in, and combine, the picked core catalog and unmatched PEC catalog
-core_catalog_picked = reader(convert_redpy_output_dir + 'GS_core_catalog_picked.xml')
-unmatched_PEC_events = reader(convert_redpy_output_dir + 'GS_unmatched_PEC_events.xml')
+core_catalog_picked = reader(convert_redpy_output_dir + 'core_catalog_picked.xml')
+unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events.xml')
 catalog = core_catalog_picked + unmatched_PEC_events
 
-# Clean catalog to only include picks from local stations
-local_stations = get_local_stations(sitelist_dir,local_volcano,local_radius)
+# For Mammoth only, we only include picks from our hand-picked stations
+mammoth_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11']
 catalog_out = Catalog()
 for event in catalog:
     catalog_out.append(event.copy())
     catalog_out[-1].picks = []
     for pick in event.picks:
-        if pick.waveform_id.station_code in local_stations:
+        if pick.waveform_id.station_code in mammoth_station_list:
             catalog_out[-1].picks.append(pick)
 catalog = catalog_out
+
+# # Clean catalog to only include picks from local stations
+# local_stations = get_local_stations(sitelist_dir,local_volcano,local_radius)
+# catalog_out = Catalog()
+# for event in catalog:
+#     catalog_out.append(event.copy())
+#     catalog_out[-1].picks = []
+#     for pick in event.picks:
+#         if pick.waveform_id.station_code in local_stations:
+#             catalog_out[-1].picks.append(pick)
+# catalog = catalog_out
 
 #%% Loop over catalog events to create templates, populating tribe
 
