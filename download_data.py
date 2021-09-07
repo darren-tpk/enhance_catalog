@@ -13,10 +13,9 @@ from obspy.clients.fdsn import Client
 
 # Define variables
 data_destination = '/home/ptan/enhance_catalog/data/mammoth/'
-start_time = UTCDateTime(2012,10,1,0,0,0)
+start_time = UTCDateTime(2013,1,1,0,0,0)
 end_time = UTCDateTime(2013,2,1,0,0,0)
-client_name = "IRIS"
-station_list_filename = '/home/ptan/enhance_catalog/data/mammoth_stations.csv'
+station_list_filename = '/home/ptan/enhance_catalog/data/mammoth_stations2.csv'
 
 
 #%% Define functions
@@ -24,9 +23,6 @@ station_list_filename = '/home/ptan/enhance_catalog/data/mammoth_stations.csv'
 # Nil
 
 #%% Loop over sta-chan-loc combinations to download data into user-defined destination
-
-# Set up client for dataselect query
-client = Client(client_name)
 
 # Get list of station info
 station_list = pandas.read_csv(station_list_filename)
@@ -46,13 +42,16 @@ for i in range(num_days):
 
     for j in range(len(station_list.Station)):
 
+        client = Client(station_list.Client[j])
         station = station_list.Station[j]
         network = station_list.Network[j]
         channels = [channel.strip() for channel in station_list.Channels[j].split(',')]
         location = station_list.Location[j]
         downloaded = station_list.Downloaded[j]
 
-        if downloaded == 'no':
+        # check for ? in channel, and skip
+
+        if downloaded == 'yes':
             continue
 
         for channel in channels:
@@ -67,7 +66,7 @@ for i in range(num_days):
                     trace_year = str(tr.stats.starttime.year)
                     trace_julday = str(tr.stats.starttime.julday)
                     trace_time = str(tr.stats.starttime.time)[0:8]
-                    trace_datetime_str = ":".join([trace_year, trace_julday, trace_time])
+                    trace_datetime_str = ":".join([trace_year, str(trace_julday).zfill(3), trace_time])
                     seed_filename = station + '.' + channel + '.' + trace_datetime_str
 
                     # Write to seed file

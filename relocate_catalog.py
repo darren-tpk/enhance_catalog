@@ -20,7 +20,7 @@ from toolbox import reader, prepare_stream_dict, writer
 #%% Define variables
 
 # Define variables
-main_dir = '/home/ptan/enhance_catalog/'
+main_dir = '/Users/darrentpk/Desktop/Github/enhance_catalog/'
 data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
 output_dir = main_dir + 'output/mammoth/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
@@ -193,9 +193,13 @@ event_id_mapper = write_correlations(catalog=catalog, stream_dict=stream_dict, e
                                      highcut=highcut, max_sep=max_sep, min_link=min_link, min_cc=min_cc,
                                      interpolate=False, max_workers=None, parallel_process=False)
 
-# # Write event_id_mapper
-# with open(relocate_catalog_output_dir + 'event_id_mapper.pkl', 'wb') as evid_pickle:  # Pickling
-#     pickle.dump(event_id_mapper, evid_pickle)
+# Write event_id_mapper
+with open(relocate_catalog_output_dir + 'event_id_mapper.pkl', 'wb') as evid_pickle:  # Pickling
+    pickle.dump(event_id_mapper, evid_pickle)
+
+# Read event_id mapper
+with open(relocate_catalog_output_dir + 'event_id_mapper.pkl', 'rb') as evid_pickle:
+    event_id_mapper = pickle.load(evid_pickle)
 
 #%% Prepare all files for GrowClust
 
@@ -234,7 +238,7 @@ for dir in [growclust_in, growclust_tt, growclust_out]:
 # Also create all necessary output destinations for GrowClust
 print('Creating necessary output destinations for growclust run...')
 
-for output_file in ['growclust_boot', 'growclust_cat', 'growclust_clust', 'growclust_log']:
+for output_file in ['out.growclust_boot', 'out.growclust_cat', 'out.growclust_clust', 'out.growclust_log']:
     output_fullfile = growclust_out + output_file
     try:
         open(output_fullfile, 'a').close()

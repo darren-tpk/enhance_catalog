@@ -2,37 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1943cdd-1119-47ca-b324-a0d776c30328" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/plot_mammoth.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img2video.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/convert_redpy.py" beforeDir="false" afterPath="$PROJECT_DIR$/convert_redpy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create_tribe.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_tribe.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/avo/adak_vzmodel.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/avo/redoubt_vzmodel.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/download_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/download_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mammoth.cfg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/core_catalog.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/core_catalog_picked.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/redpy_catalog.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/redpy_catalog_picked.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/unassociated_clusters.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/unmatched_PEC_events.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/convert_redpy/unmatched_indices.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/create_tribe/tribe.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/evlist.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/stlist.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/vzmodel.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/IN/xcordata.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/OUT/out.growclu" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/tt.pg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/tt.sg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/TT/vzfine.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/relocate_catalog/config.inp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/scan_data/party.tgz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/gs2/scan_data/party_catalog.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/IN/evlist.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/IN/evlist.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/IN/stlist.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/IN/stlist.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/IN/xcordata.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/IN/xcordata.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/growclust_boot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/growclust_cat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/growclust_clust" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/growclust_log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/out.growclust_boot" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/out.growclust_boot" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/out.growclust_cat" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/out.growclust_cat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/out.growclust_clust" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/out.growclust_clust" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/out.growclust_log" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/OUT/out.growclust_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/TT/tt.pg" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/TT/tt.pg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/TT/tt.sg" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/TT/tt.sg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/config.inp" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/config.inp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/event_id_mapper.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/event_id_mapper.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/relocate_catalog/relocated_catalog.xml" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/relocate_catalog/relocated_catalog.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/scan_data/party.tgz" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/scan_data/party.tgz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/mammoth/scan_data/party_catalog.xml" beforeDir="false" afterPath="$PROJECT_DIR$/output/mammoth/scan_data/party_catalog.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plot_mammoth.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot_mammoth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/relocate_catalog.py" beforeDir="false" afterPath="$PROJECT_DIR$/relocate_catalog.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scan_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scan_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sensitivity_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/sensitivity_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toolbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,10 +54,14 @@
     <setting file="file://$PROJECT_DIR$/scan_data.py" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/toolbox.py" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/gs_code.py" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/plot_mammoth.py" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/create_tribe.py" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/convert_redpy.py" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1wbVMCpmAfKbxPJBeYVfprmDaxz" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -95,7 +92,10 @@
       <workItem from="1629088862939" duration="3286000" />
       <workItem from="1629762804740" duration="11292000" />
       <workItem from="1629914971560" duration="12382000" />
-      <workItem from="1629930576586" duration="2351000" />
+      <workItem from="1629930576586" duration="3446000" />
+      <workItem from="1629996729113" duration="11221000" />
+      <workItem from="1630610729763" duration="2144000" />
+      <workItem from="1630645251196" duration="21834000" />
     </task>
     <servers />
   </component>

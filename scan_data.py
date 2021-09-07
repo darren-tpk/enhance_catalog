@@ -30,7 +30,7 @@ catalog_filename = 'party_catalog.xml'
 repicked_catalog_filename = None
 min_stations = 3                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
-start_time = UTCDateTime(2012, 10, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
+start_time = UTCDateTime(2013, 1, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
 end_time = UTCDateTime(2013, 2, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
 samp_rate = 50                                 # to resample streams to match tribes
 tolerance = 4e4                                # for boxcar removal
@@ -228,7 +228,6 @@ party_declustered = party_all.decluster(trig_int=trig_int)
 #%% Write our results in party form and in catalog form
 
 # Write out party
-writer(scan_data_output_dir + 'party_not_declustered.tgz', party_all)
 writer(scan_data_output_dir + party_filename, party_declustered)
 
 # Write out catalog
