@@ -34,12 +34,11 @@ conda create -n enhance_catalog -c conda-forge eqcorrscan bokeh cartopy pandas p
 conda activate enhance_catalog
 ```
 
-2. Obtain and install 
+2. Clone and enter directory
 
 ```
 git clone https://github.com/darren-uaf/enhance_catalog
 cd enhance_catalog
-pip install -e .
 ```
 
 3. Run
