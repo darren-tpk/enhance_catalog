@@ -30,7 +30,7 @@ Quickstart
 1. Prepare environment 
 
 ```
-conda create -n enhance_catalog -c conda-forge eqcorrscan bokeh cartopy pandas pytables geopy
+conda create -n enhance_catalog -c conda-forge eqcorrscan bokeh cartopy pandas pytables geopy pygmt ipython
 conda activate enhance_catalog
 ```
 
