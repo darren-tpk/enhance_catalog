@@ -15,7 +15,7 @@ from obspy.clients.fdsn import Client
 data_destination = '/home/ptan/enhance_catalog/data/mammoth/'
 start_time = UTCDateTime(2013,1,1,0,0,0)
 end_time = UTCDateTime(2013,2,1,0,0,0)
-station_list_filename = '/home/ptan/enhance_catalog/data/mammoth_stations2.csv'
+station_list_filename = '/home/ptan/enhance_catalog/data/mammoth_stations3.csv'
 
 
 #%% Define functions

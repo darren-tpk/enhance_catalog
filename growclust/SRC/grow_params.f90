@@ -1,5 +1,5 @@
 !-----------------------------------------------------------------------
-! Copyright 2020 Daniel Trugman
+! Copyright 2021 Daniel Trugman
 !
 ! This file is part of GrowClust.
 !
@@ -20,11 +20,11 @@
 
 
 ! ------ This module module initializes fixed parameters used by GrowClust
-! ----------- (these are not read from input file, so modify and recompile the module as necessary) -----!
+! ----------- (these are not read from input file, so modify and recompile the module as necessary) -----!  
 
-
+ 
    MODULE grow_params
-
+   
    ! ----------- Array size parameters ----------------------------------
    integer, parameter :: nsta0=2500            !max number of stations
    integer, parameter :: nq0=150000           !max number of quakes
@@ -45,13 +45,13 @@
    real, parameter    :: hshiftmax = 2.0        ! maximum permitted horizontal cluster shifts (km)
    real, parameter    :: vshiftmax = 2.0        ! maximum permitted vertical cluster shifts (km)
    real, parameter    :: rmedmax = 0.05         ! maximum median absolute tdif residual to join clusters
-
+   
    ! ------- Relative Relocation subroutine parameters -------------
    real, parameter    :: boxwid = 3. ! initial "shrinking-box" width (km)
    integer, parameter :: nit = 15 ! number of iterations
    integer, parameter :: irelonorm = 1 ! relocation norm (L1 norm=1, L2 norm=2, 3=robust L2)
    real, parameter    :: tdifmax = 30. ! maximum differential time value allowed (for error-checking on xcor data input)
-
+   
    ! -------- Bootstrap resampling parameters -------------------
    integer, parameter  :: iseed = 0 ! random number seed
    real, parameter     :: rms_nan = 0.0 ! rms flag in output file for unrelocated event
@@ -60,10 +60,10 @@
    integer, parameter  :: samp_type = 2 ! bootstrap sampling type
         !  1: Resample each event pair independently (each pair always has the same # of picks in each resample)'
         !  2: Resample the entire data vectors at once (event pairs may have different # of picks in each resample)
-
+        
    ! ------- Velocity model parameters (added 04/2018) -------------------------
    integer, parameter  :: vzmodel_type = 1 ! velocity model type: 1 = flat earth, (Z,Vp,Vs)
-                                           !                  or  2 = radial, (R,Vp,Vs):
+                                           !                  or  2 = radial, (R,Vp,Vs): 
                                            !                           note: option 2 has not been extensively tested!!!
-
+   
    end MODULE grow_params

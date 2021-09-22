@@ -629,6 +629,68 @@ def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",d
     # Return stream dictionary
     return stream_dict
 
+# [adjust_weights] adjust weights within a dt.cc file and write/append to another file
+def adjust_weights(dtcc_filepath,target_filepath,append=False):
+
+    # Import dependencies
+    import os
+    import numpy as np
+
+    # Open dt.cc file to read line by line
+    dtcc_textfile = open(dtcc_filepath, 'r')
+    dtcc_lines = dtcc_textfile.readlines()
+
+    # Initialize list to store target file lines
+    target_lines = []
+
+    # Loop over dt.cc file lines
+    for dtcc_line in dtcc_lines:
+
+        # If the dt.cc line is an event pair header
+        if dtcc_line[0] == '#' or len(dtcc_line) != 25:
+
+            # Append dt.cc line directly
+            target_lines.append(dtcc_line)
+
+        # If the dt.cc line is not an event pair header, it stores a channel's dt and weight
+        else:
+
+            # Extract old weight and apply sqrt
+            old_weight_str = dtcc_line.split()[2]
+            old_weight = float(old_weight_str)
+            new_weight = np.sqrt(old_weight)  # THIS FUNCTION CAN BE CHANGED
+            new_weight_str = '%0.4f' % new_weight
+
+            # Construct a new line and append
+            target_line = dtcc_line.replace(old_weight_str,new_weight_str)
+            target_lines.append(target_line)
+
+    # If the target filepath does not exist
+    if not os.path.exists(target_filepath):
+
+        # Write target file
+        target_textfile = open(target_filepath, 'w')
+        target_textfile.writelines(target_lines)
+
+    # If the target filepath exists
+    else:
+
+        # And if we want to append the information to the target file
+        if append:
+
+            # Open file in append mode and write
+            target_textfile = open(target_filepath, 'a')
+            #target_lines.insert(0,'\n')
+            target_textfile.writelines(target_lines)
+
+        # If we choose not to append
+        else:
+
+            # Delete the old filepath and write target file
+            os.remove(target_filepath)
+            target_textfile = open(target_filepath, 'w')
+            target_textfile.writelines(target_lines)
+
 # raster2array from https://www.neonscience.org/resources/learning-hub/tutorials/merge-lidar-geotiff-py
 def raster2array(geotif_file):
     metadata = {}

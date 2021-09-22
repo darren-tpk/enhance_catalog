@@ -38,7 +38,7 @@ REGION_CLEAN[3] = REGION_CLEAN[3] + 0.0125
 REGION_SWNE = [0, 20, -5, MAX_DEPTH]
 REGION_NWSE = [0, 20, -5, MAX_DEPTH]
 START_TIME = UTCDateTime(2012,10,1,0,0,0)  # reference time for "days" colorbar
-swarm_focus = True
+swarm_focus = False
 
 #%% Define functions
 
@@ -166,7 +166,7 @@ for i in range(ec_time_blocks+1):
 
         # Plot earthquakes
         if not swarm_focus:
-            pygmt.makecpt(cmap="viridis", series="2012-10-30T/2012-11-02T/1d")
+            pygmt.makecpt(cmap="viridis", series="2012-10-01T/2013-02-01T/1d")
             fig.plot(x=longitudes, y=latitudes, color=times, cmap=True, style="c0.07c", pen="black", transparency=20)
             with pygmt.config(FONT_ANNOT_PRIMARY="7p,Helvetica,black"):
                 fig.colorbar(position="JBL+o-8.5c/0.5c+w8.5c/0.4c+h",frame="xa1Of")
@@ -210,7 +210,7 @@ for i in range(ec_time_blocks+1):
 
         # Plot earthquakes
         if not swarm_focus:
-            pygmt.makecpt(cmap="viridis", series="2012-10-30T/2012-11-02T/1d")
+            pygmt.makecpt(cmap="viridis", series="2012-10-01T/2013-02-01T/1d")
             fig.plot(x=SWNE_down_distances, y=depths, style="c0.07c", color=times, cmap=True, pen="black", transparency=20)
         else:
             if len(longitudes[regular_index]) > 0:
@@ -249,7 +249,7 @@ for i in range(ec_time_blocks+1):
 
         # Plot earthquakes
         if not swarm_focus:
-            pygmt.makecpt(cmap="viridis", series="2012-10-30T/2012-11-02T/1d")
+            pygmt.makecpt(cmap="viridis", series="2012-10-01T/2013-02-01T/1d")
             fig.plot(x=NWSE_down_distances, y=depths, style="c0.07c", color=times, cmap=True, pen="black", transparency=20)
         else:
             if len(longitudes[regular_index]) > 0:
@@ -267,5 +267,7 @@ for i in range(ec_time_blocks+1):
         fig.plot(x=NWSE_elev_distances, y=-0.001 * NWSE["Elev(m)"], pen="1.5p,black")
         fig.text(x=0.5, y=-4.5, text="C", justify="LT", font="13p,black")
         fig.text(x=19.5, y=-4.5, text="D", justify="RT", font="13p,black")
+
+    fig.show(method="external")
 
     fig.savefig(swarm_framename)

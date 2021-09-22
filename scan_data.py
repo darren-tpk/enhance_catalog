@@ -20,17 +20,17 @@ from toolbox import remove_boxcars, remove_bad_traces, reader, writer
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
 data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
-output_dir = main_dir + 'output/mammoth/'
+output_dir = main_dir + 'output/mammoth2/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
 party_filename = 'party.tgz'
 catalog_filename = 'party_catalog.xml'
-repicked_catalog_filename = None
+repicked_catalog_filename = 'repicked_catalog.xml'
 min_stations = 3                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
-start_time = UTCDateTime(2013, 1, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
+start_time = UTCDateTime(2012, 10, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
 end_time = UTCDateTime(2013, 2, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
 samp_rate = 50                                 # to resample streams to match tribes
 tolerance = 4e4                                # for boxcar removal
@@ -175,13 +175,12 @@ for i in range(num_days):
 
                 # Copy the party and stream, then re-merge the stream using method 1
                 party_calc = party.copy()
-                stream_gappy = stream.copy()
-                stream_gappy = stream_gappy.split()
-                stream_gappy = stream_gappy.merge(method=1)
+                stream_calc = stream.copy()
+                stream_calc = stream_calc.split()
+                stream_calc = stream_calc.merge(method=1)
 
                 # Use lag_calc to produce the repicked catalog section
-                repicked_catalog = party_calc.lag_calc(stream_gappy, pre_processed=False, shift_len=3, min_cc=0.7,
-                                                       export_cc=True, cc_dir='/home/ptan/attempt_eqcorrscan/output/cc_data')
+                repicked_catalog = party_calc.lag_calc(stream_calc, pre_processed=False, shift_len=1.5, min_cc=0.7, export_cc=False)
 
                 # Add the repicked catalog section to the master repicked catalog
                 master_repicked_catalog += repicked_catalog

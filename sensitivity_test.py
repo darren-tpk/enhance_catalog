@@ -17,18 +17,19 @@ from phase_processing.read_hypoddpha import read_hypoddpha
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-party_dir = main_dir + 'output/mammoth/scan_data/'
+data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
+party_dir = main_dir + 'output/mammoth2/scan_data/'
 party_filename = 'party.tgz'
 PEC_dir = main_dir + 'data/ncedc/'
 hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
 hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'
 plot_hist = False
 plot_cumu = True
-plot_wave = False
+plot_wave = True
 separate_wave = False
 thres_min = 0.60
 thres_max = 0.74
-thres_vec = np.linspace(thres_min,thres_max,8)
+thres_vec = np.linspace(thres_min,thres_max,15)
 num_days = 123
 
 # Define a base time for x-axis
@@ -210,5 +211,5 @@ if plot_wave:
 
         # If plotting the template and detection together
         else:
-            detect_stream = get_detection(marginal_detection, data_dir=None, client_name='IRIS')
+            detect_stream = get_detection(marginal_detection, data_dir=data_dir)
             detection_multiplot(detect_stream,family.template.st.merge(),[marginal_detection.detect_time])

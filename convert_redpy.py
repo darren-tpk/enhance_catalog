@@ -25,18 +25,18 @@ from toolbox import read_trace, writer
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
 data_dir = '/home/ptan/enhance_catalog/data/mammoth/'  # redoubt data directory on local
-output_dir = main_dir + 'output/mammoth/'
+output_dir = main_dir + 'output/mammoth2/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
-redpy_results_dir = main_dir + 'redpy_results/mammoth/'
+redpy_results_dir = main_dir + 'redpy_results/mammoth2/'
 PEC_dir = main_dir + 'data/ncedc/'
 hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
 hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'
 max_dt = 4  # maximum time difference between REDPy detections and AVO events allowed, in seconds
 adopt_weight = 0.1  # phase weight for adopted picks
-redpy_network_list = ['NC','NC','NN','NC','NC','NC','NC','NC','NC','8E','8E','8E','8E','8E','8E','8E','8E','8E','8E']
-redpy_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11']
-redpy_channel_list = [['HHZ'],['HHZ'],['HHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ']]
-redpy_location_list = ['--','--','--','02','02','02','--','--','--','--','--','--','--','--','--','--','--','--','--']
+redpy_network_list = ['NC','NC','NN','NC','NC','NC','NC','NC','NC','8E','8E','8E','8E','8E','8E','8E','8E','8E','8E','NC','NC','NC','NC','NC','NC','NC','NC','NC','NC','NC','CI']
+redpy_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11','MQ1P','MMS','MCY','MDY','MLI','MGPB','MLK','MEM','MDR','MMLB','MCB','MLAC']
+redpy_channel_list = [['HHZ'],['HHZ'],['HHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['EHZ'],['EHZ'],['EHZ'],['HHZ'],['HHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['HHZ'],['HHZ'],['HHZ']]
+redpy_location_list = ['--','--','--','02','02','02','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','02','--','--','--']
 tolerance = 4e4  # tolerance for boxcar removal from data (as a factor to median)
 local = True
 client_name = None # IRIS/NCEDC

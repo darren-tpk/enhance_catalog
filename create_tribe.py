@@ -7,6 +7,7 @@
 # Import all dependencies
 import time
 import obspy
+import numpy as np
 from obspy import UTCDateTime, Catalog, Stream
 from obspy.clients.fdsn import Client
 from eqcorrscan.core.match_filter.tribe import Tribe
@@ -16,11 +17,11 @@ from toolbox import get_local_stations, prepare_catalog_stream, reader, writer
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/ptan/enhance_catalog/data/mammoth/'  #'/home/data/redoubt/'
-output_dir = main_dir + 'output/mammoth/'
+data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
+output_dir = main_dir + 'output/mammoth2/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 # sitelist_dir = main_dir + 'data/avo/'
-create_tribe_output_dir = main_dir + 'output/mammoth/create_tribe/'
+create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
 resampling_frequency = 50  # for resampling traces prior to final merge
@@ -50,7 +51,8 @@ unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events.x
 catalog = core_catalog_picked + unmatched_PEC_events
 
 # For Mammoth only, we only include picks from our hand-picked stations
-mammoth_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11']
+mammoth_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11','MQ1P','MMS','MCY','MDY','MLI','MGPB','MLK','MEM','MDR','MMLB','MCB','MLAC']
+
 catalog_out = Catalog()
 for event in catalog:
     catalog_out.append(event.copy())
@@ -93,13 +95,17 @@ for k in range(len(catalog)):
         day_end = day_start + 86400
         stream = stream.trim(starttime=day_start, endtime=day_end)
 
-        # If the stream has traces, check the length of each trace and remove those that are too short for processing
-        # (EQcorrscan produces an error if data is <80% of process_len)
+        # If the stream has traces, check the length of each trace and the extent of masking
+        # We remove traces that are too short and traces that consist of too many masked values
         if stream is not None:
             for trace in stream:
-                trace_length = trace.stats.npts / trace.stats.sampling_rate
-                if trace_length < (0.8 * process_len):
+                # Check number of samples
+                if trace.stats.npts < (process_len*samp_rate-2):
                     print('%s.%s got removed due to insufficient length.' % (trace.stats.station,trace.stats.channel))
+                    stream.remove(trace)
+                # Check if trace is masked with too many zeros (more than half of samples are masked)
+                elif hasattr(trace.data, 'mask') and (np.sum(trace.data.mask) / len(trace.data.mask)) > 0.5:
+                    print('%s.%s got removed due to overly large data gaps.' % (trace.stats.station, trace.stats.channel))
                     stream.remove(trace)
 
     # Start with an empty template
@@ -111,7 +117,7 @@ for k in range(len(catalog)):
             template = Tribe().construct(
                 method="from_meta_file", lowcut=lowcut, highcut=highcut, samp_rate=samp_rate, length=length,
                 filt_order=filt_order, prepick=prepick, meta_file=event, st=stream, process=True,
-                process_len=process_len, min_snr=min_snr, parallel=True)
+                process_len=process_len, min_snr=min_snr, parallel=False)
         except:
             print('WARNING: local data failed to produce template, using client method instead.')
 
