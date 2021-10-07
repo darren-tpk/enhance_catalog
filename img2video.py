@@ -4,8 +4,8 @@ import os
 from os.path import isfile, join
 
 pathIn = '/Users/darrentpk/Desktop/frames/'
-pathOut = '/Users/darrentpk/Desktop/mammoth3.avi'
-fps = 12
+pathOut = '/Users/darrentpk/Desktop/mammoth.avi'
+fps = 36
 frame_array = []
 files = [f for f in os.listdir(pathIn) if isfile(join(pathIn, f))]
 files.sort()

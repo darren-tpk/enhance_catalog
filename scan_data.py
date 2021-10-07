@@ -13,7 +13,8 @@ import numpy as np
 from eqcorrscan import Party, Tribe
 from obspy import UTCDateTime, Stream, Catalog, read
 from obspy.clients.fdsn import Client
-from toolbox import remove_boxcars, remove_bad_traces, reader, writer
+from obspy.core.event import Origin
+from toolbox import remove_boxcars, remove_bad_traces, calculate_catalog_FI, reader, writer
 
 #%% Define variables
 
@@ -26,7 +27,8 @@ create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
 party_filename = 'party.tgz'
-catalog_filename = 'party_catalog.xml'
+detected_catalog_filename = 'party_catalog.xml'
+relocatable_catalog_filename = 'relocatable_catalog.xml'
 repicked_catalog_filename = 'repicked_catalog.xml'
 min_stations = 3                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
@@ -41,6 +43,16 @@ parallel_process = 'True'                      # parallel process for speed
 generate_repicked_catalog = False              # option to use lag_calc to do catalog repicking
 local = True                                  # if set to True, use data from local machine
 client_name = 'NCEDC'                           # client name for non-local data query
+
+# Settings for FI calculation
+reference_station = 'MINS'
+reference_channel = 'HHZ'
+prepick = 1.0
+length = 8.0
+filomin = 1
+filomax = 2.5
+fiupmin = 5
+fiupmax = 10
 
 #%% Define functions
 
@@ -221,14 +233,68 @@ if generate_repicked_catalog:
     writer(scan_data_output_dir + repicked_catalog_filename, master_repicked_catalog)
     print('Number of relocated events with picks: %d out of %d total' % (len([1 for event in master_repicked_catalog if (event.picks != [])]), len(master_repicked_catalog)))
 
-#%% Clean the party off of repeats (different templates that detect the "same" event)
+#%% Process catalog derived from party, then write out both the party and the catalog
+
+# Clean the party off of repeats (different templates that detect the "same" event)
 party_declustered = party_all.decluster(trig_int=trig_int)
 
-#%% Write our results in party form and in catalog form
-
-# Write out party
-writer(scan_data_output_dir + party_filename, party_declustered)
-
-# Write out catalog
+# Extract catalog from declustered party
 detected_catalog = party_declustered.get_catalog()
-writer(scan_data_output_dir + catalog_filename, detected_catalog)
+
+# Extract all template names from tribe
+template_names = [template.name for template in tribe]
+
+# Initialize new catalog that stores detections that can be relocated
+relocatable_catalog = Catalog()
+
+# Loop over the detected catalog, copying over events if their templates have locations
+# Also give each event pick phase information based on channel convention
+for event in detected_catalog:
+
+    # Get source event
+    source_template_name = event.comments[0].text.split(' ')[1]
+    source_template_index = template_names.index(source_template_name)
+    source_template = tribe[source_template_index]
+    source_event = source_template.event
+
+    # Check if the source event has a location. Only continue if it does
+    if source_event.origins[0].latitude is not None:
+
+        # We extract the source event's location (lat, lon, dep)
+        lat = source_event.origins[0].latitude
+        lon = source_event.origins[0].longitude
+        dep = source_event.origins[0].depth
+
+        # Reformat the event's detection time to UTC
+        time_text = event.resource_id.id.split('_')[-1]
+        UTCdt = UTCDateTime(time_text)
+
+        # Create an ObsPy Origin object and store it in the event
+        event.origins = [Origin(time= UTCdt, latitude = lat, longitude = lon, depth = dep)]
+
+        # Loop over picks in event
+        for pick in event.picks:
+
+            # Check for non-vertical channel, and give an 'S' hint
+            if pick.waveform_id.channel_code[-1] == 'N' or pick.waveform_id.channel_code[-1] == 'E':
+                pick.phase_hint = 'S'
+
+            # Also check for a vertical channel, and give an 'P' hint
+            elif pick.waveform_id.channel_code[-1] == 'Z':
+                pick.phase_hint = 'P'
+
+            # Throw out a ValueError if the channel code is not recognized
+            else:
+                raise ValueError
+
+        # Append to new catalog
+        relocatable_catalog += event
+
+# Calculate FI for relocatable catalog
+relocatable_catalog = calculate_catalog_FI(relocatable_catalog,data_dir,reference_station, reference_channel, prepick,
+                                           length, filomin, filomax, fiupmin, fiupmax, histogram=False)
+
+# Write out party, catalog with all detections, and catalog with relocatable detections
+writer(scan_data_output_dir + party_filename, party_declustered)
+writer(scan_data_output_dir + detected_catalog_filename, detected_catalog)
+writer(scan_data_output_dir + relocatable_catalog_filename, relocatable_catalog)

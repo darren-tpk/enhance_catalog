@@ -737,3 +737,123 @@ def raster2array(geotif_file):
             array[...,i-1] = band
 
     return array, metadata
+
+# [calculate_catalog_FI] Calculate the FIs of events in a catalog using a reference sta-chan.
+def calculate_catalog_FI(catalog, data_dir, reference_station, reference_channel, prepick, length, filomin, filomax,
+                         fiupmin, fiupmax, histogram=False):
+
+    # Import all dependencies
+    import glob
+    import numpy as np
+    from obspy import Stream, read
+    from obspy.core.event import Comment
+    from scipy.fftpack import fft, fftfreq
+    import matplotlib.pyplot as plt
+
+    # Loop over events in catalog
+    for event in catalog:
+
+        # Look through event picks and collate a list of stations with vertical picks
+        event_stachans = []
+        for pick in event.picks:
+            event_stachans.append((pick.waveform_id.station_code, pick.waveform_id.channel_code))
+
+        # Check if the vertical channel pick on the reference station is missing
+        if (reference_station, reference_channel) not in event_stachans:
+            event_id = event.resource_id.id.split('/')[1]
+            print('Event %s does not have a vertical pick on the reference station. Inserting FI=None.' % event_id)
+            comment_text = 'FI from %s=None' % reference_station
+            event.comments.append(Comment(text=comment_text))
+            continue
+        else:
+            reference_pick = event.picks[event_stachans.index((reference_station, reference_channel))]
+
+        # If the reference station is present, we try to load the appropriate data
+        reference_pick_year = reference_pick.time.year
+        reference_pick_julday = reference_pick.time.julday
+
+        # Craft file string and append
+        data_filenames = [data_dir + reference_station + '.' + reference_channel + '.' +
+                          str(reference_pick_year) + ':' + f'{reference_pick_julday:03}' + ':*']
+
+        # Add next day if pick occurs in the first 15 minutes of the day
+        if reference_pick.time.hour == 0 and reference_pick.time.minute < 15:
+            if reference_pick.time.julday == 1:  # special case for first day of the year
+                data_filename = data_dir + reference_station + '.' + reference_channel + '.' + str(
+                    reference_pick_year - 1) + ':365:*'
+                data_filenames.append(data_filename)
+            else:
+                data_filename = data_dir + reference_station + '.' + reference_channel + '.' + str(
+                    reference_pick_year) + ':' + f'{(reference_pick_julday - 1):03}' + ':*'
+                data_filenames.append(data_filename)
+
+        # Add previous day if pick occurs in the last 15 minutes of the day
+        if reference_pick.time.hour == 23 and reference_pick.time.minute > 45:
+            if reference_pick.time.julday == 365:  # special case for last day of the year
+                data_filename = data_dir + reference_station + '.' + reference_channel + '.' + str(
+                    reference_pick_year + 1) + ':001:*'
+                data_filenames.append(data_filename)
+            else:
+                data_filename = data_dir + reference_station + '.' + reference_channel + '.' + str(
+                    reference_pick_year) + ':' + f'{(reference_pick_julday + 1):03}' + ':*'
+                data_filenames.append(data_filename)
+
+        # Read in all required traces, merging into a stream object
+        stream = Stream()
+        for data_filename in data_filenames:
+            matching_filenames = (glob.glob(data_filename))
+            for matching_filename in matching_filenames:
+                try:
+                    stream_contribution = read(matching_filename)
+                    stream = stream + stream_contribution
+                except:
+                    continue
+
+        # Since we only reference one station, the data should merge to 1 trace
+        stream.trim(reference_pick.time - prepick, reference_pick.time - prepick + length)
+        if len(stream) != 1:
+            print('WARNING: stream object contains more than 1 trace')
+
+        # Execute fft on data
+        trace = stream[0]
+
+        # trace = trace.filter('bandpass', freqmax=10, freqmin=1)
+        # trace = trace.taper(0.05, type='hann', max_length=(0.75 * 1024 / 50))
+
+        trace.trim()
+        data = trace.data
+        data_fft = fft(data)
+        fft_amplitude = np.abs(data_fft)
+        sample_frequency = fftfreq(data.size, d=trace.stats.delta)
+
+        # Calculate FI
+        FI_highband_indices = np.where((sample_frequency > fiupmin) & (sample_frequency < fiupmax))
+        FI_lowband_indices = np.where((sample_frequency > filomin) & (sample_frequency < filomax))
+        FI = np.log10(np.mean(fft_amplitude[FI_highband_indices]) / np.mean(fft_amplitude[FI_lowband_indices]))
+
+        # Add FI to event as comment
+        comment_text = 'FI from %s=%.5f' % (reference_station, FI)
+        event.comments.append(Comment(text=comment_text))
+
+    # If a histogram is desired, plot a histogram of FI
+    if histogram:
+
+        # Extract FI values from catalog
+        all_FIs = []
+        for event in catalog:
+            FI_str = event.comments[-1].text.split('=')[1]
+            if FI_str != 'None':
+                all_FIs.append(float(FI_str))
+
+        # Plot histogram
+        fig, ax = plt.subplots()
+        ax.grid(True)
+        ax.hist(all_FIs, bins=np.arange(-1.4, 0.8, 0.05), color='teal', edgecolor='black')
+        ax.set_xlim([-1.4, 0.8])
+        ax.set_xlabel('Frequency Index (FI)')
+        ax.set_ylabel('Number of Events')
+        ax.set_title('Frequency Index for %d out of %d Events' % (len(all_FIs),len(catalog)))
+        fig.show()
+
+    # Return catalog
+    return catalog

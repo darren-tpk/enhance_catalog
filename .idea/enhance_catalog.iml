@@ -2,7 +2,7 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="Remote Python 3.8.10 (sftp://ptan@tamarack.gi.alaska.edu:22/home/ptan/anaconda3/envs/enhance_catalog/bin/python)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.8 (enhance_catalog)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
