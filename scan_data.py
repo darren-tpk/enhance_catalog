@@ -10,11 +10,11 @@ import pickle
 import time
 import glob
 import numpy as np
-from eqcorrscan import Party, Tribe
+from eqcorrscan.core.match_filter import Party, Tribe
 from obspy import UTCDateTime, Stream, Catalog, read
 from obspy.clients.fdsn import Client
 from obspy.core.event import Origin
-from toolbox import remove_boxcars, remove_bad_traces, calculate_catalog_FI, reader, writer
+from toolbox import remove_boxcars, remove_bad_traces, calculate_catalog_FI, calculate_relative_magnitudes, reader, writer
 
 #%% Define variables
 
@@ -47,12 +47,19 @@ client_name = 'NCEDC'                           # client name for non-local data
 # Settings for FI calculation
 reference_station = 'MINS'
 reference_channel = 'HHZ'
-prepick = 1.0
-length = 8.0
-filomin = 1
-filomax = 2.5
-fiupmin = 5
-fiupmax = 10
+prepick = 1.0  # s
+length = 8.0  # s
+filomin = 1  # Hz
+filomax = 2.5  # Hz
+fiupmin = 5   # Hz
+fiupmax = 10   # Hz
+
+# Settings for magnitude calculation
+noise_window = (-20, -1)  # s
+signal_window = (-1, 8)  # s
+shift_len = 1.5  # s
+min_cc = 0.75
+min_snr = 2
 
 #%% Define functions
 
@@ -291,8 +298,12 @@ for event in detected_catalog:
         relocatable_catalog += event
 
 # Calculate FI for relocatable catalog
-relocatable_catalog = calculate_catalog_FI(relocatable_catalog,data_dir,reference_station, reference_channel, prepick,
+relocatable_catalog = calculate_catalog_FI(relocatable_catalog, data_dir, reference_station, reference_channel, prepick,
                                            length, filomin, filomax, fiupmin, fiupmax, histogram=False)
+
+# Calculate magnitude for relocatable catalog
+relocatable_catalog = calculate_relative_magnitudes(relocatable_catalog, tribe, data_dir, noise_window, signal_window,
+                                                    min_cc, min_snr, shift_len, tolerance, samp_rate)
 
 # Write out party, catalog with all detections, and catalog with relocatable detections
 writer(scan_data_output_dir + party_filename, party_declustered)
