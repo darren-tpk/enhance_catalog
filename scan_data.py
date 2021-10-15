@@ -10,7 +10,7 @@ import pickle
 import time
 import glob
 import numpy as np
-from eqcorrscan.core.match_filter import Party, Tribe
+from eqcorrscan import Party, Tribe
 from obspy import UTCDateTime, Stream, Catalog, read
 from obspy.clients.fdsn import Client
 from obspy.core.event import Origin
@@ -38,6 +38,7 @@ samp_rate = 50                                 # to resample streams to match tr
 tolerance = 4e4                                # for boxcar removal
 threshold_type = 'av_chan_corr'                # also consider 'MAD', Jeremy uses 12
 threshold = 0.60                               # used to be 0.74 from sensitivity test. Was too high
+rethreshold = 0.70                             # filter party using revised threshold from sensitivity test
 trig_int = 8                                   # trigger interval for each template. Also used to remove repeats (decluster)
 parallel_process = 'True'                      # parallel process for speed
 generate_repicked_catalog = False              # option to use lag_calc to do catalog repicking
@@ -55,10 +56,10 @@ fiupmin = 5   # Hz
 fiupmax = 10   # Hz
 
 # Settings for magnitude calculation
-noise_window = (-20, -1)  # s
-signal_window = (-1, 8)  # s
+noise_window = (-20.0, -prepick)  # s
+signal_window = (-prepick, -prepick+length)  # s
 shift_len = 1.5  # s
-min_cc = 0.75
+min_cc = 0.7
 min_snr = 2
 
 #%% Define functions

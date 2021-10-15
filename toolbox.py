@@ -759,7 +759,7 @@ def calculate_catalog_FI(catalog, data_dir, reference_station, reference_channel
 
         # Check if the vertical channel pick on the reference station is missing
         if (reference_station, reference_channel) not in event_stachans:
-            event_id = event.resource_id.id.split('/')[1]
+            event_id = event.resource_id.id
             print('Event %s does not have a vertical pick on the reference station. Inserting FI=None.' % event_id)
             comment_text = 'FI from %s=None' % reference_station
             event.comments.append(Comment(text=comment_text))
@@ -860,24 +860,35 @@ def calculate_catalog_FI(catalog, data_dir, reference_station, reference_channel
 
 # [calculate_relative_magnitudes] function to calculate magnitudes using CC based on Schaff & Richards (2014)
 # Uses template events in PEC as reference magnitudes for relocatable catalog
-def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal_window, min_cc, min_snr,
+# This function rethresholds the detected catalog by min_cc while processing it
+def calculate_relative_magnitudes(catalog_in, tribe, data_dir, noise_window, signal_window, min_cc, min_snr,
                                   shift_len, tolerance, resampling_frequency):
 
     # Import dependencies
     import numpy as np
-    from eqcorrscan.utils.mag_calc import relative_magnitude, _get_signal_and_noise, _get_pick_for_station
-    from toolbox import reader, prepare_catalog_stream
+    from eqcorrscan.utils.mag_calc import relative_magnitude
+    from toolbox import prepare_catalog_stream
     from obspy import Catalog
     from obspy.core.event import Magnitude
 
     # Derive template names from tribe
     template_names = [template.name for template in tribe]
 
+    # Initialize output catalog
+    catalog_out = Catalog()
+
     # Loop through events in target catalog
-    for i, target_event in enumerate(catalog):
+    for i, target_event in enumerate(catalog_in):
 
         # Print progress
-        print('Now at event %d of %d in catalog.' % (i+1,len(catalog)))
+        print('Now at event %d of %d in catalog.' % (i+1,len(catalog_in)))
+
+        # Do a check on detection threshold. Skip events that record an av_chan_corr < min_cc
+        # This makes sure that there are enough picks to compute relative magnitude
+        av_chan_corr = float(target_event.comments[2].text.split('=')[1]) / len(target_event.picks)
+        if av_chan_corr < min_cc:
+            print('Skipping event %s. av_chan_corr is %.2f, lower than min_cc %.2f.' % (target_event.resource_id.id, av_chan_corr, min_cc))
+            continue
 
         # Obtain template event
         template_index = template_names.index(target_event.comments[0].text.split(' ')[1])
@@ -895,46 +906,59 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
         template_st = template_st.filter(type='bandpass', freqmin=1, freqmax=10, corners=4)
         template_st = template_st.merge()
 
-        # Calculate magnitude differences weighted by cc
+        # Calculate magnitude differences determined by each channel
         delta_mags, ccs = relative_magnitude(target_st, template_st, target_event, template_event,
                                              noise_window=noise_window, signal_window=signal_window,
-                                             min_snr=min_snr, min_cc=min_cc, use_s_picks=False, correlations=None,
+                                             min_snr=2, min_cc=min_cc, use_s_picks=False, correlations=None,
                                              shift=shift_len, return_correlations=True, correct_mag_bias=True)
 
-        # Now calculate target magnitude
+        # If the SNR window fails to record above min_snr, we skip the event
+        # It is likely that there is a larger event preceding it in the noise window
+        # The magnitude estimation will therefore be inaccurate
+        if len(delta_mags) == 0:
+            print('Skipping event %s. No channels record above min_snr.' % (target_event.resource_id.id))
+            continue
+
+        # Now calculate target event's magnitude
+        # Weight each channel's delta_mag by cc so that well correlated channels hold higher weight in mag change
         delta_mag_values = [delta_mag[1] for delta_mag in delta_mags.items()]
         cc_values = [cc[1] for cc in ccs.items() if (cc[1] > min_cc)]
-        original_mag = template_event.preferred_magnitude().mag
-        if delta_mag_values == []:
-            print('No channels register a cc value above min_cc. Double-check.')
-            continue
-        else:
-            try:
-                target_mag = original_mag + np.sum(delta_mag_values) / np.sum(cc_values)
-            except ValueError:
-                print('There exists a nan value in delta_mag_values or cc_values.')
-                print('delta_mag_values:')
-                print(delta_mag_values)
-                print('cc_values:')
-                print(cc_values)
-                target_mag = original_mag + np.nansum(delta_mag_values) / np.nansum(cc_values)
+        try:
+            original_mag = template_event.preferred_magnitude().mag
+        except:
+            original_mag = template_event.magnitudes[0].mag
+        target_mag = original_mag + np.dot(delta_mag_values, cc_values) / np.sum(cc_values)
 
-        # Add target magnitude into input catalog
-        target_event.magnitudes.append(Magnitude(mag=target_mag))
+        # Add target magnitude into event and append to output catalog
+        catalog_out += target_event
+        catalog_out[-1].magnitudes.append(Magnitude(mag=target_mag))
 
     # Return catalog
-    return catalog
+    return catalog_out
 
-def trim_around_picks(st,event):
+# [trim_around_picks] use event information to trim the picks
+# Uses template events in PEC as reference magnitudes for relocatable catalog
+def trim_around_picks(st,event,prepick,length):
 
+    # Obtain list of pick waveform ids from event
     pick_ids = []
     for pick in event.picks:
-        pick_id = pick.waveform_id.network_code + '.' + pick.waveform_id.station_code + \
-        '.' + pick.waveform_id.location_code + '.' + pick.waveform_id.channel_code
+        pick_id = pick.waveform_id.network_code + '.' + pick.waveform_id.station_code + '.' + pick.waveform_id.channel_code
         pick_ids.append(pick_id)
 
+    # Duplicate input stream for trimming
     st_out = st.copy()
 
+    # Loop through traces
     for i in range(len(st_out)):
 
-        st_out[i].trim(starttime=)
+        # Obtain corresponding pick
+        waveform_id_chunks = st_out[i].id.split('.')
+        waveform_id_chunks.remove(waveform_id_chunks[2])
+        waveform_id = '.'.join(waveform_id_chunks)
+        pick = event.picks[pick_ids.index(waveform_id)]
+
+        # Trim based on pick time, prepick and length
+        st_out[i].trim(starttime=(pick.time-prepick),endtime=(pick.time-prepick+length))
+
+    return st_out

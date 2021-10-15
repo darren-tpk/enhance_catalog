@@ -25,7 +25,7 @@ NWSE_profile_filename = elev_profile_dir + 'nw_se_profile_MM.csv'
 PEC_events_dir = main_dir + 'data/ncedc/'
 cores_filename = main_dir + 'output/mammoth2/convert_redpy/core_catalog_picked.xml'
 unmatched_PEC_events_filepath = main_dir + 'output/mammoth2/convert_redpy/unmatched_PEC_events.xml'
-relocated_catalog_filepath = main_dir + 'output/mammoth2/relocate_catalog/relocated_catalog_plot.xml'
+relocated_catalog_filepath = main_dir + 'output/mammoth2/relocate_catalog/relocated_catalog_mag.xml'
 plot_output_dir = main_dir + 'output/mammoth2/relocate_catalog/'
 VOLC_LAT = 37.631
 VOLC_LON = -119.032
@@ -39,6 +39,7 @@ REGION_CLEAN[3] = REGION_CLEAN[3] + 0.0125
 REGION_SWNE = [0, 20, -5, MAX_DEPTH]
 REGION_NWSE = [0, 20, -5, MAX_DEPTH]
 START_TIME = UTCDateTime(2012,10,1,0,0,0)  # reference time for "days" colorbar
+size_by_magnitude = True
 plot_temporal = True
 plot_FI = True
 migration_track = True
@@ -89,13 +90,14 @@ elif catalog == relocated_catalog:
     plot_title = '+t\"Relocated Catalog (N=%d)\"' % len(catalog)
     save_filepath = plot_output_dir + 'relocated_catalog_N' + str(len(relocated_catalog)) + '.jpg'
 
-# Extract hypocenter, time and FI information
+# Extract hypocenter, time, magnitude and FI information
 latitudes = np.array([event.origins[0].latitude for event in catalog])
 longitudes = np.array([event.origins[0].longitude for event in catalog])
 depths = np.array([event.origins[0].depth for event in catalog]) / 1000  # km
 utctimes = np.array([event.origins[0].time for event in catalog])
 times = np.array([np.datetime64(event.origins[0].time) for event in catalog])
 days = ((utctimes - START_TIME) / 86400).astype(int)
+magnitudes = np.array([event.magnitudes[0].mag for event in catalog])
 if plot_FI:
     FI_values = []
     for event in catalog:
@@ -112,7 +114,26 @@ longitudes = longitudes[valid_index]
 depths = depths[valid_index]
 times = times[valid_index]
 days = days[valid_index]
+magnitudes = magnitudes[valid_index]
 FI_values = FI_values[valid_index]
+
+# Normalize the magnitudes based on reasonable size values:
+if size_by_magnitude:
+    # # Sanity check via histogram
+    # _ = plt.hist(magnitudes, bins='auto')  # arguments are passed to np.histogram
+    # plt.title("Histogram with 'auto' bins")
+    # plt.show()
+    sizes = []
+    min_mag_marker = 0
+    for magnitude in magnitudes:
+        if magnitude < min_mag_marker:
+            size = 0.06
+        else:
+            normalized_magnitude = (magnitude - np.min(min_mag_marker))/np.ptp(magnitudes[magnitudes > min_mag_marker])
+            size = 0.06 + normalized_magnitude*0.14
+        sizes.append(size)
+    sizes = np.array(sizes)
+    # This is only valid from the current spread of magnitudes
 
 # Prepare cross-section data for SW-NE cross section
 SW = [37.55, -119.15]
@@ -166,9 +187,22 @@ if plot_temporal:
 
         # Plot earthquakes
         pygmt.makecpt(cmap="viridis", series="2012-10-01T/2013-02-01T/1d")
-        fig.plot(x=longitudes, y=latitudes, color=times, cmap=True, style="c0.07c", pen="black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=longitudes, y=latitudes, color=times, cmap=True, size=sizes, style="c", pen="black", transparency=20)
+        else:
+            fig.plot(x=longitudes, y=latitudes, color=times, cmap=True, style="c0.07c", pen="black", transparency=20)
         with pygmt.config(FONT_ANNOT_PRIMARY="7p,Helvetica,black"):
             fig.colorbar(position="JBL+o-8.5c/0.5c+w8.5c/0.4c+h",frame="xa1Of")
+
+        # # Plot size indicator if sizing by mag:
+        if size_by_magnitude:
+            fig.plot(x=-119.195, y=37.553, style="r1.8/0.8", color="white", pen="0p", transparency=25)
+            fig.plot(x=-119.21, y=37.55, color='gray', style="c0.06c", pen="black")
+            fig.plot(x=-119.195, y=37.55, color='gray', style="c0.13c", pen="black")
+            fig.plot(x=-119.18, y=37.55, color='gray', style="c0.20c", pen="black")
+            fig.text(x=-119.21, y=37.555, text="M0", justify="CB", font="9p,black")
+            fig.text(x=-119.195, y=37.555, text="M1", justify="CB", font="9p,black")
+            fig.text(x=-119.18, y=37.555, text="M2", justify="CB", font="9p,black")
 
         # Plot cross-section indicators
         fig.plot(x=SWNE_x, y=SWNE_y, pen="0.9p,black,-", transparency=40)
@@ -201,7 +235,10 @@ if plot_temporal:
 
         # Plot earthquakes
         pygmt.makecpt(cmap="viridis", series="2012-10-01T/2013-02-01T/1d")
-        fig.plot(x=SWNE_down_distances, y=depths, style="c0.07c", color=times, cmap=True, pen="black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=SWNE_down_distances, y=depths, size=sizes, style="c", color=times, cmap=True, pen="black", transparency=20)
+        else:
+            fig.plot(x=SWNE_down_distances, y=depths, style="c0.07c", color=times, cmap=True, pen="black", transparency=20)
 
         # Plot shallow-deep separator
         fig.plot(x=[0, 20], y=[8, 8], pen="1p,black,-")
@@ -233,7 +270,10 @@ if plot_temporal:
 
         # Plot earthquakes
         pygmt.makecpt(cmap="viridis", series="2012-10-01T/2013-02-01T/1d")
-        fig.plot(x=NWSE_down_distances, y=depths, style="c0.07c", color=times, cmap=True, pen="black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=NWSE_down_distances, y=depths, size=sizes, style="c", color=times, cmap=True, pen="black", transparency=20)
+        else:
+            fig.plot(x=NWSE_down_distances, y=depths, style="c0.07c", color=times, cmap=True, pen="black", transparency=20)
 
         # Plot shallow-deep separator
         fig.plot(x=[0, 20], y=[8, 8], pen="1p,black,-")
@@ -287,11 +327,27 @@ if plot_FI:
         fig.grdimage(grid=grid, shading=True, cmap="geo", transparency=40)
 
         # Plot earthquakes
-        fig.plot(x=longitudes[invalid_FI_index], y=latitudes[invalid_FI_index], color="darkgray", cmap=False, style="x0.12c", pen="0.7p,black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=longitudes[invalid_FI_index], y=latitudes[invalid_FI_index], size=sizes[invalid_FI_index], color="darkgray", cmap=False, style="x", pen="0.7p,black", transparency=20)
+        else:
+            fig.plot(x=longitudes[invalid_FI_index], y=latitudes[invalid_FI_index], color="darkgray", cmap=False, style="x0.12c", pen="0.7p,black", transparency=20)
         #pygmt.makecpt(cmap="seis", color_model="+cLF,Hybrid,HF", series=(0,2,1))
         pygmt.makecpt(cmap="polar", reverse=False, series=[-1.00, 0.5])
-        fig.plot(x=longitudes[valid_FI_index], y=latitudes[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c0.07c", pen="black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=longitudes[valid_FI_index], y=latitudes[valid_FI_index], size=sizes[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c", pen="black", transparency=20)
+        else:
+            fig.plot(x=longitudes[valid_FI_index], y=latitudes[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c0.07c", pen="black", transparency=20)
         fig.colorbar(position="JBL+o-8.5c/0.5c+w8.5c/0.4c+h", frame='xa0.25f+l"Frequency Index"')
+
+        # # Plot size indicator if sizing by mag:
+        if size_by_magnitude:
+            fig.plot(x=-119.195, y=37.553, style="r1.8/0.8", color="white", pen="0p", transparency=25)
+            fig.plot(x=-119.21, y=37.55, color='gray', style="c0.06c", pen="black")
+            fig.plot(x=-119.195, y=37.55, color='gray', style="c0.13c", pen="black")
+            fig.plot(x=-119.18, y=37.55, color='gray', style="c0.20c", pen="black")
+            fig.text(x=-119.21, y=37.555, text="M0", justify="CB", font="9p,black")
+            fig.text(x=-119.195, y=37.555, text="M1", justify="CB", font="9p,black")
+            fig.text(x=-119.18, y=37.555, text="M2", justify="CB", font="9p,black")
 
         # Plot cross-section indicators
         fig.plot(x=SWNE_x, y=SWNE_y, pen="0.9p,black,-", transparency=40)
@@ -323,9 +379,15 @@ if plot_FI:
             fig.plot(data=data, style="r", color="gray90", pen="1p,gray90")
 
         # Plot earthquakes
-        fig.plot(x=SWNE_down_distances[invalid_FI_index], y=depths[invalid_FI_index], color="darkgray", cmap=False, style="x0.12c", pen="0.7p,black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=SWNE_down_distances[invalid_FI_index], y=depths[invalid_FI_index], size=sizes[invalid_FI_index], color="darkgray", cmap=False, style="x", pen="0.7p,black", transparency=20)
+        else:
+            fig.plot(x=SWNE_down_distances[invalid_FI_index], y=depths[invalid_FI_index], color="darkgray", cmap=False, style="x0.12c", pen="0.7p,black", transparency=20)
         pygmt.makecpt(cmap="polar", reverse=False, series=[-1.00,0.5])
-        fig.plot(x=SWNE_down_distances[valid_FI_index], y=depths[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c0.07c", pen="black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=SWNE_down_distances[valid_FI_index], y=depths[valid_FI_index], size=sizes[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c", pen="black", transparency=20)
+        else:
+            fig.plot(x=SWNE_down_distances[valid_FI_index], y=depths[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c0.07c", pen="black", transparency=20)
 
         # Plot shallow-deep separator
         fig.plot(x=[0, 20], y=[8, 8], pen="1p,black,-")
@@ -356,9 +418,15 @@ if plot_FI:
             fig.plot(data=data, style="r", color="gray90", pen="1p,gray90")
 
         # Plot earthquakes
-        fig.plot(x=NWSE_down_distances[invalid_FI_index], y=depths[invalid_FI_index], color="darkgray", cmap=False, style="x0.12c", pen="0.7p,black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=NWSE_down_distances[invalid_FI_index], y=depths[invalid_FI_index], size=sizes[invalid_FI_index], color="darkgray", cmap=False, style="x", pen="0.7p,black", transparency=20)
+        else:
+            fig.plot(x=NWSE_down_distances[invalid_FI_index], y=depths[invalid_FI_index], color="darkgray", cmap=False, style="x0.12c", pen="0.7p,black", transparency=20)
         pygmt.makecpt(cmap="polar", reverse=False, series=[-1.00,0.5])
-        fig.plot(x=NWSE_down_distances[valid_FI_index], y=depths[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c0.07c", pen="black", transparency=20)
+        if size_by_magnitude:
+            fig.plot(x=NWSE_down_distances[valid_FI_index], y=depths[valid_FI_index], size=sizes[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c", pen="black", transparency=20)
+        else:
+            fig.plot(x=NWSE_down_distances[valid_FI_index], y=depths[valid_FI_index], color=FI_values[valid_FI_index], cmap=True, style="c0.07c", pen="black", transparency=20)
 
         # Plot shallow-deep separator
         fig.plot(x=[0, 20], y=[8, 8], pen="1p,black,-")
@@ -371,7 +439,7 @@ if plot_FI:
         fig.text(x=19.5, y=-4.5, text="D", justify="RT", font="13p,black")
 
     fig.show(method="external")
-    fig.savefig(plot_output_dir + 'relocated_catalog_FI_OMMB.jpg')
+    fig.savefig(plot_output_dir + 'relocated_catalog_FI.jpg')
 
 #%% Plot hypocenters using distance along A-B as coloration
 if migration_track:

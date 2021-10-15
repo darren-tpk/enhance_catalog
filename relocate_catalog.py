@@ -27,9 +27,9 @@ output_dir = main_dir + 'output/mammoth2/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
-relocatable_catalog_filename = 'relocatable_catalog.xml'
+relocatable_catalog_filename = 'relocatable_catalog_mag.xml'
 relocate_catalog_output_dir = '/Users/darrentpk/Desktop/OUTPUT/'  # '/home/ptan/enhance_catalog/output/mammoth2/relocate_catalog/'
-relocated_catalog_filename = 'relocated_catalog.xml'
+relocated_catalog_filename = 'relocated_catalog_mag.xml'
 raw_station_list_dir = main_dir + 'data/stations/'
 raw_station_list_filename = 'mammoth_station_list.csv'
 raw_vzmodel_dir = main_dir + 'data/vz/'
@@ -266,7 +266,7 @@ for output_file in ['out.growclust_boot', 'out.growclust_cat', 'out.growclust_cl
         print('Output file %s already exists.' % output_file)
 
 # Copy dt.cc file to its appropriate directory and rename
-original_dt_dir = os.getcwd() + '/master_dt75.cc'
+original_dt_dir = os.getcwd() + '/master_dt.cc'
 target_dt_dir = xcordata_filename
 shutil.copyfile(original_dt_dir, target_dt_dir)
 
@@ -366,7 +366,8 @@ relocated_catalog = Catalog()
 for i in range(len(relocated_event_table)):
     time = UTCDateTime(relocated_event_table.yr[i],relocated_event_table.mon[i],relocated_event_table.day[i],relocated_event_table.hr[i],relocated_event_table.mm[i],relocated_event_table.sec[i])
     FI_comment = catalog[i].comments[-1]
-    event = Event(comments=[FI_comment],origins=[Origin(time=time,latitude=relocated_event_table.lat[i],longitude=relocated_event_table.lon[i],depth=relocated_event_table.dep[i]*1000)])
+    magnitude = catalog[i].magnitudes[-1]
+    event = Event(origins=[Origin(time=time,latitude=relocated_event_table.lat[i],longitude=relocated_event_table.lon[i],depth=relocated_event_table.dep[i]*1000)],comments=[FI_comment],magnitudes=[magnitude])
     relocated_catalog += event
 writer(relocate_catalog_output_dir + relocated_catalog_filename, relocated_catalog)
 
