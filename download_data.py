@@ -3,6 +3,7 @@
 # This script downloads data from a chosen seismic network across a user-defined duration, using ObsPy's st.read() and st.write().
 
 # Import all dependencies
+import glob
 import time
 import pandas
 import numpy as np
@@ -12,10 +13,10 @@ from obspy.clients.fdsn import Client
 #%% Define variables
 
 # Define variables
-data_destination = '/home/ptan/enhance_catalog/data/mammoth/'
-start_time = UTCDateTime(2013,1,1,0,0,0)
-end_time = UTCDateTime(2013,2,1,0,0,0)
-station_list_filename = '/home/ptan/enhance_catalog/data/mammoth_stations3.csv'
+data_destination = '/home/data/redoubt/'
+start_time = UTCDateTime(2008,8,1,0,0,0)
+end_time = UTCDateTime(2009,9,1,0,0,0)
+station_list_filename = '/home/ptan/enhance_catalog/data/redoubt_stations.csv'
 
 
 #%% Define functions
@@ -40,46 +41,49 @@ for i in range(num_days):
     t2 = start_time + ((i + 1) * 86400)
     print('\nNow at %s...' % str(t1.date))
 
-    for j in range(len(station_list.Station)):
+    #for j in range(len(station_list.Station)):
+    j = 12
+    client = Client(station_list.Client[j])
+    station = station_list.Station[j]
+    network = station_list.Network[j]
+    channels = ['BHE', 'BHN', 'BHZ', 'SHE', 'SHN', 'SHZ', 'EHE', 'EHN', 'EHZ']
+        #[channel.strip() for channel in station_list.Channels[j].split(',')]
+    location = station_list.Location[j]
+    downloaded = station_list.Downloaded[j]
 
-        client = Client(station_list.Client[j])
-        station = station_list.Station[j]
-        network = station_list.Network[j]
-        channels = [channel.strip() for channel in station_list.Channels[j].split(',')]
-        location = station_list.Location[j]
-        downloaded = station_list.Downloaded[j]
+    # check if file already exists, or if it is already indicated as downloaded
+    seed_sample_filepath = data_destination + station + '.*.' + str(t1.year) + ':' + str(t1.julday) + ':*'
+    matching_data_files = glob.glob(seed_sample_filepath)
+    if len(matching_data_files) != 0 or downloaded == 'yes':
+        print('%s already has data files for %s, skipping.' % (station,t1.date))
+        continue
 
-        # check for ? in channel, and skip
+    for channel in channels:
 
-        if downloaded == 'yes':
+        # Get waveforms by querying client
+        try:
+            st = client.get_waveforms(network, station, location, channel, t1, t2)
+
+            # Save every trace separately
+            for tr in st:
+                # Craft the seed file name
+                trace_year = str(tr.stats.starttime.year)
+                trace_julday = str(tr.stats.starttime.julday)
+                trace_time = str(tr.stats.starttime.time)[0:8]
+                trace_datetime_str = ":".join([trace_year, str(trace_julday).zfill(3), trace_time])
+                seed_filename = station + '.' + channel + '.' + trace_datetime_str
+
+                # Write to seed file
+                seed_filepath = data_destination + seed_filename
+                tr.write(seed_filepath, format="MSEED")
+
+                # Print success
+                print('%s successfully saved.' % seed_filename)
+
+        # continue if waveform retrieval fails
+        except:
+            # print('%s.%s failed.' % (station,channel))
             continue
-
-        for channel in channels:
-
-            # Get waveforms by querying client
-            try:
-                st = client.get_waveforms(network, station, location, channel, t1, t2)
-
-                # Save every trace separately
-                for tr in st:
-                    # Craft the seed file name
-                    trace_year = str(tr.stats.starttime.year)
-                    trace_julday = str(tr.stats.starttime.julday)
-                    trace_time = str(tr.stats.starttime.time)[0:8]
-                    trace_datetime_str = ":".join([trace_year, str(trace_julday).zfill(3), trace_time])
-                    seed_filename = station + '.' + channel + '.' + trace_datetime_str
-
-                    # Write to seed file
-                    seed_filepath = data_destination + seed_filename
-                    tr.write(seed_filepath, format="MSEED")
-
-                    # Print success
-                    print('%s successfully saved.' % seed_filename)
-
-            # continue if waveform retrieval fails
-            except:
-                print('%s.%s failed.' % (station,channel))
-                continue
 
     # Print progression
     time_current = time.time()

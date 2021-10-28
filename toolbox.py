@@ -1,5 +1,43 @@
 #%% Toolbox of all functions
 
+#%% [download_catalog] function to download catalog along with its phase data using libcomcat
+def download_catalog(start_time,end_time,contributor,latitude,longitude,max_radius,max_depth,review_status='reviewed',verbose=False):
+
+    from libcomcat.search import search
+    import requests
+    from libcomcat.utils import HEADERS, TIMEOUT
+    from obspy.io.quakeml.core import Unpickler
+    from obspy import Catalog
+
+    # Pull earthquakes from libcomcat
+    earthquakes = search(starttime=start_time.datetime,
+                         endtime=end_time.datetime,
+                         contributor=contributor,
+                         latitude=latitude,
+                         longitude=longitude,
+                         maxradiuskm=max_radius,
+                         maxdepth=max_depth,
+                         reviewstatus=review_status)
+
+    print('Found %d earthquakes. Processing phases...' % (len(earthquakes)))
+
+    # Initialize catalog object to populate
+    catalog = Catalog()
+
+    # Loop over earthquakes to get phase products
+    for i,eq in enumerate(earthquakes):
+        if verbose:
+            print('Event #%d: %s' % (i+1,eq))
+        detail = eq.getDetailEvent()
+        phasedata = detail.getProducts('phase-data', source=str(eq)[0:2])[0]
+        quakeurl = phasedata.getContentURL('quakeml.xml')
+        response = requests.get(quakeurl, timeout=TIMEOUT, headers=HEADERS)
+        data = response.text.encode('utf-8')
+        unpickler = Unpickler()
+        catalog += unpickler.loads(data)
+
+    return catalog
+
 #%% [remove_boxcars] function to remove artificial boxcar-like signals from stream
 def remove_boxcars(st,tolerance):
 
@@ -857,12 +895,67 @@ def calculate_catalog_FI(catalog, data_dir, reference_station, reference_channel
     # Return catalog
     return catalog
 
+# [relative_magnitude] edited from eqcorrscan package
+
+def relative_magnitude(st1, st2, event1, event2, noise_window=(-20, -1),
+                       signal_window=(-.5, 20), min_snr=5.0, min_cc=0.7,
+                       use_s_picks=False, correlations=None, shift=.2,
+                       return_correlations=False, correct_mag_bias=True):
+
+    import math
+    from obspy.signal.cross_correlation import correlate
+    from eqcorrscan.utils.mag_calc import relative_amplitude, _get_pick_for_station
+
+    relative_magnitudes = {}
+    compute_correlations = False
+    if correlations is None:
+        correlations = {}
+        compute_correlations = True
+    relative_amplitudes, snrs_1, snrs_2 = relative_amplitude(
+        st1=st1, st2=st2, event1=event1, event2=event2,
+        noise_window=noise_window, signal_window=signal_window,
+        min_snr=min_snr, use_s_picks=use_s_picks)
+    for seed_id, amplitude_ratio in relative_amplitudes.items():
+        tr1 = st1.select(id=seed_id)[0]
+        tr2 = st2.select(id=seed_id)[0]
+        pick1 = _get_pick_for_station(
+            event=event1, station=tr1.stats.station, use_s_picks=use_s_picks)
+        pick2 = _get_pick_for_station(
+            event=event2, station=tr2.stats.station, use_s_picks=use_s_picks)
+        if compute_correlations:
+            cc = correlate(
+                tr1.slice(
+                    starttime=pick1.time + signal_window[0],
+                    endtime=pick1.time + signal_window[1]),
+                tr2.slice(
+                    starttime=pick2.time + signal_window[0],
+                    endtime=pick2.time + signal_window[1]),
+                shift=int(shift * tr1.stats.sampling_rate))
+            cc = abs(cc).max() #cc.max()
+            correlations.update({seed_id: cc})
+        else:
+            cc = correlations.get(seed_id, 0.0)
+        if cc < min_cc:
+            continue
+        snr_x = snrs_1[seed_id]
+        snr_y = snrs_2[seed_id]
+        if not correct_mag_bias:
+            cc = 1.0
+            snr_x = 1.0
+            snr_y = 1.0
+        # Correct for CC and SNR-bias and add to relative_magnitudes
+        # This is equation 10 from Schaff & Richards 2014:
+        rel_mag = math.log10(amplitude_ratio) + math.log10(math.sqrt( (1 + 1 / snr_y**2) / (1 + 1 / snr_x**2) ) * cc)
+        relative_magnitudes.update({seed_id: rel_mag})
+    if return_correlations:
+        return relative_magnitudes, correlations
+    return relative_magnitudes
 
 # [calculate_relative_magnitudes] function to calculate magnitudes using CC based on Schaff & Richards (2014)
 # Uses template events in PEC as reference magnitudes for relocatable catalog
 # This function rethresholds the detected catalog by min_cc while processing it
-def calculate_relative_magnitudes(catalog_in, tribe, data_dir, noise_window, signal_window, min_cc, min_snr,
-                                  shift_len, tolerance, resampling_frequency):
+def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal_window, min_cc, min_snr,
+                                  shift_len, tolerance, resampling_frequency, use_s_picks=False):
 
     # Import dependencies
     import numpy as np
@@ -870,6 +963,9 @@ def calculate_relative_magnitudes(catalog_in, tribe, data_dir, noise_window, sig
     from toolbox import prepare_catalog_stream
     from obspy import Catalog
     from obspy.core.event import Magnitude
+
+    # Copy catalog so we don't mess with input
+    catalog_in = catalog.copy()
 
     # Derive template names from tribe
     template_names = [template.name for template in tribe]
@@ -892,7 +988,18 @@ def calculate_relative_magnitudes(catalog_in, tribe, data_dir, noise_window, sig
 
         # Obtain template event
         template_index = template_names.index(target_event.comments[0].text.split(' ')[1])
-        template_event = tribe[template_index].event
+        template_event = tribe[template_index].event.copy()
+
+        # Remove S picks for maximum reliability in magnitude calculation
+        # Note that the "use_s_picks" argument in relative_magnitude() is buggy
+        # We remove the S picks in the copied events before using the function to enforce this
+        if not use_s_picks:
+            for pick in target_event.picks:
+                if pick.phase_hint == 'S':
+                    target_event.picks.remove(pick)
+            for pick in template_event.picks:
+                if pick.phase_hint == 'S':
+                    template_event.picks.remove(pick)
 
         # Obtain day-long streams for both the target event and the template event. (Also detrend and filter)
         target_st = prepare_catalog_stream(data_dir, Catalog() + target_event, resampling_frequency, tolerance)
@@ -909,7 +1016,7 @@ def calculate_relative_magnitudes(catalog_in, tribe, data_dir, noise_window, sig
         # Calculate magnitude differences determined by each channel
         delta_mags, ccs = relative_magnitude(target_st, template_st, target_event, template_event,
                                              noise_window=noise_window, signal_window=signal_window,
-                                             min_snr=2, min_cc=min_cc, use_s_picks=False, correlations=None,
+                                             min_snr=2, min_cc=min_cc, use_s_picks=use_s_picks, correlations=None,
                                              shift=shift_len, return_correlations=True, correct_mag_bias=True)
 
         # If the SNR window fails to record above min_snr, we skip the event

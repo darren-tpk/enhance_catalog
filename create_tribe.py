@@ -11,16 +11,16 @@ import numpy as np
 from obspy import UTCDateTime, Catalog, Stream
 from obspy.clients.fdsn import Client
 from eqcorrscan.core.match_filter.tribe import Tribe
-from toolbox import get_local_stations, prepare_catalog_stream, reader, writer
+from toolbox import download_catalog, get_local_stations, prepare_catalog_stream, reader, writer
 
 #%% Define variables
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
-output_dir = main_dir + 'output/mammoth2/'
+data_dir = '/home/data/redoubt/'
+output_dir = main_dir + 'output/redoubt2/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
-# sitelist_dir = main_dir + 'data/avo/'
+sitelist_dir = main_dir + 'data/avo/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
@@ -34,10 +34,10 @@ filt_order = 4             # number of corners for filter
 prepick = 1.0              # pre-pick time (s), Wech et al. (2018) chose 5s
 process_len = 86400        # length to process data in (s)
 min_snr = 2                # minimum SNR, Jeremy's recommendation was 5.0 (same as EQcorrscan tutorial)
-# local_volcano = 'great sitkin'  # for get_local_stations function, since we only take picks from stations near Redoubt
-# local_radius = 25          # for get_local_stations function; radius around volcano to accept stations
+local_volcano = 'redoubt'  # for get_local_stations function, since we only take picks from stations near Redoubt
+local_radius = 25          # for get_local_stations function; radius around volcano to accept stations
 local = True               # if set to True, use data from local machine
-client_name = 'NCEDC'        # client name for back-up or non-local data query
+client_name = 'IRIS'        # client name for back-up or non-local data query
 
 #%% Define functions
 

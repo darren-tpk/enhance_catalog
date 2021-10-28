@@ -24,10 +24,10 @@ from toolbox import read_trace, writer
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/ptan/enhance_catalog/data/mammoth/'  # redoubt data directory on local
-output_dir = main_dir + 'output/mammoth2/'
+data_dir = '/home/data/redoubt/'  # redoubt data directory on local
+output_dir = main_dir + 'output/redoubt2/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
-redpy_results_dir = main_dir + 'redpy_results/mammoth2/'
+redpy_results_dir = main_dir + 'redpy_results/redoubt2/'
 PEC_dir = main_dir + 'data/ncedc/'
 hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
 hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'

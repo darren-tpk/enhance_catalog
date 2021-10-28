@@ -115,7 +115,8 @@ depths = depths[valid_index]
 times = times[valid_index]
 days = days[valid_index]
 magnitudes = magnitudes[valid_index]
-FI_values = FI_values[valid_index]
+if plot_FI:
+    FI_values = FI_values[valid_index]
 
 # Normalize the magnitudes based on reasonable size values:
 if size_by_magnitude:
