@@ -50,15 +50,16 @@ core_catalog_picked = reader(convert_redpy_output_dir + 'core_catalog_picked.xml
 unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events.xml')
 catalog = core_catalog_picked + unmatched_PEC_events
 
-# For Mammoth only, we only include picks from our hand-picked stations
-mammoth_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11','MQ1P','MMS','MCY','MDY','MLI','MGPB','MLK','MEM','MDR','MMLB','MCB','MLAC']
+# We only include picks from our hand-picked stations
+#mammoth_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11','MQ1P','MMS','MCY','MDY','MLI','MGPB','MLK','MEM','MDR','MMLB','MCB','MLAC']
+redoubt_station_list = ['DFR','NCT','RDDF','RDDR','RDE','RDJH','RDN','RDSO','RDT','RDW','RDWB','RED','REF','RSO','RD01','RD02','RD03']
 
 catalog_out = Catalog()
 for event in catalog:
     catalog_out.append(event.copy())
     catalog_out[-1].picks = []
     for pick in event.picks:
-        if pick.waveform_id.station_code in mammoth_station_list:
+        if pick.waveform_id.station_code in redoubt_station_list:
             catalog_out[-1].picks.append(pick)
 catalog = catalog_out
 

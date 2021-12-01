@@ -1,0 +1,15 @@
+Client,Station,Network,Channels,Location,Latitude,Longitude,Used by Dane in his paper,Used in REDPy,N(picks) in 13 month AVO catalog,Use in EQcorrscan
+IRIS,RDN,AV,EHZ,--,60.5224,-152.7401,Yes,Yes,81,yes
+IRIS,REF,AV,"BHE, BHN, BHZ, SHE, SHN, SHZ, EHE, EHN, EHZ, ELZ",--,60.4888,-152.694,Yes,Yes,236,yes
+IRIS,RSO,AV,EHZ,--,60.4616,-152.756,Yes,Yes,48,yes
+IRIS,DFR,AV,"EHZ, EH4",--,60.5913,-152.6882,Yes,No,151,yes
+IRIS,NCT,AV,"EHZ, EH4",--,60.5621,-152.9293,Yes,No,136,yes
+IRIS,RDDF,AV,"BHE, BHN, BHZ",--,60.5912,-152.6883,No,No,0,yes
+IRIS,RDDR,AV,EHZ,--,60.5843,-152.5887,No,No,1,yes
+IRIS,RDE,AV,EHZ,--,60.5869,-152.5925,Yes,No,105,yes
+IRIS,RDJH,AV,"BHE, BHN, BHZ",--,60.5905,-152.8058,Yes,No,48,yes
+IRIS,RDSO,AV,"BHE, BHN, BHZ",--,60.4536,-152.743,No,No,0,yes
+IRIS,RDT,AV,"EHZ, BHE, BHN, BHZ",--,60.5726,-152.4075,Yes,No,34,yes
+IRIS,RDW,AV,"BHE, BHN, BHZ",--,60.5208,-152.7376,Yes,No,0,yes
+IRIS,RDWB,AV,"BHE, BHN, BHZ",--,60.4875,-152.8425,Yes,No,207,yes
+IRIS,RED,AV,"EHE, EHN, EHZ, BHE, BHN, BHZ",--,60.4196,-152.7742,Yes,No,152,yes

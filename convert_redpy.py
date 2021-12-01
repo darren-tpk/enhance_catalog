@@ -28,15 +28,19 @@ data_dir = '/home/data/redoubt/'  # redoubt data directory on local
 output_dir = main_dir + 'output/redoubt2/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 redpy_results_dir = main_dir + 'redpy_results/redoubt2/'
-PEC_dir = main_dir + 'data/ncedc/'
-hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
-hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'
+PEC_dir = main_dir + 'data/avo/'
+hypoi_file = 'redoubt_20080501_20090901_hypoi.txt'
+hypoddpha_file = 'redoubt_20080501_20090901_hypoddpha.txt'
 max_dt = 4  # maximum time difference between REDPy detections and AVO events allowed, in seconds
 adopt_weight = 0.1  # phase weight for adopted picks
-redpy_network_list = ['NC','NC','NN','NC','NC','NC','NC','NC','NC','8E','8E','8E','8E','8E','8E','8E','8E','8E','8E','NC','NC','NC','NC','NC','NC','NC','NC','NC','NC','NC','CI']
-redpy_station_list = ['MINS','MDPB','OMMB','MRD','MDC','MCM','MMP','MLC','MCV','MB01','MB02','MB03','MB05','MB06','MB07','MB08','MB09','MB10','MB11','MQ1P','MMS','MCY','MDY','MLI','MGPB','MLK','MEM','MDR','MMLB','MCB','MLAC']
-redpy_channel_list = [['HHZ'],['HHZ'],['HHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['HHZ'],['EHZ'],['EHZ'],['EHZ'],['HHZ'],['HHZ'],['EHZ'],['EHZ'],['EHZ'],['EHZ'],['HHZ'],['HHZ'],['HHZ']]
-redpy_location_list = ['--','--','--','02','02','02','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','--','02','--','--','--']
+redpy_network_list = ['AV','AV','AV']
+redpy_station_list = ['RDN','REF','RSO']
+redpy_channel_list = [['EHZ'],['EHZ'],['EHZ']]
+redpy_location_list = ['--','--','--']
+campaign_network_list = ['AV','AV','AV']
+campaign_station_list = ['RD01','RD02','RD03','RDW']
+campaign_channel_list = [['BHZ'],['BHZ'],['BHZ'],['BHZ']]
+campaign_location_list = ['--','--','--']
 tolerance = 4e4  # tolerance for boxcar removal from data (as a factor to median)
 local = True
 client_name = None # IRIS/NCEDC
@@ -106,7 +110,7 @@ for output_subdir in output_subdirs:
 print('All output subdirectories created.')
 
 # Initialize catalog object and lists before commencing loop
-redpy_catalog = Catalog()  # empty catalog to populate\
+redpy_catalog = Catalog()  # empty catalog to populate
 associated_cluster_list = []  # store unique cluster numbers that have associated catalog events
 unmatched_indices = list(range(len(PEC_events)))  # list of avo event indices. matched indices are removed
 
@@ -268,9 +272,9 @@ for unassociated_cluster in unassociated_clusters:
 
         # Remove some stations if necessary
         redpy_stations = redpy_station_list
-        # # REMOVE RSO AFTER FIRST EXPLOSION [HARD CODED]
-        # if UTCDateTime(2009, 3, 24, 0, 0, 0) < starttime < UTCDateTime(2009, 4, 16, 0, 0, 0):
-        #     redpy_stations = ['RDN', 'REF']
+        # REMOVE RSO AFTER FIRST EXPLOSION [HARD CODED]
+        if UTCDateTime(2009, 3, 24, 0, 0, 0) < starttime < UTCDateTime(2009, 4, 16, 0, 0, 0):
+            redpy_stations = ['RDN', 'REF']
 
         # Gather data from local machine in a +/- 12s window, filter, and taper
         stream = Stream()
@@ -356,29 +360,29 @@ if add_pick_to_associated:
         # Loop through these unassociated detections to add picks
         for contribution_index in contribution_list:
 
-            # Determine time difference to offset pick times
+            # Extract contribution time
             contribution_time = redpy_catalog[contribution_index].origins[0].time
+            # if the contribution is from before the campaign was installed, we skip the pick-adding for the event
+            if contribution_time < UTCDateTime(2009,3,21):
+                continue
 
             # Retrieve time limits for data fetch (+/- 12s window)
             starttime = contribution_time - 12
             endtime = contribution_time + 12
 
             # Remove stations if necessary
-            redpy_stations = redpy_station_list
-            # # REMOVE RSO AFTER FIRST EXPLOSION [HARD CODED]
-            # if UTCDateTime(2009, 3, 24, 0, 0, 0) < starttime < UTCDateTime(2009, 4, 16, 0, 0, 0):
-            #     redpy_stations = ['RDN', 'REF']
+            campaign_stations = campaign_station_list
 
             # Gather data from local machine in a +/- 12s window, filter, and taper
             stream = Stream()
-            for k, redpy_station in enumerate(redpy_stations):
-                for redpy_channel in redpy_channel_list[k]:
+            for k, campaign_station in enumerate(campaign_stations):
+                for campaign_channel in campaign_channel_list[k]:
                     if local:
-                        station_tr = read_trace(data_dir=data_dir, station=redpy_station, channel=redpy_channel,
+                        station_tr = read_trace(data_dir=data_dir, station=campaign_station, channel=campaign_channel,
                                                 starttime=starttime, endtime=endtime, tolerance=tolerance)
                     else:
-                        station_tr = client.get_waveforms(redpy_network_list[k], redpy_station, redpy_location_list[k],
-                                                          redpy_channel, starttime, endtime)
+                        station_tr = client.get_waveforms(campaign_network_list[k], campaign_station, campaign_location_list[k],
+                                                          campaign_channel, starttime, endtime)
                     stream = stream + station_tr
             stream = stream.split()
             stream = stream.filter('bandpass', freqmin=1.0, freqmax=10.0, corners=2, zerophase=True)

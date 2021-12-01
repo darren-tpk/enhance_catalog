@@ -1,7 +1,7 @@
-#%% PLOT HYPOCENTERS
+#%% PLOT MAMMOTH
 
-# This script loads in a catalog of choice and plots the hypocenters in 3 panels
-# (a N-S cross section, an E-W cross section, and a top-down view of the hypocenters)
+# This script loads in a MM catalog of choice and plots the hypocenters in 3 panels
+# (a NW-SE cross section, a NE-SW cross section, and a top-down view of the hypocenters)
 # The user will have to specify and tweak lat and lon limits, and region settings
 # For detailed description of plotting syntax, refer to PyGMT documentation
 

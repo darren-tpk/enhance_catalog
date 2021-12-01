@@ -137,7 +137,7 @@ def remove_boxcars(st,tolerance):
     return st_out
 
 # [remove_bad_traces] function to remove traces with too many zeros
-def remove_bad_traces(st,max_zeros=100):
+def remove_bad_traces(st,max_zeros=100,npts_threshold=100):
 
     # Recommended value: max_zeros=100 for 50Hz daylong traces
 
@@ -147,7 +147,7 @@ def remove_bad_traces(st,max_zeros=100):
     # Check traces
     for tr in st:
         num_zeros = np.sum(tr.data.data==0)
-        if num_zeros > max_zeros:
+        if num_zeros > max_zeros or tr.stats.npts < npts_threshold:
             st.remove(tr)
 
     # Return filtered stream object
@@ -422,7 +422,12 @@ def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
     tr_merged = tr_unmerged.copy()
     tr_merged.trim(starttime=starttime, endtime=endtime)
     tr_merged = remove_boxcars(tr_merged, tolerance)
-    tr_merged.detrend("simple").merge()
+    tr_merged = tr_merged.detrend("simple")
+    try:
+        tr_merged.merge()
+    except:
+        tr_merged.resample(tr_merged[0].stats.sampling_rate)
+        tr_merged.merge()
 
     # Since a single station and channel is provided, the traces should merge into 1
     if len(tr_merged) == 0:
@@ -436,12 +441,12 @@ def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
     return output
 
 # [prepare_catalog_stream] function to read streams pertaining to an input catalog
-def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance):
+def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance,max_zeros=100,npts_threshold=100):
 
     # Import dependencies
     import glob
     from obspy import Stream, read
-    from toolbox import remove_boxcars
+    from toolbox import remove_boxcars, remove_bad_traces
 
     # Initialize list for all station channel data needed for the day's events
     data_filenames = []
@@ -497,10 +502,22 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance):
             except:
                 continue
 
+    # Remove bad traces:
+    stream = remove_bad_traces(stream,max_zeros=max_zeros,npts_threshold=npts_threshold)
+
     # Remove boxcar and spikes, resample and merge
     stream = remove_boxcars(stream, tolerance)
-    stream = stream.resample(resampling_frequency)
+    if resampling_frequency:
+        stream = stream.resample(resampling_frequency)
+    else:
+        for tr in stream:
+            sr = tr.stats.sampling_rate
+            if abs(100 - sr) < abs(50 - sr):
+                tr.resample(100)
+            else:
+                tr.resample(50)
     stream = stream.merge()
+
     # Return stream object
     return stream
 
@@ -537,7 +554,7 @@ def client_download(stream_in,source='IRIS'):
     return(stream_out)
 
 # [get_detection] get stream related to detection by downloading necessary streams
-def get_detection(detection,data_dir='/home/data/redoubt/',client_name='IRIS',length=10,resampling_frequency=50,tolerance=4e4,lowcut=1,highcut=10,plot=False):
+def get_detection(detection,data_dir='/home/data/redoubt/',client_name='IRIS',length=8,resampling_frequency=50,tolerance=4e4,lowcut=1,highcut=10,plot=False):
 
     # Import dependencies
     import glob
@@ -959,7 +976,8 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
 
     # Import dependencies
     import numpy as np
-    from eqcorrscan.utils.mag_calc import relative_magnitude
+    # from eqcorrscan.utils.mag_calc import relative_magnitude
+    from mag_calc_copy import relative_magnitude
     from toolbox import prepare_catalog_stream
     from obspy import Catalog
     from obspy.core.event import Magnitude
@@ -981,14 +999,26 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
 
         # Do a check on detection threshold. Skip events that record an av_chan_corr < min_cc
         # This makes sure that there are enough picks to compute relative magnitude
-        av_chan_corr = float(target_event.comments[2].text.split('=')[1]) / len(target_event.picks)
-        if av_chan_corr < min_cc:
-            print('Skipping event %s. av_chan_corr is %.2f, lower than min_cc %.2f.' % (target_event.resource_id.id, av_chan_corr, min_cc))
+        av_chan_corr = float(target_event.comments[2].text.split('=')[1]) / target_event.comments[3].text.count(')')
+        if abs(av_chan_corr) < min_cc:
+            print('Skipping event %s. abs(av_chan_corr) is %.2f, lower than min_cc %.2f.' % (target_event.resource_id.id, abs(av_chan_corr), min_cc))
             continue
 
         # Obtain template event
         template_index = template_names.index(target_event.comments[0].text.split(' ')[1])
         template_event = tribe[template_index].event.copy()
+
+        # If the detection value is very high, it is a self-detection. Give target event the same mag as template
+        if abs(av_chan_corr) > 0.999:
+            try:
+                original_mag = template_event.preferred_magnitude().mag
+            except:
+                original_mag = template_event.magnitudes[0].mag
+            target_mag = original_mag
+            # Add target magnitude into event and append to output catalog
+            catalog_out += target_event
+            catalog_out[-1].magnitudes.append(Magnitude(mag=target_mag))
+            continue
 
         # Remove S picks for maximum reliability in magnitude calculation
         # Note that the "use_s_picks" argument in relative_magnitude() is buggy
@@ -1028,8 +1058,11 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
 
         # Now calculate target event's magnitude
         # Weight each channel's delta_mag by cc so that well correlated channels hold higher weight in mag change
-        delta_mag_values = [delta_mag[1] for delta_mag in delta_mags.items()]
-        cc_values = [cc[1] for cc in ccs.items() if (cc[1] > min_cc)]
+        delta_mag_values = [delta_mag[1] for delta_mag in delta_mags.items() if not np.isnan(delta_mag[1])]
+        if len(delta_mag_values) == 0:
+            print('Skipping event %s. All calculated delta magnitudes are nan.' % (target_event.resource_id.id))
+            continue
+        cc_values = [cc[1] for cc in ccs.items() if (cc[1] > min_cc) and not np.isnan(cc[1])]
         try:
             original_mag = template_event.preferred_magnitude().mag
         except:

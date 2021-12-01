@@ -17,23 +17,23 @@ from phase_processing.read_hypoddpha import read_hypoddpha
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
-party_dir = main_dir + 'output/mammoth2/scan_data/'
+data_dir = '/home/data/redoubt/'
+party_dir = main_dir + 'output/redoubt2/scan_data/'
 party_filename = 'party.tgz'
-PEC_dir = main_dir + 'data/ncedc/'
-hypoi_file = 'mammoth_20121001_20130131_hypoi.txt'
-hypoddpha_file = 'mammoth_20121001_20130131_hypoddpha.txt'
+PEC_dir = main_dir + 'data/avo/'
+hypoi_file = 'redoubt_20080501_20090901_hypoi.txt'
+hypoddpha_file = 'redoubt_20080501_20090901_hypoddpha.txt'
 plot_hist = False
 plot_cumu = True
 plot_wave = True
 separate_wave = False
 thres_min = 0.60
 thres_max = 0.75
-thres_vec = np.linspace(thres_min,thres_max,4)
-num_days = 123
+thres_vec = np.linspace(thres_min,thres_max,7)
+num_days = 153
 
 # Define a base time for x-axis
-base_time = UTCDateTime(2012, 10, 1, 0, 0, 0)
+base_time = UTCDateTime(2008, 5, 1, 0, 0, 0)
 #base_time = UTCDateTime(2009, 1, 1, 0, 0, 0)
 
 # Define swarm start and swarm end hours for vertical dashed lines
@@ -46,11 +46,17 @@ swarm_times = []
                # (UTCDateTime(2009,5,2,21,0,0),UTCDateTime(2009,5,8,1,0,0)) May's swarm
 
 # Define tick marks over span of party
-tick_times = [UTCDateTime(2012, 10, 1), UTCDateTime(2012, 10, 15),
-              UTCDateTime(2012, 11, 1), UTCDateTime(2012, 11, 15),
-              UTCDateTime(2012, 12, 1), UTCDateTime(2012, 12, 15),
-              UTCDateTime(2013, 1, 1), UTCDateTime(2013, 1, 15),
-              UTCDateTime(2013, 2, 1)]
+tick_times = [UTCDateTime(2008, 5, 1), UTCDateTime(2008, 5, 15),
+              UTCDateTime(2008, 6, 1), UTCDateTime(2008, 6, 15),
+              UTCDateTime(2008, 7, 1), UTCDateTime(2008, 7, 15),
+              UTCDateTime(2008, 8, 1), UTCDateTime(2008, 8, 15),
+              UTCDateTime(2008, 9, 1), UTCDateTime(2008, 9, 15),
+              UTCDateTime(2008, 10, 1)]
+# tick_times = [UTCDateTime(2012, 10, 1), UTCDateTime(2012, 10, 15),
+#               UTCDateTime(2012, 11, 1), UTCDateTime(2012, 11, 15),
+#               UTCDateTime(2012, 12, 1), UTCDateTime(2012, 12, 15),
+#               UTCDateTime(2013, 1, 1), UTCDateTime(2013, 1, 15),
+#               UTCDateTime(2013, 2, 1)]
 # tick_times = [UTCDateTime(2009, 1, 1), UTCDateTime(2009, 1, 15),
 #               UTCDateTime(2009, 2, 1), UTCDateTime(2009, 2, 15),
 #               UTCDateTime(2009, 3, 1), UTCDateTime(2009, 3, 15),
@@ -112,15 +118,15 @@ if plot_cumu:
     PEC_events = read_hypoddpha(hypoi_path, hypoddpha_path, channel_convention=True)
     PEC_detect_time = [event.origins[0].time for event in PEC_events]
     PEC_detect_time = np.array(PEC_detect_time)
-    PEC_detect_hours = (PEC_detect_time - base_time) / 3600
+    PEC_detect_days = (PEC_detect_time - base_time) / 86400
 
     # Get cumulative numbers for plotting PEC
     PEC_detect_num = []
-    PEC_hours = []
-    for i in range(num_days * 24 + 1):
-        detect_num = sum(PEC_detect_hours <= i)
+    PEC_days = []
+    for i in range(num_days + 1):
+        detect_num = sum(PEC_detect_days <= i)
         PEC_detect_num.append(detect_num)
-        PEC_hours.append(i)
+        PEC_days.append(i)
 
     # Start plot
     fig, ax = plt.subplots(figsize=(9,6))
@@ -137,33 +143,33 @@ if plot_cumu:
 
         # Retrieve detection times to plot, and convert to hours
         plot_detect_time = all_detect_time[valid_bool]
-        plot_detect_hours = (plot_detect_time - base_time) / 3600
+        plot_detect_days = (plot_detect_time - base_time) / 86400
         plot_detect_num = []
-        plot_hours = []
+        plot_days = []
 
         # Get cumulative numbers for plotting
-        for i in range(num_days*24+1):
-            detect_num = sum(plot_detect_hours <= i)
+        for i in range(num_days+1):
+            detect_num = sum(plot_detect_days <= i)
             plot_detect_num.append(detect_num)
-            plot_hours.append(i)
+            plot_days.append(i)
 
         # Plot cumulative trend in a stepwise fashion
-        ax.step(plot_hours,plot_detect_num,label=str(thres))
+        ax.step(plot_days,plot_detect_num,label=str(thres))
 
     # Add PEC's cumulative trend in black
-    ax.step(PEC_hours,PEC_detect_num,color='k',linestyle='--',linewidth=2,label='Original NCEDC catalog')
+    ax.step(PEC_days,PEC_detect_num,color='k',linestyle='--',linewidth=2,label='Original NCEDC catalog')
 
     # Add vertical spans indicating swarms
     for swarm_time in swarm_times:
-        swarm_start_hour = (swarm_time[0] - base_time) / 3600
-        swarm_end_hour = (swarm_time[1] - base_time) / 3600
-        ax.axvspan(swarm_start_hour,swarm_end_hour,color='grey',alpha=0.5)
+        swarm_start_day = (swarm_time[0] - base_time) / 86400
+        swarm_end_day = (swarm_time[1] - base_time) / 86400
+        ax.axvspan(swarm_start_day,swarm_end_day,color='grey',alpha=0.5)
 
     # Tidy up plot
     ax.legend(title='Threshold',fontsize=12)
     ax.grid()
-    ax.set_xlim([0,24*num_days])
-    ax.set_xticks((np.array(tick_times) - base_time) / 3600)
+    ax.set_xlim([0,num_days])
+    ax.set_xticks((np.array(tick_times) - base_time) / 86400)
     ax.set_xticklabels([tick_time.strftime('%b %d') for tick_time in tick_times],rotation=30,ha='right')
     ax.set_ylabel('Number of detections',fontsize=15)
     ax.set_xlabel('UTC Time',fontsize=15)

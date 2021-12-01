@@ -10,7 +10,7 @@ import pickle
 import time
 import glob
 import numpy as np
-from eqcorrscan import Party, Tribe
+from eqcorrscan import Party, Tribe, Family
 from obspy import UTCDateTime, Stream, Catalog, read
 from obspy.clients.fdsn import Client
 from obspy.core.event import Origin
@@ -20,8 +20,8 @@ from toolbox import remove_boxcars, remove_bad_traces, calculate_catalog_FI, cal
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/ptan/enhance_catalog/data/mammoth/'
-output_dir = main_dir + 'output/mammoth2/'
+data_dir = '/home/data/redoubt/'
+output_dir = main_dir + 'output/redoubt2/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
@@ -32,8 +32,10 @@ relocatable_catalog_filename = 'relocatable_catalog.xml'
 repicked_catalog_filename = 'repicked_catalog.xml'
 min_stations = 3                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
-start_time = UTCDateTime(2012, 10, 1, 0, 0, 0)  # start: UTCDateTime(2009, 1, 1, 0, 0, 0)
-end_time = UTCDateTime(2013, 2, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 5, 1, 0, 0, 0)
+# start_time = UTCDateTime(2008, 10, 1, 0, 0, 0)  # start: UTCDateTime(2008, 5, 1, 0, 0, 0)
+# end_time = UTCDateTime(2009, 5, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 9, 1, 0, 0, 0)
+max_zeros = 100                                # maximum number of zeros allowed in daylong merged trace
+npts_threshold = 100                           # drop data chunks that are overly short / have too little samples
 samp_rate = 50                                 # to resample streams to match tribes
 tolerance = 4e4                                # for boxcar removal
 threshold_type = 'av_chan_corr'                # also consider 'MAD', Jeremy uses 12
@@ -43,11 +45,11 @@ trig_int = 8                                   # trigger interval for each templ
 parallel_process = 'True'                      # parallel process for speed
 generate_repicked_catalog = False              # option to use lag_calc to do catalog repicking
 local = True                                  # if set to True, use data from local machine
-client_name = 'NCEDC'                           # client name for non-local data query
+client_name = 'IRIS'                           # client name for non-local data query
 
 # Settings for FI calculation
-reference_station = 'MINS'
-reference_channel = 'HHZ'
+reference_station = 'REF'
+reference_channel = 'EHZ'
 prepick = 1.0  # s
 length = 8.0  # s
 filomin = 1  # Hz
@@ -59,7 +61,7 @@ fiupmax = 10   # Hz
 noise_window = (-20.0, -prepick)  # s
 signal_window = (-prepick, -prepick+length)  # s
 shift_len = 1.5  # s
-min_cc = 0.7
+min_cc = 0.6
 min_snr = 2
 
 #%% Define functions
@@ -140,173 +142,238 @@ if local:
 
 #%% Brute force scan: load each day's data and scan day-by-day
 
-# Initialize master party and calculate number of days to scan
-party_all = Party()
-num_days = int(np.floor((end_time - start_time) / 86400))
-time_start = time.time()
+# Loop over month long chunks
+time_list = [UTCDateTime(2008, 5, 1, 0, 0, 0),
+             UTCDateTime(2008, 5, 15, 0, 0, 0),
+             UTCDateTime(2008, 6, 1, 0, 0, 0),
+             UTCDateTime(2008, 6, 15, 0, 0, 0),
+             UTCDateTime(2008, 7, 1, 0, 0, 0),
+             UTCDateTime(2008, 7, 15, 0, 0, 0),
+             UTCDateTime(2008, 8, 1, 0, 0, 0),
+             UTCDateTime(2008, 8, 15, 0, 0, 0),
+             UTCDateTime(2008, 9, 1, 0, 0, 0),
+             UTCDateTime(2008, 9, 15, 0, 0, 0),
+             UTCDateTime(2008,10, 1, 0, 0, 0),
+             UTCDateTime(2008,10, 15, 0, 0, 0),
+             UTCDateTime(2008,11, 1, 0, 0, 0),
+             UTCDateTime(2008,11, 15, 0, 0, 0),
+             UTCDateTime(2008,12, 1, 0, 0, 0),
+             UTCDateTime(2008,12, 15, 0, 0, 0),
+             UTCDateTime(2009, 1, 1, 0, 0, 0),
+             UTCDateTime(2009, 1, 15, 0, 0, 0),
+             UTCDateTime(2009, 2, 1, 0, 0, 0),
+             UTCDateTime(2009, 2, 15, 0, 0, 0),
+             UTCDateTime(2009, 3, 1, 0, 0, 0),
+             UTCDateTime(2009, 3, 15, 0, 0, 0),
+             UTCDateTime(2009, 4, 1, 0, 0, 0),
+             UTCDateTime(2009, 4, 15, 0, 0, 0),
+             UTCDateTime(2009, 5, 1, 0, 0, 0)]
 
-# Commence loop over days
-for i in range(num_days):
+# Loop over time list and save in monthly chunks
+for k in range(len(time_list)-1):
 
-    # Define temporal boundaries of our day's scan
-    t1 = start_time + (i * 86400)
-    t2 = start_time + ((i + 1) * 86400)
-    print('\nNow at %s...' % str(t1))
+    # Define start and end time rather than at start of script
+    start_time = time_list[k]
+    end_time = time_list[k+1]
+    time_tag = '_%4d%02d%02d_%4d%02d%02d' % (start_time.year,start_time.month,start_time.day,end_time.year,end_time.month,end_time.day)
+    print('NOW PROCESSING TIME TAG: ' + time_tag[1:])
 
-    # If using local data, read in data and process stream before creating party
-    if local:
+    # Initialize master party and calculate number of days to scan
+    party_all = Party()
+    num_days = int(np.floor((end_time - start_time) / 86400))
+    time_start = time.time()
 
-        # Initialize stream object and fetch data from data_dir
-        stream = Stream()
+    # Commence loop over days
+    for i in range(num_days):
 
-        # Loop over data fileheads, using glob.glob to match data files we want in data_dir
-        for data_filehead in data_fileheads:
-            data_filename = data_filehead + str(t1.year) + ':' + f'{t1.julday :03}' + ':*'
-            matching_filenames = (glob.glob(data_filename))
+        # Define temporal boundaries of our day's scan
+        t1 = start_time + (i * 86400)
+        t2 = start_time + ((i + 1) * 86400)
+        print('\nNow at %s...' % str(t1))
 
-            # Try to read the miniseed data file and add it to the stream (occasionally fails)
-            for matching_filename in matching_filenames:
-                try:
-                    stream_contribution = read(matching_filename)
-                    stream = stream + stream_contribution
-                except:
-                    continue
+        # If using local data, read in data and process stream before creating party
+        if local:
 
-        # Process stream (remove spikes, downsample to match tribe, detrend)
-        stream = remove_boxcars(stream,tolerance)
-        stream = stream.resample(sampling_rate=samp_rate)
-        stream = stream.detrend("simple")
-        stream = stream.merge()
-        stream = remove_bad_traces(stream,max_zeros=100)
-        print('Stream despiked, resampled and merged. Getting party of detections...')
+            # Initialize stream object and fetch data from data_dir
+            stream = Stream()
 
-        # Attempt to scan the current day
-        try:
-            party = tribe.detect(
-                stream=stream, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int, daylong=True, overlap=None, parallel_process=True)
+            # Loop over data fileheads, using glob.glob to match data files we want in data_dir
+            for data_filehead in data_fileheads:
+                data_filename = data_filehead + str(t1.year) + ':' + f'{t1.julday :03}' + ':*'
+                matching_filenames = (glob.glob(data_filename))
 
-            # Append party to party_all
-            party_all = party_all + party
-            time_current = time.time()
-            print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+                # Try to read the miniseed data file and add it to the stream (occasionally fails)
+                for matching_filename in matching_filenames:
+                    try:
+                        stream_contribution = read(matching_filename)
+                        stream = stream + stream_contribution
+                    except:
+                        continue
 
-            # If generating a repicked catalog, we prep the stream differently for lag_calc
-            if generate_repicked_catalog:
+            # Remove bad traces (too many zeros or too little samples)
+            stream = remove_bad_traces(stream,max_zeros=max_zeros,npts_threshold=npts_threshold)
 
-                # Copy the party and stream, then re-merge the stream using method 1
-                party_calc = party.copy()
-                stream_calc = stream.copy()
-                stream_calc = stream_calc.split()
-                stream_calc = stream_calc.merge(method=1)
+            # Process stream (remove spikes, downsample to match tribe, detrend, merge)
+            stream = remove_boxcars(stream,tolerance)
+            stream = stream.resample(sampling_rate=samp_rate)
+            stream = stream.detrend("simple")
+            stream = stream.merge()
+            # Remove traces that are overly masked (i.e. more zeros than actual data points)
+            for tr in stream:
+                if len(np.nonzero(tr.data)[0]) < 0.5 * len(tr.data):
+                    stream.remove(tr)
+            print('Stream despiked, resampled and merged. Getting party of detections...')
 
-                # Use lag_calc to produce the repicked catalog section
-                repicked_catalog = party_calc.lag_calc(stream_calc, pre_processed=False, shift_len=1.5, min_cc=0.7, export_cc=False)
+            # Attempt to scan the current day
+            try:
+                party = tribe.detect(
+                    stream=stream, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int, daylong=True, overlap=None, parallel_process=True)
 
-                # Add the repicked catalog section to the master repicked catalog
-                master_repicked_catalog += repicked_catalog
+                # Append party to party_all
+                party_all = party_all + party
                 time_current = time.time()
-                print('Repicked catalog generated. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+                print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
 
-        # If the scan for the day fails, print a notification
-        except:
-            time_current = time.time()
-            print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
-            continue
+                # If generating a repicked catalog, we prep the stream differently for lag_calc
+                if generate_repicked_catalog:
 
-    # If not using local data, directly query client
-    else:
+                    # Copy the party and stream, then re-merge the stream using method 1
+                    party_calc = party.copy()
+                    stream_calc = stream.copy()
+                    stream_calc = stream_calc.split()
+                    stream_calc = stream_calc.merge(method=1)
 
-        # Define client
-        client = Client(client_name)
+                    # Use lag_calc to produce the repicked catalog section
+                    repicked_catalog = party_calc.lag_calc(stream_calc, pre_processed=False, shift_len=1.5, min_cc=0.7, export_cc=False)
 
-        # Attempt scan via client downloads
-        try:
-            party = tribe.client_detect(client=client, starttime=t1, endtime=t2, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int)
+                    # Add the repicked catalog section to the master repicked catalog
+                    master_repicked_catalog += repicked_catalog
+                    time_current = time.time()
+                    print('Repicked catalog generated. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
 
-            # Append party to party_all
-            party_all = party_all + party
-            time_current = time.time()
-            print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+            # If the scan for the day fails, print a notification
+            except:
+                time_current = time.time()
+                print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+                continue
 
-        # If the scan for the day fails, print a notification
-        except:
-            time_current = time.time()
-            print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
-            continue
+        # If not using local data, directly query client
+        else:
 
-# Conclude process
-time_end = time.time()
-print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_start)/3600))
-if generate_repicked_catalog:
-    writer(scan_data_output_dir + repicked_catalog_filename, master_repicked_catalog)
-    print('Number of relocated events with picks: %d out of %d total' % (len([1 for event in master_repicked_catalog if (event.picks != [])]), len(master_repicked_catalog)))
+            # Define client
+            client = Client(client_name)
 
-#%% Process catalog derived from party, then write out both the party and the catalog
+            # Attempt scan via client downloads
+            try:
+                party = tribe.client_detect(client=client, starttime=t1, endtime=t2, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int)
 
-# Clean the party off of repeats (different templates that detect the "same" event)
-party_declustered = party_all.decluster(trig_int=trig_int)
+                # Append party to party_all
+                party_all = party_all + party
+                time_current = time.time()
+                print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
 
-# Extract catalog from declustered party
-detected_catalog = party_declustered.get_catalog()
+            # If the scan for the day fails, print a notification
+            except:
+                time_current = time.time()
+                print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
+                continue
 
-# Extract all template names from tribe
-template_names = [template.name for template in tribe]
+    # Conclude process
+    time_end = time.time()
+    print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_start)/3600))
+    if generate_repicked_catalog:
+        writer(scan_data_output_dir + repicked_catalog_filename, master_repicked_catalog)
+        print('Number of relocated events with picks: %d out of %d total' % (len([1 for event in master_repicked_catalog if (event.picks != [])]), len(master_repicked_catalog)))
 
-# Initialize new catalog that stores detections that can be relocated
-relocatable_catalog = Catalog()
+    #%% Process catalog derived from party, then write out both the party and the catalog
 
-# Loop over the detected catalog, copying over events if their templates have locations
-# Also give each event pick phase information based on channel convention
-for event in detected_catalog:
+    # Remove detections that are anchored by too little stations
+    print('Filtering away detections anchored by too little stations...')
+    for family in party_all:
+        for detection_index in reversed(range(len(family.detections))):
+            detection = family[detection_index]
+            if detection.no_chans < min_stations:
+                family.detections.pop(detection_index)
 
-    # Get source event
-    source_template_name = event.comments[0].text.split(' ')[1]
-    source_template_index = template_names.index(source_template_name)
-    source_template = tribe[source_template_index]
-    source_event = source_template.event
+    # Clean the party off of repeats (different templates that detect the "same" event)
+    print('Declustering party with leftover detections...')
+    party_declustered = party_all.decluster(trig_int=trig_int)
 
-    # Check if the source event has a location. Only continue if it does
-    if source_event.origins[0].latitude is not None:
+    # Extract catalog from declustered party
+    detected_catalog = party_declustered.get_catalog()
 
-        # We extract the source event's location (lat, lon, dep)
-        lat = source_event.origins[0].latitude
-        lon = source_event.origins[0].longitude
-        dep = source_event.origins[0].depth
+    # Write out party and catalog with all detections
+    writer(scan_data_output_dir + party_filename[0:-4] + time_tag + party_filename[-4:], party_declustered)
+    writer(scan_data_output_dir + detected_catalog_filename[0:-4] + time_tag + detected_catalog_filename[-4:], detected_catalog)
 
-        # Reformat the event's detection time to UTC
-        time_text = event.resource_id.id.split('_')[-1]
-        UTCdt = UTCDateTime(time_text)
+    # Commence FI and magnitude calculation for relocatable catalog
+    print('\nNow processing FI and magnitudes of relocatable catalog...')
+    time_start = time.time()
 
-        # Create an ObsPy Origin object and store it in the event
-        event.origins = [Origin(time= UTCdt, latitude = lat, longitude = lon, depth = dep)]
+    # Extract all template names from tribe
+    template_names = [template.name for template in tribe]
 
-        # Loop over picks in event
-        for pick in event.picks:
+    # Initialize new catalog that stores detections that can be relocated
+    relocatable_catalog = Catalog()
 
-            # Check for non-vertical channel, and give an 'S' hint
-            if pick.waveform_id.channel_code[-1] == 'N' or pick.waveform_id.channel_code[-1] == 'E':
-                pick.phase_hint = 'S'
+    # Loop over the detected catalog, copying over events if their templates have locations
+    # Also give each event pick phase information based on channel convention
+    for event in detected_catalog:
 
-            # Also check for a vertical channel, and give an 'P' hint
-            elif pick.waveform_id.channel_code[-1] == 'Z':
-                pick.phase_hint = 'P'
+        # Get source event
+        source_template_name = event.comments[0].text.split(' ')[1]
+        source_template_index = template_names.index(source_template_name)
+        source_template = tribe[source_template_index]
+        source_event = source_template.event
 
-            # Throw out a ValueError if the channel code is not recognized
-            else:
-                raise ValueError
+        # Check if the source event has a location. Only continue if it does
+        if source_event.origins[0].latitude is not None:
 
-        # Append to new catalog
-        relocatable_catalog += event
+            # We extract the source event's location (lat, lon, dep)
+            lat = source_event.origins[0].latitude
+            lon = source_event.origins[0].longitude
+            dep = source_event.origins[0].depth
 
-# Calculate FI for relocatable catalog
-relocatable_catalog = calculate_catalog_FI(relocatable_catalog, data_dir, reference_station, reference_channel, prepick,
-                                           length, filomin, filomax, fiupmin, fiupmax, histogram=False)
+            # Reformat the event's detection time to UTC
+            time_text = event.resource_id.id.split('_')[-1]
+            UTCdt = UTCDateTime(time_text)
 
-# Calculate magnitude for relocatable catalog
-relocatable_catalog = calculate_relative_magnitudes(relocatable_catalog, tribe, data_dir, noise_window, signal_window,
-                                                    min_cc, min_snr, shift_len, tolerance, samp_rate)
+            # Create an ObsPy Origin object and store it in the event
+            event.origins = [Origin(time= UTCdt, latitude = lat, longitude = lon, depth = dep)]
 
-# Write out party, catalog with all detections, and catalog with relocatable detections
-writer(scan_data_output_dir + party_filename, party_declustered)
-writer(scan_data_output_dir + detected_catalog_filename, detected_catalog)
-writer(scan_data_output_dir + relocatable_catalog_filename, relocatable_catalog)
+            # Loop over picks in event
+            for pick in event.picks:
+
+                # Check for non-vertical channel, and give an 'S' hint
+                if pick.waveform_id.channel_code[-1] == 'N' or pick.waveform_id.channel_code[-1] == 'E':
+                    pick.phase_hint = 'S'
+
+                # Also check for a vertical channel, and give an 'P' hint
+                elif pick.waveform_id.channel_code[-1] == 'Z':
+                    pick.phase_hint = 'P'
+
+                # Throw out a ValueError if the channel code is not recognized
+                else:
+                    raise ValueError
+
+            # Append to new catalog
+            relocatable_catalog += event
+
+    # Write out catalog with relocatable detections
+    writer(scan_data_output_dir + relocatable_catalog_filename[0:-4] + time_tag + relocatable_catalog_filename[-4:], relocatable_catalog)
+
+    # Calculate FI for relocatable catalog
+    relocatable_catalog = calculate_catalog_FI(relocatable_catalog, data_dir, reference_station, reference_channel, prepick,
+                                               length, filomin, filomax, fiupmin, fiupmax, histogram=False)
+    print('\nFIs calculated. Now calculating magnitudes...')
+
+    # # Calculate magnitude for relocatable catalog
+    # relocatable_catalog = calculate_relative_magnitudes(relocatable_catalog, tribe, data_dir, noise_window, signal_window,
+    #                                                     min_cc, min_snr, shift_len, tolerance, samp_rate)
+    # print('\nMagnitudes calculated. Saving catalog...')
+    print('Magnitude calculation was commented out.')
+
+    # Write out catalog with relocatable detections
+    writer(scan_data_output_dir + relocatable_catalog_filename[0:-4] + time_tag + relocatable_catalog_filename[-4:], relocatable_catalog)
+    time_end = time.time()
+    print('\nRelocatable catalog saved. Time taken: %.2f hours' % ((time_end - time_start)/3600))

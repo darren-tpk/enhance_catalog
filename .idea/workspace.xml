@@ -5,16 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c26c20f-0cc3-4776-8c43-d75893511d2c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/enhance_catalog.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/enhance_catalog.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mag_calc_copy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plot_redoubt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/convert_redpy.py" beforeDir="false" afterPath="$PROJECT_DIR$/convert_redpy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/create_tribe.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_tribe.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/dem/ew_profile.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/dem/ns_profile.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/debugger.py" beforeDir="false" afterPath="$PROJECT_DIR$/debugger.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/download_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/download_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/nohup.out" beforeDir="false" afterPath="$PROJECT_DIR$/nohup.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/plot_mammoth.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot_mammoth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/redpy_results/redoubt2/catalog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/redpy_results/redoubt2/catalog.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/redpy_results/redoubt2/cores.txt" beforeDir="false" afterPath="$PROJECT_DIR$/redpy_results/redoubt2/cores.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/redpy_results/redoubt2/orphancatalog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/redpy_results/redoubt2/orphancatalog.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/relocate_catalog.py" beforeDir="false" afterPath="$PROJECT_DIR$/relocate_catalog.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scan_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/scan_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sensitivity_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/sensitivity_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/toolbox.py" beforeDir="false" afterPath="$PROJECT_DIR$/toolbox.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,6 +49,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/plot_mammoth.py" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/scan_data.py" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/relocate_catalog.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1xsJxVQTznwtxUvxPTG8DGZS1ky" />
@@ -63,7 +71,7 @@
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="PyScientificConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -101,7 +109,24 @@
       <workItem from="1634012939115" duration="3000" />
       <workItem from="1634012951848" duration="40985000" />
       <workItem from="1634674923622" duration="9734000" />
-      <workItem from="1634850412524" duration="13225000" />
+      <workItem from="1634850412524" duration="18794000" />
+      <workItem from="1635579664867" duration="8062000" />
+      <workItem from="1635789203571" duration="21048000" />
+      <workItem from="1636054074846" duration="4460000" />
+      <workItem from="1636143154343" duration="241000" />
+      <workItem from="1636394155077" duration="1989000" />
+      <workItem from="1636406661052" duration="11360000" />
+      <workItem from="1636655727525" duration="5915000" />
+      <workItem from="1636758308123" duration="12496000" />
+      <workItem from="1637092541903" duration="18707000" />
+      <workItem from="1637432803785" duration="4948000" />
+      <workItem from="1637549226821" duration="1269000" />
+      <workItem from="1637605133101" duration="9420000" />
+      <workItem from="1637771960060" duration="10857000" />
+      <workItem from="1638214287775" duration="5032000" />
+      <workItem from="1638232170945" duration="6569000" />
+      <workItem from="1638247989863" duration="6025000" />
+      <workItem from="1638311614373" duration="5809000" />
     </task>
     <servers />
   </component>
@@ -119,5 +144,16 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/calc_and_combine.py</url>
+          <line>131</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
