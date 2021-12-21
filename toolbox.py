@@ -865,8 +865,17 @@ def calculate_catalog_FI(catalog, data_dir, reference_station, reference_channel
 
         # Since we only reference one station, the data should merge to 1 trace
         stream.trim(reference_pick.time - prepick, reference_pick.time - prepick + length)
+
+        # If the stream object is empty, we insert FI=None and continue
+        if len(stream) == 0:
+            print('Event %s does not have the data to calculate FI. Inserting FI=None.' % event_id)
+            comment_text = 'FI from %s=None' % reference_station
+            event.comments.append(Comment(text=comment_text))
+            continue
+
+        # If the stream object is not a singular trace, we spit out a warning
         if len(stream) != 1:
-            print('WARNING: stream object contains more than 1 trace')
+            print('WARNING: Event %s has a stream object that contains more than 1 trace' % event_id)
 
         # Execute fft on data
         trace = stream[0]
@@ -902,8 +911,8 @@ def calculate_catalog_FI(catalog, data_dir, reference_station, reference_channel
         # Plot histogram
         fig, ax = plt.subplots()
         ax.grid(True)
-        ax.hist(all_FIs, bins=np.arange(-1.4, 0.8, 0.05), color='teal', edgecolor='black')
-        ax.set_xlim([-1.4, 0.8])
+        ax.hist(all_FIs, bins=np.arange(-2.5, 0.5, 0.05), color='teal', edgecolor='black')
+        ax.set_xlim([-2.5, 0.5])
         ax.set_xlabel('Frequency Index (FI)')
         ax.set_ylabel('Number of Events')
         ax.set_title('Frequency Index for %d out of %d Events' % (len(all_FIs),len(catalog)))

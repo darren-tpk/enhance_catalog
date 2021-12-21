@@ -47,16 +47,16 @@ reference_station = 'REF'
 reference_channel = 'EHZ'
 prepick = 1.0  # s
 length = 8.0  # s
-filomin = 1  # Hz
-filomax = 2.5  # Hz
-fiupmin = 5   # Hz
-fiupmax = 10   # Hz
+filomin = 2  # Hz
+filomax = 4  # Hz
+fiupmin = 8   # Hz
+fiupmax = 25   # Hz
 
 # Settings for magnitude calculation
 noise_window = (-20.0, -prepick)  # s
 signal_window = (-prepick, -prepick+length)  # s
 shift_len = 1.5  # s
-min_cc = 0.6
+min_cc = 0.7
 min_snr = 2
 
 #%% Define functions
@@ -129,39 +129,20 @@ if local:
 #              UTCDateTime(2009, 8, 15, 0, 0, 0),
 #              UTCDateTime(2009, 9, 1, 0, 0, 0)]
 
-time_list = [UTCDateTime(2008, 5, 1, 0, 0, 0),
-             UTCDateTime(2008, 5, 15, 0, 0, 0),
-             UTCDateTime(2008, 6, 1, 0, 0, 0),
-             UTCDateTime(2008, 6, 15, 0, 0, 0),
-             UTCDateTime(2008, 7, 1, 0, 0, 0),
-             UTCDateTime(2008, 7, 15, 0, 0, 0),
-             UTCDateTime(2008, 8, 1, 0, 0, 0),
-             UTCDateTime(2008, 8, 15, 0, 0, 0),
-             UTCDateTime(2008, 9, 1, 0, 0, 0),
-             UTCDateTime(2008, 9, 15, 0, 0, 0),
-             UTCDateTime(2008, 10, 1, 0, 0, 0),
-             UTCDateTime(2008, 10, 15, 0, 0, 0),
-             UTCDateTime(2008, 11, 1, 0, 0, 0),
-             UTCDateTime(2008, 11, 15, 0, 0, 0),
-             UTCDateTime(2008, 12, 1, 0, 0, 0),
-             UTCDateTime(2008, 12, 15, 0, 0, 0),
-             UTCDateTime(2009, 1, 1, 0, 0, 0),
-             UTCDateTime(2009, 1, 15, 0, 0, 0),
-             UTCDateTime(2009, 2, 1, 0, 0, 0),
-             UTCDateTime(2009, 2, 15, 0, 0, 0),
-             UTCDateTime(2009, 3, 1, 0, 0, 0),
-             UTCDateTime(2009, 3, 15, 0, 0, 0),
-             UTCDateTime(2009, 4, 1, 0, 0, 0),
-             UTCDateTime(2009, 4, 15, 0, 0, 0),
-             UTCDateTime(2009, 5, 1, 0, 0, 0),
-	         UTCDateTime(2009, 5, 15, 0, 0, 0),
-             UTCDateTime(2009, 6, 1, 0, 0, 0),
-             UTCDateTime(2009, 6, 15, 0, 0, 0),
-             UTCDateTime(2009, 7, 1, 0, 0, 0),
-             UTCDateTime(2009, 7, 15, 0, 0, 0),
-             UTCDateTime(2009, 8, 1, 0, 0, 0),
-             UTCDateTime(2009, 8, 15, 0, 0, 0),
-             UTCDateTime(2009, 9, 1, 0, 0, 0)]
+# time_list = [UTCDateTime(2009, 3, 15, 0, 0, 0),
+#              UTCDateTime(2009, 4, 1, 0, 0, 0),
+#              UTCDateTime(2009, 4, 15, 0, 0, 0),
+#              UTCDateTime(2009, 5, 1, 0, 0, 0),
+# 	         UTCDateTime(2009, 5, 15, 0, 0, 0),
+#              UTCDateTime(2009, 6, 1, 0, 0, 0),
+#              UTCDateTime(2009, 6, 15, 0, 0, 0),
+#              UTCDateTime(2009, 7, 1, 0, 0, 0),
+#              UTCDateTime(2009, 7, 15, 0, 0, 0),
+#              UTCDateTime(2009, 8, 1, 0, 0, 0),
+#              UTCDateTime(2009, 8, 15, 0, 0, 0),
+#              UTCDateTime(2009, 9, 1, 0, 0, 0)]
+
+time_list = [UTCDateTime(2009,5,1), UTCDateTime(2009,5,15)]
 
 # Initialize master catalog
 master_catalog = Catalog()
@@ -189,15 +170,15 @@ for k in range(len(time_list)-1):
     # Print number of events after threshold filter
     print('Time Tag: ' + time_tag + ', Number of events after filtering: ' + str(len(add_catalog)))
 
-    # # Calculate magnitude for relocatable catalog
-    # add_catalog = calculate_relative_magnitudes(add_catalog, tribe, data_dir, noise_window, signal_window,
-    #                                                     min_cc, min_snr, shift_len, tolerance, samp_rate)
-    # print('Magnitudes successfully calculated. Adding catalog.')
+    # Calculate magnitude for relocatable catalog
+    add_catalog = calculate_relative_magnitudes(add_catalog, tribe, data_dir, noise_window, signal_window,
+                                                min_cc, min_snr, shift_len, tolerance, samp_rate)
+    print('Magnitudes successfully calculated. Adding catalog.')
 
     # Append to master catalog
     master_catalog = master_catalog + add_catalog
 
     # Write out master catalog at every step to save progress
-    writer(scan_data_output_dir + 'master_catalogR.xml', master_catalog)
+    writer(scan_data_output_dir + 'master_catalogM2.xml', master_catalog)
 
 # all_times = [event.origins[0].time for event in master_catalog]
