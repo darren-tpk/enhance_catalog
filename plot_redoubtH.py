@@ -25,7 +25,8 @@ NS_profile_filename = elev_profile_dir + 'ns_profile_redoubt.csv'
 PEC_events_filepath = main_dir + 'output/redoubt2/scan_data/PEC_events_reFI.xml'
 cores_filename = main_dir + 'output/redoubt2/convert_redpy/core_catalog_picked.xml'
 unmatched_PEC_events_filepath = main_dir + 'output/redoubt2/convert_redpy/unmatched_PEC_events.xml'
-relocated_catalog_filepath = main_dir + 'output/redoubt2/relocate_catalog/relocated_catalog_reFImag.xml'
+# relocated_catalog_filepath = main_dir + 'output/redoubt2/relocate_catalog/relocated_catalog_reFImag.xml'
+relocated_catalog_filepath = main_dir + 'output/redoubt2/relocate_catalog/sub_catalog_node.xml'
 plot_output_dir = main_dir + 'output/redoubt2/relocate_catalog/'
 VOLC_LAT = 60.4852
 VOLC_LON = -152.7438
@@ -314,14 +315,14 @@ if plot_FI:
         fig.basemap(region=REGION_WE, projection="X10c/-5c", frame=["xa0.2f0.05+lLongitude", "yaf+lDepth", "WSne"],
                     panel=[0, 0])
 
-        # Plot landfill
-        for i in range(1, len(WE)):
-            delta = abs(WE["Lon"][i] - WE["Lon"][i - 1]) / (REGION_WE[1] - REGION_WE[0]) * 10  # inter-measurement width
-            height_km = (MAX_DEPTH + 0.001 * WE["Elev(m)"][i])  # depth - negative elevation
-            height_cm = height_km / (MAX_DEPTH+5) * 4.9  # ratio * figure height
-            midpoint = MAX_DEPTH - 0.5 * height_km
-            data = [[WE["Lon"][i], midpoint, delta, height_cm]]
-            fig.plot(data=data, style="r", color="gray90", pen="1p,gray90")
+        # # Plot landfill
+        # for i in range(1, len(WE)):
+        #     delta = abs(WE["Lon"][i] - WE["Lon"][i - 1]) / (REGION_WE[1] - REGION_WE[0]) * 10  # inter-measurement width
+        #     height_km = (MAX_DEPTH + 0.001 * WE["Elev(m)"][i])  # depth - negative elevation
+        #     height_cm = height_km / (MAX_DEPTH+5) * 4.9  # ratio * figure height
+        #     midpoint = MAX_DEPTH - 0.5 * height_km
+        #     data = [[WE["Lon"][i], midpoint, delta, height_cm]]
+        #     fig.plot(data=data, style="r", color="gray90", pen="1p,gray90")
 
         # Plot earthquakes
         if size_by_magnitude:
@@ -390,14 +391,14 @@ if plot_FI:
         fig.basemap(region=REGION_NS, projection="X5c/10c", frame=["xaf+lDepth", "ya0.1f0.025+lLatitude", "wsNE"],
                     panel=[0, 0])
 
-        # Plot landfill
-        for i in range(1, len(NS)):
-            delta = abs(NS["Lat"][i] - NS["Lat"][i - 1]) / (REGION_NS[1] - REGION_NS[0]) * 10  # inter-measurement width
-            height_km = (MAX_DEPTH + 0.001 * NS["Elev(m)"][i])  # depth - negative elevation
-            height_cm = height_km / (MAX_DEPTH+5) * 4.9  # ratio * figure height
-            midpoint = MAX_DEPTH - 0.5 * height_km
-            data = [[midpoint, NS["Lat"][i], height_cm, delta]]
-            fig.plot(data=data, style="r", color="gray90", pen="1.5p,gray90")
+        # # Plot landfill
+        # for i in range(1, len(NS)):
+        #     delta = abs(NS["Lat"][i] - NS["Lat"][i - 1]) / (REGION_NS[1] - REGION_NS[0]) * 10  # inter-measurement width
+        #     height_km = (MAX_DEPTH + 0.001 * NS["Elev(m)"][i])  # depth - negative elevation
+        #     height_cm = height_km / (MAX_DEPTH+5) * 4.9  # ratio * figure height
+        #     midpoint = MAX_DEPTH - 0.5 * height_km
+        #     data = [[midpoint, NS["Lat"][i], height_cm, delta]]
+        #     fig.plot(data=data, style="r", color="gray90", pen="1.5p,gray90")
 
         # Plot earthquakes
         if size_by_magnitude:
@@ -418,7 +419,7 @@ if plot_FI:
         fig.plot(x=-0.001 * NS["Elev(m)"], y=NS["Lat"], pen="1.5p,black")
 
     fig.show(method="external")
-    fig.savefig(plot_output_dir + 'relocated_catalog_reFImag.jpg')
+    fig.savefig(plot_output_dir + 'redoubt_original_catalog.jpg')
 
 #%% Plot hypocenters using distance along A-B as coloration
 if migration_track:

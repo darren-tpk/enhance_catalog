@@ -1,7 +1,7 @@
 #%% CONVERT REDPY
 
 # This script aims to convert the output from the REDPy tool into ObsPy catalog objects.
-# In the process, the REDPy output is compared to a pre-existing catalog to generate a list of associated cores.
+# # In the process, the REDPy output is compared to a pre-existing catalog to generate a list of associated cores.
 # Lastly, the code can also revisit the seismic data to use the STA/LTA coincidence trigger as P pick times.
 # All .xml catalog and .txt files created are saved in the user-defined output_dir.
 # Note that [PEC = pre-existing catalog]
@@ -24,23 +24,23 @@ from toolbox import read_trace, writer
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/data/redoubt/'  # redoubt data directory on local
-output_dir = main_dir + 'output/redoubt2/'
-convert_redpy_output_dir = output_dir + 'convert_redpy/'
-redpy_results_dir = main_dir + 'redpy_results/redoubt2/'
+data_dir = '/home/data/augustine/'  # redoubt data directory on local
+output_dir = main_dir + 'output/augustine/'
+convert_redpy_output_dir = output_dir + 'convert_redpy/2/'
+redpy_results_dir = main_dir + 'redpy_results/augustine/2/'
 PEC_dir = main_dir + 'data/avo/'
-hypoi_file = 'redoubt_20080501_20090901_hypoi.txt'
-hypoddpha_file = 'redoubt_20080501_20090901_hypoddpha.txt'
+hypoi_file = 'augustine_20050401_20060501_hypoi.txt'
+hypoddpha_file = 'augustine_20050401_20060501_hypoddpha.txt'
 max_dt = 4  # maximum time difference between REDPy detections and AVO events allowed, in seconds
 adopt_weight = 0.1  # phase weight for adopted picks
-redpy_network_list = ['AV','AV','AV']
-redpy_station_list = ['RDN','REF','RSO']
-redpy_channel_list = [['EHZ'],['EHZ'],['EHZ']]
-redpy_location_list = ['--','--','--']
-campaign_network_list = ['AV','AV','AV']
-campaign_station_list = ['RD01','RD02','RD03','RDW']
-campaign_channel_list = [['BHZ'],['BHZ'],['BHZ'],['BHZ']]
-campaign_location_list = ['--','--','--']
+redpy_network_list = ['AV','AV','AV','AV']
+redpy_station_list = ['AUH','AUI','AUP','AUS']
+redpy_channel_list = [['EHZ'],['EHZ'],['EHZ'],['EHZ']]
+redpy_location_list = ['--','--','--','--']
+campaign_network_list = ['AV','AV','AV','AV']
+campaign_station_list = ['AU11','AU13','AU14','AU15']
+campaign_channel_list = [['HHZ'],['HHZ'],['HHZ'],['HHZ']]
+campaign_location_list = ['--','--','--','--']
 tolerance = 4e4  # tolerance for boxcar removal from data (as a factor to median)
 local = True
 client_name = None # IRIS/NCEDC
@@ -85,6 +85,24 @@ redpy_detections = pd.read_csv(redpy_results_dir + 'catalog.txt', sep=' ', names
 redpy_cores = pd.read_csv(redpy_results_dir + 'cores.txt', sep=' ', names=['Cluster', 'DateTime'])
 redpy_orphans = pd.read_csv(redpy_results_dir + 'orphancatalog.txt', names=['DateTime'])
 
+# Remove bad clusters after manual check
+clusters_to_remove = [0,1,8,10,16,26,50,54,56,58,59,60,98,104,137,145]
+# clusters_to_remove = [0,3,4,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,32,35,37,38,
+#                       40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,58,59,60,62,63,64,65,79,91,
+#                       94,98,105,108,109,119,121,122,124,125,126,127,137,138,
+#                       139,140,158,163,164,167,169,170,172,174,180,183,196,200,
+#                       203,204,205,207,208,217,218,219,228,236,241]
+# clusters_to_remove = [4,13,15,18,19,22,27,28,30,31,36]
+# clusters_to_remove = [22,23,24,25,26,28,29,35,45,54,58,59,60,63,
+#                       64,66,67,68,69,70,71,72,75,76,77,78,82,
+#                       85,87,100,101,109,111,115,117,119,120,121,124]
+cluster_index_to_remove = redpy_cores.index[redpy_cores.Cluster.isin(clusters_to_remove)].tolist()
+redpy_cores = redpy_cores.drop(cluster_index_to_remove)
+redpy_cores = redpy_cores.reset_index(drop=True)
+detection_index_to_remove = redpy_detections.index[redpy_detections.Cluster.isin(clusters_to_remove)].tolist()
+redpy_detections = redpy_detections.drop(detection_index_to_remove)
+redpy_detections = redpy_detections.reset_index(drop=True)
+
 # Prepare core and orphan datetimes as an array
 core_event_times = np.array([UTCDateTime(t) for t in redpy_cores.DateTime])
 orphan_event_times = np.array([UTCDateTime(t) for t in redpy_orphans.DateTime])
@@ -112,7 +130,8 @@ print('All output subdirectories created.')
 # Initialize catalog object and lists before commencing loop
 redpy_catalog = Catalog()  # empty catalog to populate
 associated_cluster_list = []  # store unique cluster numbers that have associated catalog events
-unmatched_indices = list(range(len(PEC_events)))  # list of avo event indices. matched indices are removed
+unmatched_indices_redpy = list(range(len(PEC_events)))  # list of avo event indices. matched indices are removed
+unmatched_indices_core = list(range(len(PEC_events)))  # list of avo event indices. matched indices are removed
 
 # Loop through redpy detection list
 print('\nCreating ObsPy catalog for REDPy results...')
@@ -153,8 +172,10 @@ for i in range(len(redpy_detections)):
         associated_cluster_list.append(cluster)
 
         # Remove avo index from unmatched list if it still exists
-        if PEC_index in unmatched_indices:
-            unmatched_indices.remove(PEC_index)
+        if PEC_index in unmatched_indices_redpy:
+            unmatched_indices_redpy.remove(PEC_index)
+        if PEC_index in unmatched_indices_core and event_tag.split(' ')[2] == 'CORE':
+            unmatched_indices_core.remove(PEC_index)
 
     # If event is not part of the PEC, we tag it as so
     else:
@@ -164,7 +185,7 @@ for i in range(len(redpy_detections)):
     redpy_catalog.append(redpy_event)
 
 # Write the redpy catalog to an xml file
-writer(convert_redpy_output_dir + 'redpy_catalog.xml', redpy_catalog)
+# writer(convert_redpy_output_dir + 'redpy_catalog.xml', redpy_catalog)
 
 # Get unique list of AVO-associated clusters and non-associated clusters
 associated_clusters = list(np.unique(np.array(associated_cluster_list)))
@@ -175,285 +196,294 @@ unassociated_clusters = [cluster for cluster in list(np.unique(np.array(redpy_de
 with open(convert_redpy_output_dir + 'unassociated_clusters.txt', 'wb') as cluster_pickle:  # Pickling
     pickle.dump(unassociated_clusters, cluster_pickle)
     pickle.dump(associated_clusters, cluster_pickle)
-with open(convert_redpy_output_dir + 'unmatched_indices.txt', 'wb') as unmatched_pickle:  # Pickling
-    pickle.dump(unmatched_indices, unmatched_pickle)
+with open(convert_redpy_output_dir + 'unmatched_indices_redpy.txt', 'wb') as unmatched_pickle:  # Pickling
+    pickle.dump(unmatched_indices_redpy, unmatched_pickle)
+with open(convert_redpy_output_dir + 'unmatched_indices_core.txt', 'wb') as unmatched_pickle:  # Pickling
+    pickle.dump(unmatched_indices_core, unmatched_pickle)
 
-# Also generate unmatched PEC catalog (that can be used as templates later)
-unmatched_PEC_events = Catalog()
+# Also generate unmatched PEC catalogs (that can be used as templates later)
+unmatched_PEC_events_redpy = Catalog() # PEC events that don't match redpy catalog
+unmatched_PEC_events_core = Catalog() # PEC events that don't match redpy cores
 for j, PEC_event in enumerate(PEC_events):
-    if j in unmatched_indices:
-        unmatched_PEC_events += PEC_event
+    if j in unmatched_indices_redpy:
+        unmatched_PEC_events_redpy += PEC_event
+    if j in unmatched_indices_core:
+        unmatched_PEC_events_core += PEC_event
 
 # Write out unmatched PEC catalog to .xml file
-writer(convert_redpy_output_dir + 'unmatched_PEC_events.xml', unmatched_PEC_events)
+writer(convert_redpy_output_dir + 'unmatched_PEC_events_redpy.xml', unmatched_PEC_events_redpy)
+writer(convert_redpy_output_dir + 'unmatched_PEC_events_core.xml', unmatched_PEC_events_core)
 
 # Conclude process
 time_stop = time.time()
 print('Catalog object created, processing time: %.2f s' % (time_stop-time_start))
 
-#%% Pull core catalog from full catalog (picks not added)
-
-# Call pull_cores function
-core_catalog = pull_cores(redpy_catalog)
-
-# Write core catalog to .xml file
-writer(convert_redpy_output_dir + 'core_catalog.xml', core_catalog)
-
-#%% Generate orphan catalog (picks not added)
-
-# Commence process
-print('\nNow processing orphans...')
-time_start = time.time()
-
-# Initialize empty catalog
-orphan_catalog = Catalog()
-
-# Loop through redpy orphan list and populate orphan catalog
-for orphan_time in orphan_event_times:
-
-    # Create orphan event
-    event_tag = 'ORPHAN EVENT;'
-    orphan_event = Event(origins=[Origin(time=orphan_time, comments=[Comment(text=event_tag)])])
-
-    # Check if event is part of PEC, using a inter-event tolerance defined by user
-    if min(abs(PEC_event_times - orphan_time)) < max_dt:
-
-        # Find the closest event in time within PEC
-        PEC_index = np.argmin(abs(PEC_event_times - orphan_time))
-        PEC_event = PEC_events[PEC_index]
-
-        # Use closest event information to fill up event object
-        orphan_event.picks = PEC_event.picks
-        orphan_event.magnitudes = PEC_event.magnitudes
-        orphan_event.origins[0].longitude = PEC_event.origins[0].longitude
-        orphan_event.origins[0].latitude = PEC_event.origins[0].latitude
-        orphan_event.origins[0].depth = PEC_event.origins[0].depth
-        orphan_event.origins[0].arrivals = PEC_event.origins[0].arrivals
-        orphan_event.origins[0].comments[0].text += ' IN PEC, DT = ' + '%.2f' % min(abs(PEC_event_times - orphan_time))
-
-    # If event is not part of the PEC, we tag it otherwise
-    else:
-        orphan_event.origins[0].comments[0].text += ' NOT IN AVO'
-
-    # Finally we append the event
-    orphan_catalog.append(orphan_event)
-
-# Conclude process
-time_stop = time.time()
-print('Orphan catalog created, processing time: %.2f s' % (time_stop-time_start))
-
-#%% Revisit redpy catalog to add picks using single channel STA/LTA
-
-# Commence process
-print('\nMaking picks for non-associated cluster events...')
-time_start = time.time()
-
-# Define client if using data from server
-if not local:
-    client = Client(client_name)
-
-# Define some coincidence_trigger arguments
-
-# Loop through unassociated clusters
-for unassociated_cluster in unassociated_clusters:
-
-    # Find all detections within unassociated cluster
-    contribution_list = list(np.where(np.array(redpy_detections.Cluster) == unassociated_cluster)[0])
-
-    # Loop through these unassociated detections to add picks
-    for contribution_index in contribution_list:
-
-        # Determine time difference to offset pick times
-        contribution_time = redpy_catalog[contribution_index].origins[0].time
-
-        # Retrieve time limits for data fetch (+/- 12s window)
-        starttime = contribution_time - 12
-        endtime = contribution_time + 12
-
-        # Remove some stations if necessary
-        redpy_stations = redpy_station_list
-        # REMOVE RSO AFTER FIRST EXPLOSION [HARD CODED]
-        if UTCDateTime(2009, 3, 24, 0, 0, 0) < starttime < UTCDateTime(2009, 4, 16, 0, 0, 0):
-            redpy_stations = ['RDN', 'REF']
-
-        # Gather data from local machine in a +/- 12s window, filter, and taper
-        stream = Stream()
-        for k, redpy_station in enumerate(redpy_stations):
-            for redpy_channel in redpy_channel_list[k]:
-                if local:
-                    station_tr = read_trace(data_dir=data_dir, station=redpy_station, channel=redpy_channel,
-                                            starttime=starttime, endtime=endtime, tolerance=tolerance)
-                else:
-                    station_tr = client.get_waveforms(redpy_network_list[k], redpy_station, redpy_location_list[k], redpy_channel, starttime, endtime)
-                stream = stream + station_tr
-        stream = stream.split()
-        stream = stream.filter('bandpass',freqmin=1.0, freqmax=10.0, corners=2, zerophase=True)
-        stream = stream.taper(0.05, type='hann', max_length=(0.75*1024/100))  # [HARD CODED]
-        stream = stream.merge(method=1, fill_value=0)
-        stream = stream.trim(starttime=starttime,endtime=endtime)
-
-        # Use coincidence trigger to get a pick time estimate
-        try:
-            coin_trigger = []
-            coincidence_sum_threshold = int(round(len(redpy_stations)/2))
-            coin_trigger = coincidence_trigger('classicstalta', 3, 2, stream, coincidence_sum_threshold, sta=0.7, lta=8, details=True)
-        # If it fails (usually due to data being too gappy), move to next event
-        except:
-            continue
-
-        # If there are no coincidence triggers, move to next event
-        if not coin_trigger:
-            continue
-
-        # Otherwise, continue to single channel STA/LTA pick making
-        else:
-
-            # Extract coincidence trigger time
-            coin_trigger_time = coin_trigger[0]["time"]
-
-            # For each channel,
-            for tr in stream:
-
-                # Calculate the value of the characteristic function
-                sampling_rate = tr.stats.sampling_rate
-                cft = classic_sta_lta(tr.data, int(0.7 * sampling_rate), int(8 * sampling_rate))
-                # To plot function, use: plot_trigger(tr, cft, 3, 2)
-
-                # Obtain trigger limits
-                trigger_limits = np.array(trigger_onset(cft, 3, 2))
-
-                # If there exists some trigger limits
-                if trigger_limits.size != 0:
-
-                    # Convert to UTCDateTime and find the trigger-on time closest to the coincidence trigger
-                    trigger_on = np.array([tr.stats.starttime + t for t in (trigger_limits[:, 0] / sampling_rate)])
-                    pick_time = trigger_on[np.argmin(abs(trigger_on-coin_trigger_time))]
-
-                    # Craft waveform stream ID
-                    tr_id = tr.id.split('.')
-                    waveform_id = WaveformStreamID(tr_id[0],tr_id[1],tr_id[2],tr_id[3])
-
-                    # Create ObsPy pick and ObsPy arrival objects and add to redpy_catalog
-                    add_pick = Pick(time=pick_time,waveform_id=waveform_id,phase_hint='P')
-                    add_arrival = Arrival(pick_id=ResourceIdentifier(id=add_pick.resource_id),phase='P',time_weight=0.1)
-                    redpy_catalog[contribution_index].picks.append(add_pick)
-                    redpy_catalog[contribution_index].origins[0].arrivals.append(add_arrival)
-
-if add_pick_to_associated:
-
-    # Commence process
-    print('Adding picks for associated cluster events (mostly from temporary stations)...')
-    time_start = time.time()
-
-    # Define client if using data from server
-    if not local:
-        client = Client(client_name)
-
-    # Define some coincidence_trigger arguments
-
-    # Loop through associated clusters
-    for associated_cluster in associated_clusters:
-
-        # Find all detections within unassociated cluster
-        contribution_list = list(np.where(np.array(redpy_detections.Cluster) == associated_cluster)[0])
-
-        # Loop through these unassociated detections to add picks
-        for contribution_index in contribution_list:
-
-            # Extract contribution time
-            contribution_time = redpy_catalog[contribution_index].origins[0].time
-            # if the contribution is from before the campaign was installed, we skip the pick-adding for the event
-            if contribution_time < UTCDateTime(2009,3,21):
-                continue
-
-            # Retrieve time limits for data fetch (+/- 12s window)
-            starttime = contribution_time - 12
-            endtime = contribution_time + 12
-
-            # Remove stations if necessary
-            campaign_stations = campaign_station_list
-
-            # Gather data from local machine in a +/- 12s window, filter, and taper
-            stream = Stream()
-            for k, campaign_station in enumerate(campaign_stations):
-                for campaign_channel in campaign_channel_list[k]:
-                    if local:
-                        station_tr = read_trace(data_dir=data_dir, station=campaign_station, channel=campaign_channel,
-                                                starttime=starttime, endtime=endtime, tolerance=tolerance)
-                    else:
-                        station_tr = client.get_waveforms(campaign_network_list[k], campaign_station, campaign_location_list[k],
-                                                          campaign_channel, starttime, endtime)
-                    stream = stream + station_tr
-            stream = stream.split()
-            stream = stream.filter('bandpass', freqmin=1.0, freqmax=10.0, corners=2, zerophase=True)
-            stream = stream.taper(0.05, type='hann', max_length=(0.75 * 1024 / 100))  # [HARD CODED]
-            stream = stream.merge(method=1, fill_value=0)
-            stream = stream.trim(starttime=starttime, endtime=endtime)
-
-            # Use coincidence trigger to get a pick time estimate
-            try:
-                coin_trigger = []
-                coin_trigger = coincidence_trigger('classicstalta', 3, 2, stream, 2, sta=0.7, lta=8, details=True)
-            # If it fails (usually due to data being too gappy), move to next event
-            except:
-                continue
-
-            # If there are no coincidence triggers, move to next event
-            if not coin_trigger:
-                continue
-
-            # Otherwise, continue to single channel STA/LTA pick making
-            else:
-
-                # Extract coincidence trigger time
-                coin_trigger_time = coin_trigger[0]["time"]
-
-                # Remove traces that belong to channels that already have been picked
-                existing_station_list = [pick.waveform_id.station_code for pick in redpy_catalog[contribution_index].picks]
-                for tr in stream:
-                    if tr.stats.station in existing_station_list:
-                        stream.remove(tr)
-
-                # For each channel,
-                for tr in stream:
-
-                    # Calculate the value of the characteristic function
-                    sampling_rate = tr.stats.sampling_rate
-                    cft = classic_sta_lta(tr.data, int(0.7 * sampling_rate), int(8 * sampling_rate))
-                    # To plot function, use: plot_trigger(tr, cft, 3, 2)
-
-                    # Obtain trigger limits
-                    trigger_limits = np.array(trigger_onset(cft, 3, 2))
-
-                    # If there exists some trigger limits
-                    if trigger_limits.size != 0:
-
-                        # Convert to UTCDateTime and find the trigger-on time closest to the coincidence trigger
-                        trigger_on = np.array([tr.stats.starttime + t for t in (trigger_limits[:, 0] / sampling_rate)])
-                        pick_time = trigger_on[np.argmin(abs(trigger_on - coin_trigger_time))]
-
-                        # Craft waveform stream ID
-                        tr_id = tr.id.split('.')
-                        waveform_id = WaveformStreamID(tr_id[0], tr_id[1], tr_id[2], tr_id[3])
-
-                        # Create ObsPy pick and ObsPy arrival objects and add to redpy_catalog
-                        add_pick = Pick(time=pick_time, waveform_id=waveform_id, phase_hint='P')
-                        add_arrival = Arrival(pick_id=ResourceIdentifier(id=add_pick.resource_id), phase='P',
-                                              time_weight=0.1)
-                        redpy_catalog[contribution_index].picks.append(add_pick)
-                        redpy_catalog[contribution_index].origins[0].arrivals.append(add_arrival)
-
-# Write the fully picked redpy catalog to an xml file
-writer(convert_redpy_output_dir + 'redpy_catalog_picked.xml', redpy_catalog)
-
-# Conclude process
-time_stop = time.time()
-print('Pick making complete, processing time: %.2f s' % (time_stop-time_start))
-
-#%% Pull the fully picked core catalog from picked redpy catalog
-
-# Call pull_cores function
-core_catalog = pull_cores(redpy_catalog)
-
-# Write picked core catalog to .xml file
-writer(convert_redpy_output_dir + 'core_catalog_picked.xml', core_catalog)
+# #%% Pull core catalog from full catalog (picks not added)
+#
+# # Call pull_cores function
+# core_catalog = pull_cores(redpy_catalog)
+#
+# # Write core catalog to .xml file
+# writer(convert_redpy_output_dir + 'core_catalog.xml', core_catalog)
+#
+# #%% Generate orphan catalog (picks not added)
+#
+# # Commence process
+# print('\nNow processing orphans...')
+# time_start = time.time()
+#
+# # Initialize empty catalog
+# orphan_catalog = Catalog()
+#
+# # Loop through redpy orphan list and populate orphan catalog
+# for orphan_time in orphan_event_times:
+#
+#     # Create orphan event
+#     event_tag = 'ORPHAN EVENT;'
+#     orphan_event = Event(origins=[Origin(time=orphan_time, comments=[Comment(text=event_tag)])])
+#
+#     # Check if event is part of PEC, using a inter-event tolerance defined by user
+#     if min(abs(PEC_event_times - orphan_time)) < max_dt:
+#
+#         # Find the closest event in time within PEC
+#         PEC_index = np.argmin(abs(PEC_event_times - orphan_time))
+#         PEC_event = PEC_events[PEC_index]
+#
+#         # Use closest event information to fill up event object
+#         orphan_event.picks = PEC_event.picks
+#         orphan_event.magnitudes = PEC_event.magnitudes
+#         orphan_event.origins[0].longitude = PEC_event.origins[0].longitude
+#         orphan_event.origins[0].latitude = PEC_event.origins[0].latitude
+#         orphan_event.origins[0].depth = PEC_event.origins[0].depth
+#         orphan_event.origins[0].arrivals = PEC_event.origins[0].arrivals
+#         orphan_event.origins[0].comments[0].text += ' IN PEC, DT = ' + '%.2f' % min(abs(PEC_event_times - orphan_time))
+#
+#     # If event is not part of the PEC, we tag it otherwise
+#     else:
+#         orphan_event.origins[0].comments[0].text += ' NOT IN AVO'
+#
+#     # Finally we append the event
+#     orphan_catalog.append(orphan_event)
+#
+# # Write the fully picked redpy catalog to an xml file
+# writer(convert_redpy_output_dir + 'orphan_catalog_picked.xml', orphan_catalog)
+#
+# # Conclude process
+# time_stop = time.time()
+# print('Orphan catalog created, processing time: %.2f s' % (time_stop-time_start))
+#
+# #%% Revisit redpy catalog to add picks using single channel STA/LTA
+#
+# # Commence process
+# print('\nMaking picks for non-associated cluster events...')
+# time_start = time.time()
+#
+# # Define client if using data from server
+# if not local:
+#     client = Client(client_name)
+#
+# # Define some coincidence_trigger arguments
+#
+# # Loop through unassociated clusters
+# for unassociated_cluster in unassociated_clusters:
+#
+#     # Find all detections within unassociated cluster
+#     contribution_list = list(np.where(np.array(redpy_detections.Cluster) == unassociated_cluster)[0])
+#
+#     # Loop through these unassociated detections to add picks
+#     for contribution_index in contribution_list:
+#
+#         # Determine time difference to offset pick times
+#         contribution_time = redpy_catalog[contribution_index].origins[0].time
+#
+#         # Retrieve time limits for data fetch (+/- 12s window)
+#         starttime = contribution_time - 12
+#         endtime = contribution_time + 12
+#
+#         # Remove some stations if necessary
+#         redpy_stations = redpy_station_list
+#         # # For Redoubt, remove RSO after first explosion
+#         # if UTCDateTime(2009, 3, 24, 0, 0, 0) < starttime < UTCDateTime(2009, 4, 16, 0, 0, 0):
+#         #     redpy_stations = ['RDN', 'REF']
+#
+#         # Gather data from local machine in a +/- 12s window, filter, and taper
+#         stream = Stream()
+#         for k, redpy_station in enumerate(redpy_stations):
+#             for redpy_channel in redpy_channel_list[k]:
+#                 if local:
+#                     station_tr = read_trace(data_dir=data_dir, station=redpy_station, channel=redpy_channel,
+#                                             starttime=starttime, endtime=endtime, tolerance=tolerance)
+#                 else:
+#                     station_tr = client.get_waveforms(redpy_network_list[k], redpy_station, redpy_location_list[k], redpy_channel, starttime, endtime)
+#                 stream = stream + station_tr
+#         stream = stream.split()
+#         stream = stream.filter('bandpass',freqmin=1.0, freqmax=20.0, corners=2, zerophase=True)
+#         stream = stream.taper(0.05, type='hann', max_length=(0.75*1024/100))  # [HARD CODED]
+#         stream = stream.merge(method=1, fill_value=0)
+#         stream = stream.trim(starttime=starttime,endtime=endtime)
+#
+#         # Use coincidence trigger to get a pick time estimate
+#         try:
+#             coin_trigger = []
+#             coincidence_sum_threshold = int(round(len(redpy_stations)/2))
+#             coin_trigger = coincidence_trigger('classicstalta', 3, 2, stream, coincidence_sum_threshold, sta=0.7, lta=8, details=True)
+#         # If it fails (usually due to data being too gappy), move to next event
+#         except:
+#             continue
+#
+#         # If there are no coincidence triggers, move to next event
+#         if not coin_trigger:
+#             continue
+#
+#         # Otherwise, continue to single channel STA/LTA pick making
+#         else:
+#
+#             # Extract coincidence trigger time
+#             coin_trigger_time = coin_trigger[0]["time"]
+#
+#             # For each channel,
+#             for tr in stream:
+#
+#                 # Calculate the value of the characteristic function
+#                 sampling_rate = tr.stats.sampling_rate
+#                 cft = classic_sta_lta(tr.data, int(0.7 * sampling_rate), int(8 * sampling_rate))
+#                 # To plot function, use: plot_trigger(tr, cft, 3, 2)
+#
+#                 # Obtain trigger limits
+#                 trigger_limits = np.array(trigger_onset(cft, 3, 2))
+#
+#                 # If there exists some trigger limits
+#                 if trigger_limits.size != 0:
+#
+#                     # Convert to UTCDateTime and find the trigger-on time closest to the coincidence trigger
+#                     trigger_on = np.array([tr.stats.starttime + t for t in (trigger_limits[:, 0] / sampling_rate)])
+#                     pick_time = trigger_on[np.argmin(abs(trigger_on-coin_trigger_time))]
+#
+#                     # Craft waveform stream ID
+#                     tr_id = tr.id.split('.')
+#                     waveform_id = WaveformStreamID(tr_id[0],tr_id[1],tr_id[2],tr_id[3])
+#
+#                     # Create ObsPy pick and ObsPy arrival objects and add to redpy_catalog
+#                     add_pick = Pick(time=pick_time,waveform_id=waveform_id,phase_hint='P')
+#                     add_arrival = Arrival(pick_id=ResourceIdentifier(id=add_pick.resource_id),phase='P',time_weight=0.1)
+#                     redpy_catalog[contribution_index].picks.append(add_pick)
+#                     redpy_catalog[contribution_index].origins[0].arrivals.append(add_arrival)
+#
+# if add_pick_to_associated:
+#
+#     # Commence process
+#     print('Adding picks for associated cluster events (mostly from temporary stations)...')
+#     time_start = time.time()
+#
+#     # Define client if using data from server
+#     if not local:
+#         client = Client(client_name)
+#
+#     # Define some coincidence_trigger arguments
+#
+#     # Loop through associated clusters
+#     for associated_cluster in associated_clusters:
+#
+#         # Find all detections within unassociated cluster
+#         contribution_list = list(np.where(np.array(redpy_detections.Cluster) == associated_cluster)[0])
+#
+#         # Loop through these unassociated detections to add picks
+#         for contribution_index in contribution_list:
+#
+#             # Extract contribution time
+#             contribution_time = redpy_catalog[contribution_index].origins[0].time
+#             # if the contribution is from before the campaign was installed, we skip the pick-adding for the event
+#             if contribution_time < UTCDateTime(2005,12,22) or contribution_time > UTCDateTime(2006,4,28):
+#                 continue
+#
+#             # Retrieve time limits for data fetch (+/- 12s window)
+#             starttime = contribution_time - 12
+#             endtime = contribution_time + 12
+#
+#             # Remove stations if necessary
+#             campaign_stations = campaign_station_list
+#
+#             # Gather data from local machine in a +/- 12s window, filter, and taper
+#             stream = Stream()
+#             for k, campaign_station in enumerate(campaign_stations):
+#                 for campaign_channel in campaign_channel_list[k]:
+#                     if local:
+#                         station_tr = read_trace(data_dir=data_dir, station=campaign_station, channel=campaign_channel,
+#                                                 starttime=starttime, endtime=endtime, tolerance=tolerance)
+#                     else:
+#                         station_tr = client.get_waveforms(campaign_network_list[k], campaign_station, campaign_location_list[k],
+#                                                           campaign_channel, starttime, endtime)
+#                     stream = stream + station_tr
+#             stream = stream.split()
+#             stream = stream.filter('bandpass', freqmin=1.0, freqmax=10.0, corners=2, zerophase=True)
+#             stream = stream.taper(0.05, type='hann', max_length=(0.75 * 1024 / 100))  # [HARD CODED]
+#             stream = stream.merge(method=1, fill_value=0)
+#             stream = stream.trim(starttime=starttime, endtime=endtime)
+#
+#             # Use coincidence trigger to get a pick time estimate
+#             try:
+#                 coin_trigger = []
+#                 coin_trigger = coincidence_trigger('classicstalta', 3, 2, stream, 2, sta=0.7, lta=8, details=True)
+#             # If it fails (usually due to data being too gappy), move to next event
+#             except:
+#                 continue
+#
+#             # If there are no coincidence triggers, move to next event
+#             if not coin_trigger:
+#                 continue
+#
+#             # Otherwise, continue to single channel STA/LTA pick making
+#             else:
+#
+#                 # Extract coincidence trigger time
+#                 coin_trigger_time = coin_trigger[0]["time"]
+#
+#                 # Remove traces that belong to channels that already have been picked
+#                 existing_station_list = [pick.waveform_id.station_code for pick in redpy_catalog[contribution_index].picks]
+#                 for tr in stream:
+#                     if tr.stats.station in existing_station_list:
+#                         stream.remove(tr)
+#
+#                 # For each channel,
+#                 for tr in stream:
+#
+#                     # Calculate the value of the characteristic function
+#                     sampling_rate = tr.stats.sampling_rate
+#                     cft = classic_sta_lta(tr.data, int(0.7 * sampling_rate), int(8 * sampling_rate))
+#                     # To plot function, use: plot_trigger(tr, cft, 3, 2)
+#
+#                     # Obtain trigger limits
+#                     trigger_limits = np.array(trigger_onset(cft, 3, 2))
+#
+#                     # If there exists some trigger limits
+#                     if trigger_limits.size != 0:
+#
+#                         # Convert to UTCDateTime and find the trigger-on time closest to the coincidence trigger
+#                         trigger_on = np.array([tr.stats.starttime + t for t in (trigger_limits[:, 0] / sampling_rate)])
+#                         pick_time = trigger_on[np.argmin(abs(trigger_on - coin_trigger_time))]
+#
+#                         # Craft waveform stream ID
+#                         tr_id = tr.id.split('.')
+#                         waveform_id = WaveformStreamID(tr_id[0], tr_id[1], tr_id[2], tr_id[3])
+#
+#                         # Create ObsPy pick and ObsPy arrival objects and add to redpy_catalog
+#                         add_pick = Pick(time=pick_time, waveform_id=waveform_id, phase_hint='P')
+#                         add_arrival = Arrival(pick_id=ResourceIdentifier(id=add_pick.resource_id), phase='P',
+#                                               time_weight=0.1)
+#                         redpy_catalog[contribution_index].picks.append(add_pick)
+#                         redpy_catalog[contribution_index].origins[0].arrivals.append(add_arrival)
+#
+# # Write the fully picked redpy catalog to an xml file
+# writer(convert_redpy_output_dir + 'redpy_catalog_picked.xml', redpy_catalog)
+#
+# # Conclude process
+# time_stop = time.time()
+# print('Pick making complete, processing time: %.2f s' % (time_stop-time_start))
+#
+# #%% Pull the fully picked core catalog from picked redpy catalog
+#
+# # Call pull_cores function
+# core_catalog = pull_cores(redpy_catalog)
+#
+# # Write picked core catalog to .xml file
+# writer(convert_redpy_output_dir + 'core_catalog_picked.xml', core_catalog)

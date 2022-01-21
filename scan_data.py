@@ -20,8 +20,8 @@ from toolbox import remove_boxcars, remove_bad_traces, calculate_catalog_FI, cal
 
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
-data_dir = '/home/data/redoubt/'
-output_dir = main_dir + 'output/redoubt2/'
+data_dir = '/home/data/augustine/'
+output_dir = main_dir + 'output/augustine/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
@@ -30,7 +30,7 @@ party_filename = 'party.tgz'
 detected_catalog_filename = 'party_catalog.xml'
 relocatable_catalog_filename = 'relocatable_catalog.xml'
 repicked_catalog_filename = 'repicked_catalog.xml'
-min_stations = 3                               # to remove templates that are anchored by too little stations
+min_stations = 4                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
 # start_time = UTCDateTime(2008, 10, 1, 0, 0, 0)  # start: UTCDateTime(2008, 5, 1, 0, 0, 0)
 # end_time = UTCDateTime(2009, 5, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 9, 1, 0, 0, 0)
@@ -48,14 +48,14 @@ local = True                                  # if set to True, use data from lo
 client_name = 'IRIS'                           # client name for non-local data query
 
 # Settings for FI calculation
-reference_station = 'REF'
+reference_station = 'AUH'
 reference_channel = 'EHZ'
 prepick = 1.0  # s
 length = 8.0  # s
-filomin = 1  # Hz
-filomax = 2.5  # Hz
-fiupmin = 5   # Hz
-fiupmax = 10   # Hz
+filomin = 1  # Hz        # Buurman et al.
+filomax = 2  # Hz
+fiupmin = 10   # Hz
+fiupmax = 20   # Hz
 
 # Settings for magnitude calculation
 noise_window = (-20.0, -prepick)  # s
@@ -83,11 +83,7 @@ print('\nAfter removing templates with < %d stations...' % min_stations)
 print(tribe)
 
 # Remove based on min_picks
-new_tribe = Tribe()
-for template in tribe:
-    if len(template.st) >= min_picks:
-        new_tribe += template
-tribe = new_tribe
+tribe.templates = [t for t in tribe if len(t.event.picks) >= min_picks]
 print('\nAfter removing templates with < %d valid picks...' % min_picks)
 print(tribe)
 
@@ -142,32 +138,34 @@ if local:
 
 #%% Brute force scan: load each day's data and scan day-by-day
 
-# Loop over month long chunks
-time_list = [UTCDateTime(2008, 5, 1, 0, 0, 0),
-             UTCDateTime(2008, 5, 15, 0, 0, 0),
-             UTCDateTime(2008, 6, 1, 0, 0, 0),
-             UTCDateTime(2008, 6, 15, 0, 0, 0),
-             UTCDateTime(2008, 7, 1, 0, 0, 0),
-             UTCDateTime(2008, 7, 15, 0, 0, 0),
-             UTCDateTime(2008, 8, 1, 0, 0, 0),
-             UTCDateTime(2008, 8, 15, 0, 0, 0),
-             UTCDateTime(2008, 9, 1, 0, 0, 0),
-             UTCDateTime(2008, 9, 15, 0, 0, 0),
-             UTCDateTime(2008,10, 1, 0, 0, 0),
-             UTCDateTime(2008,10, 15, 0, 0, 0),
-             UTCDateTime(2008,11, 1, 0, 0, 0),
-             UTCDateTime(2008,11, 15, 0, 0, 0),
-             UTCDateTime(2008,12, 1, 0, 0, 0),
-             UTCDateTime(2008,12, 15, 0, 0, 0),
-             UTCDateTime(2009, 1, 1, 0, 0, 0),
-             UTCDateTime(2009, 1, 15, 0, 0, 0),
-             UTCDateTime(2009, 2, 1, 0, 0, 0),
-             UTCDateTime(2009, 2, 15, 0, 0, 0),
-             UTCDateTime(2009, 3, 1, 0, 0, 0),
-             UTCDateTime(2009, 3, 15, 0, 0, 0),
-             UTCDateTime(2009, 4, 1, 0, 0, 0),
-             UTCDateTime(2009, 4, 15, 0, 0, 0),
-             UTCDateTime(2009, 5, 1, 0, 0, 0)]
+# Loop over half-month long chunks
+time_list = [UTCDateTime(2005, 4, 1, 0, 0, 0),
+             UTCDateTime(2005, 4, 15, 0, 0, 0),
+             UTCDateTime(2005, 5, 1, 0, 0, 0),
+             UTCDateTime(2005, 5, 15, 0, 0, 0),
+             UTCDateTime(2005, 6, 1, 0, 0, 0),
+             UTCDateTime(2005, 6, 15, 0, 0, 0),
+             UTCDateTime(2005, 7, 1, 0, 0, 0),
+             UTCDateTime(2005, 7, 15, 0, 0, 0),
+             UTCDateTime(2005, 8, 1, 0, 0, 0),
+             UTCDateTime(2005, 8, 15, 0, 0, 0),
+             UTCDateTime(2005, 9, 1, 0, 0, 0),
+             UTCDateTime(2005, 9, 15, 0, 0, 0),
+             UTCDateTime(2005,10, 1, 0, 0, 0),
+             UTCDateTime(2005,10, 15, 0, 0, 0),
+             UTCDateTime(2005,11, 1, 0, 0, 0),
+             UTCDateTime(2005,11, 15, 0, 0, 0),
+             UTCDateTime(2005,12, 1, 0, 0, 0),
+             UTCDateTime(2005,12, 15, 0, 0, 0),
+             UTCDateTime(2006, 1, 1, 0, 0, 0),
+             UTCDateTime(2006, 1, 15, 0, 0, 0),
+             UTCDateTime(2006, 2, 1, 0, 0, 0),
+             UTCDateTime(2006, 2, 15, 0, 0, 0),
+             UTCDateTime(2006, 3, 1, 0, 0, 0),
+             UTCDateTime(2006, 3, 15, 0, 0, 0),
+             UTCDateTime(2006, 4, 1, 0, 0, 0),
+             UTCDateTime(2006, 4, 15, 0, 0, 0),
+             UTCDateTime(2006, 5, 1, 0, 0, 0)]
 
 # Loop over time list and save in monthly chunks
 for k in range(len(time_list)-1):
@@ -362,18 +360,18 @@ for k in range(len(time_list)-1):
     # Write out catalog with relocatable detections
     writer(scan_data_output_dir + relocatable_catalog_filename[0:-4] + time_tag + relocatable_catalog_filename[-4:], relocatable_catalog)
 
-    # Calculate FI for relocatable catalog
-    relocatable_catalog = calculate_catalog_FI(relocatable_catalog, data_dir, reference_station, reference_channel, prepick,
-                                               length, filomin, filomax, fiupmin, fiupmax, histogram=False)
-    print('\nFIs calculated. Now calculating magnitudes...')
-
-    # # Calculate magnitude for relocatable catalog
-    # relocatable_catalog = calculate_relative_magnitudes(relocatable_catalog, tribe, data_dir, noise_window, signal_window,
-    #                                                     min_cc, min_snr, shift_len, tolerance, samp_rate)
-    # print('\nMagnitudes calculated. Saving catalog...')
-    print('Magnitude calculation was commented out.')
-
-    # Write out catalog with relocatable detections
-    writer(scan_data_output_dir + relocatable_catalog_filename[0:-4] + time_tag + relocatable_catalog_filename[-4:], relocatable_catalog)
-    time_end = time.time()
-    print('\nRelocatable catalog saved. Time taken: %.2f hours' % ((time_end - time_start)/3600))
+    # # Calculate FI for relocatable catalog
+    # relocatable_catalog = calculate_catalog_FI(relocatable_catalog, data_dir, reference_station, reference_channel, prepick,
+    #                                            length, filomin, filomax, fiupmin, fiupmax, histogram=False)
+    # print('\nFIs calculated. Now calculating magnitudes...')
+    #
+    # # # Calculate magnitude for relocatable catalog
+    # # relocatable_catalog = calculate_relative_magnitudes(relocatable_catalog, tribe, data_dir, noise_window, signal_window,
+    # #                                                     min_cc, min_snr, shift_len, tolerance, samp_rate)
+    # # print('\nMagnitudes calculated. Saving catalog...')
+    # print('Magnitude calculation was commented out.')
+    #
+    # # Write out catalog with relocatable detections
+    # writer(scan_data_output_dir + relocatable_catalog_filename[0:-4] + time_tag + relocatable_catalog_filename[-4:], relocatable_catalog)
+    # time_end = time.time()
+    # print('\nRelocatable catalog saved. Time taken: %.2f hours' % ((time_end - time_start)/3600))

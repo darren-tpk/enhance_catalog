@@ -21,19 +21,20 @@ from toolbox import reader, writer, prepare_stream_dict, adjust_weights
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/GitHub/enhance_catalog/'  # '/home/ptan/enhance_catalog/
-# data_dir = '/home/data/redoubt/'
+main_dir = '/Users/darrentpk/Desktop/GitHub/enhance_catalog/' # '/home/ptan/enhance_catalog/'
+data_dir = '/home/data/redoubt/'
 output_dir = main_dir + 'output/redoubt2/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
-relocatable_catalog_filename = 'master_catalogR3.xml'
-relocate_catalog_output_dir = '/Users/darrentpk/Desktop/OUTPUT/'  # '/home/ptan/enhance_catalog/output/redoubt2/relocate_catalog/'
-relocated_catalog_filename = 'master_catalogR3.xml'
+relocatable_catalog_filename = 'sub_catalog.xml' # ALSO: sub_catalog.xml, may_swarm.xml
+relocate_catalog_output_dir =  '/Users/darrentpk/Desktop/OUTPUT/' # '/home/ptan/enhance_catalog/output/redoubt2/relocate_catalog/'
+relocated_catalog_filename = 'sub_catalog_01202022.xml'
 raw_station_list_dir = main_dir + 'data/stations/'
 raw_station_list_filename = 'avo_station_list.csv'
 raw_vzmodel_dir = main_dir + 'data/vz/'
 raw_vzmodel_filename = 'redoubt_vzmodel.txt'
+vzmodel_type = 'layer' # accepted: 'node' for linear gradient, 'layer' for step wise
 ratio_provided = True
 by_cluster = True
 growclust_exe = main_dir + 'growclust/SRC/growclust'
@@ -62,8 +63,8 @@ evlist_format = '1'
 evlist_filename = growclust_in + 'evlist.txt'
 
 # Station list format & name
-# (0 = SEED channel, 1 = station name)
-stlist_format = '1'
+# (0 = SEED channel, 1 = station name, 2 = with elevation (see Section 3.2.2 in growclust docs))
+stlist_format = '2'
 stlist_filename = growclust_in + 'stlist.txt'
 
 # Cross correlation format & name
@@ -95,22 +96,22 @@ outboot_filename = growclust_out + 'out.growclust_boot'
 # For detailed description look at GrowClust manual
 
 # vpvs_factor, rayparam_min (-1 = default)
-vpvs_rayparam = '1.732 -1'
+vpvs_rayparam = '1.78 -1'
 
 # tt_dep0, tt_dep1, tt_ddep
-tt_deps = '0. 50. 1.'
+tt_deps = '0. 50. 0.25'
 
 # tt_del0, tt_del1, tt_ddel
-tt_dels = '0. 200. 2.'
+tt_dels = '0. 50. 0.25'
 
 # rmin, delmax, rmsmax
-tt_thres = '0.6 80 0.2'
+tt_thres = '0.75 50 0.2'
 
 # rpsavgmin, rmincut, ngoodmin, iponly
 tt_thres2 = '0 0 0 0'
 
 # nboot, nbranch_min
-nboot_nbranch = '10 1'
+nboot_nbranch = '50 1'
 
 
 #%% Define functions
@@ -164,7 +165,7 @@ catalog = reader(scan_data_output_dir + relocatable_catalog_filename)
 #     for i, unique_template in enumerate(unique_templates):
 #
 #         # Find index of catalog events that correspond to this template
-#         template_detection_indices = [i for i, template in enumerate(templates) if unique_template in template]
+#         template_detection_indices = [k for k, template in enumerate(templates) if unique_template in template]
 #
 #         # Craft sub-catalog
 #         sub_catalog = Catalog()
@@ -192,6 +193,67 @@ catalog = reader(scan_data_output_dir + relocatable_catalog_filename)
 #             adjust_weights(original_dt_dir, target_dt_dir, append=False)
 #         else:
 #             adjust_weights(original_dt_dir, target_dt_dir, append=True)
+#
+#     ##################################################################
+#     # # now deal with extra large cluster
+#     # unique_template = unique_templates[1039]
+#     #
+#     # # Find index of catalog events that correspond to this template
+#     # template_detection_indices = [k for k, template in enumerate(templates) if unique_template in template]
+#     # template_index = 4598
+#     # template_detection_indices.remove(template_index)
+#     #
+#     # import random
+#     # random.shuffle(template_detection_indices)
+#     #
+#     # # chunk into 50 event steps with 10 event overlap
+#     # for j in range(int(np.ceil(len(template_detection_indices) / 40))):
+#     #     if j < (int(np.ceil(len(template_detection_indices) / 40)) - 1):
+#     #         current_indices = template_detection_indices[(j * 40):((j * 40) + 50)]
+#     #     else:
+#     #         current_indices = template_detection_indices[(j * 40):]
+#     #
+#     #     # Craft sub-catalog
+#     #     sub_catalog = Catalog()
+#     #     for template_detection_index in current_indices:
+#     #         template_detection = catalog[template_detection_index]
+#     #         sub_catalog += template_detection
+#     #
+#     #     # Now craft stream dictionary
+#     #     stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
+#     #                                       data_dir=data_dir)
+#     #
+#     #     # Execute cross correlations
+#     #     _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
+#     #                            extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
+#     #                            lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
+#     #                            min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
+#     #
+#     #     # Write/append dt.cc to target cc file
+#     #     adjust_weights(original_dt_dir, target_dt_dir, append=True)
+#     #
+#     # # now cross correlate template with each one of its detections
+#     # # (note the big cluster's template was added manually)
+#     # for template_detection_index in template_detection_indices:
+#     #
+#     #     # Craft sub-catalog
+#     #     sub_catalog = Catalog()
+#     #     sub_catalog += catalog[4598] # add template
+#     #     sub_catalog += catalog[template_detection_index]
+#     #
+#     #     # Now craft stream dictionary
+#     #     stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
+#     #                                       data_dir=data_dir)
+#     #
+#     #     # Execute cross correlations
+#     #     _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
+#     #                            extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
+#     #                            lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
+#     #                            min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
+#     #
+#     #     # Write/append dt.cc to target cc file
+#     #     adjust_weights(original_dt_dir, target_dt_dir, append=True)
+#     ##################################################################
 #
 #     # Now execute inter-template cross correlation by generating a sub-catalog containing template self-detections
 #     sub_catalog = Catalog()
@@ -286,39 +348,62 @@ for station_used in stations_used:
     index = list(raw_station_list.station).index(station_used)
     station_lat = raw_station_list.latitude[index]
     station_lon = raw_station_list.longitude[index]
-    entry = '%s %9.4f %9.4f' % (station_used, station_lat, station_lon)
+    station_elev = raw_station_list.elevation[index]
+    entry = '%s %9.4f %9.4f %4.1f' % (station_used, station_lat, station_lon, station_elev)
     stlist_file.write(entry + '\n')
 stlist_file.close()
 
-# Format velocity model to layer cake and write
+# Format velocity model to layer cake or node and write
 # (Current velocity model is from Toth and Kisslinger, 1984 for Adak, and Power et al., 2012 for Redoubt)
+# (Also added the node model option, after Deshon et al. (2007)'s 3D model work on Redoubt)
 vzmodel = pd.read_csv(raw_vzmodel_dir + raw_vzmodel_filename, header=None)
 vzmodel_file = open(vzmodel_filename, 'w')
-if ratio_provided:
-    for i in range(len(vzmodel.values)):
-        if i != len(vzmodel.values)-1:
-            vz_str1 = vzmodel.values[i][0].split(' ')
-            entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
-            vz_str2 = vzmodel.values[i + 1][0].split(' ')
-            entry2 = '%5.1f %4.2f %4.2f' % (float(vz_str2[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
-            vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
-        else:
-            vz_str1 = vzmodel.values[i][0].split(' ')
-            entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
-            vzmodel_file.write(entry1)
+if vzmodel_type == 'layer':
+    if ratio_provided:
+        for i in range(len(vzmodel.values)):
+            if i != len(vzmodel.values)-1:
+                vz_str1 = vzmodel.values[i][0].split(' ')
+                entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+                vz_str2 = vzmodel.values[i + 1][0].split(' ')
+                entry2 = '%5.1f %4.2f %4.2f' % (float(vz_str2[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+                vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
+            else:
+                vz_str1 = vzmodel.values[i][0].split(' ')
+                entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+                vzmodel_file.write(entry1)
+    else:
+        for i in range(len(vzmodel.values)):
+            if i != len(vzmodel.values)-1:
+                vz_str1 = vzmodel.values[i][0].split(' ')
+                entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
+                vz_str2 = vzmodel.values[i + 1][0].split(' ')
+                entry2 = '%5.1f %4.2f 0.0' % (float(vz_str2[0]), float(vz_str1[1]))
+                vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
+            else:
+                vz_str1 = vzmodel.values[i][0].split(' ')
+                entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
+                vzmodel_file.write(entry1)
+    vzmodel_file.close()
+elif vzmodel_type == 'node':
+    if ratio_provided:
+        for i in range(len(vzmodel.values)):
+            vz_str = vzmodel.values[i][0].split(' ')
+            entry = '%5.1f %4.2f %4.2f' % (float(vz_str[0]), float(vz_str[1]), float(vz_str[1]) / float(vz_str[2]))
+            if i != len(vzmodel.values)-1:
+                vzmodel_file.write(entry + '\n')
+            else:
+                vzmodel_file.write(entry)
+    else:
+        for i in range(len(vzmodel.values)):
+            vz_str = vzmodel.values[i][0].split(' ')
+            entry = '%5.1f %4.2f 0.0' % (float(vz_str[0]), float(vz_str[1]))
+            if i != len(vzmodel.values)-1:
+                vzmodel_file.write(entry + '\n')
+            else:
+                vzmodel_file.write(entry)
+    vzmodel_file.close()
 else:
-    for i in range(len(vzmodel.values)):
-        if i != len(vzmodel.values)-1:
-            vz_str1 = vzmodel.values[i][0].split(' ')
-            entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
-            vz_str2 = vzmodel.values[i + 1][0].split(' ')
-            entry2 = '%5.1f %4.2f 0.0' % (float(vz_str2[0]), float(vz_str1[1]))
-            vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
-        else:
-            vz_str1 = vzmodel.values[i][0].split(' ')
-            entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
-            vzmodel_file.write(entry1)
-vzmodel_file.close()
+    raise ValueError('Invalid vzmodel_type entered.')
 
 # Create vzfine file in TT directory
 vzfine_file = open(vzmodel_fileout, 'w')
@@ -372,4 +457,8 @@ for i in range(len(relocated_event_table)):
     relocated_catalog += event
 writer(relocate_catalog_output_dir + relocated_catalog_filename, relocated_catalog)
 
+# Also copy bootstrap file for error analysis
+original_bootstrap_dir = relocate_catalog_output_dir + 'OUT/out.growclust_boot'
+target_bootstrap_dir = relocate_catalog_output_dir + 'layer_bootstrap_results.txt'
+shutil.copyfile(original_bootstrap_dir, target_bootstrap_dir)
 
