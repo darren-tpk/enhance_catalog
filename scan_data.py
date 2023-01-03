@@ -21,48 +21,53 @@ from toolbox import remove_boxcars, remove_bad_traces, calculate_catalog_FI, cal
 # Define variables
 main_dir = '/home/ptan/enhance_catalog/'
 data_dir = '/home/data/augustine/'
-output_dir = main_dir + 'output/augustine/'
+output_dir = main_dir + 'output/augustine5/'
 convert_redpy_output_dir = output_dir + 'convert_redpy/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
-tribe_filename = 'tribe.tgz'
+tribe_filename = 'tribe2.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
 party_filename = 'party.tgz'
-detected_catalog_filename = 'party_catalog.xml'
+detected_catalog_filename = 'party.xml'
 relocatable_catalog_filename = 'relocatable_catalog.xml'
 repicked_catalog_filename = 'repicked_catalog.xml'
-min_stations = 4                               # to remove templates that are anchored by too little stations
+min_stations = 3                               # to remove templates that are anchored by too little stations
 min_picks = 0                                  # to remove templates that are anchored by too little picks
-# start_time = UTCDateTime(2008, 10, 1, 0, 0, 0)  # start: UTCDateTime(2008, 5, 1, 0, 0, 0)
-# end_time = UTCDateTime(2009, 5, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 9, 1, 0, 0, 0)
+start_time = UTCDateTime(2005, 4, 1, 0, 0, 0)  # start: UTCDateTime(2008, 5, 1, 0, 0, 0)
+end_time = UTCDateTime(2006, 5, 1, 0, 0, 0)    # goal: UTCDateTime(2009, 9, 1, 0, 0, 0)
 max_zeros = 100                                # maximum number of zeros allowed in daylong merged trace
 npts_threshold = 100                           # drop data chunks that are overly short / have too little samples
 samp_rate = 50                                 # to resample streams to match tribes
 tolerance = 4e4                                # for boxcar removal
 threshold_type = 'av_chan_corr'                # also consider 'MAD', Jeremy uses 12
-threshold = 0.60                               # used to be 0.74 from sensitivity test. Was too high
-rethreshold = 0.70                             # filter party using revised threshold from sensitivity test
+threshold = 0.6                                # used to be 0.74 from sensitivity test. Was too high
+# rethreshold = 0.70                           # filter party using revised threshold from sensitivity test
 trig_int = 8                                   # trigger interval for each template. Also used to remove repeats (decluster)
-parallel_process = 'True'                      # parallel process for speed
-generate_repicked_catalog = False              # option to use lag_calc to do catalog repicking
-local = True                                  # if set to True, use data from local machine
+parallel_process = True                      # parallel process for speed
+local = True                                   # if set to True, use data from local machine
 client_name = 'IRIS'                           # client name for non-local data query
 
 # Settings for FI calculation
-reference_station = 'AUH'
-reference_channel = 'EHZ'
+reference_stations = ['AUH','AUI','AUP','AUS','AUW','AUE','AU13']
+reference_channels = ['EHZ','EHZ','EHZ','EHZ','EHZ','EHZ','BHZ']
+min_match = 2  # minimum number of matches with reference channels before FI calculation
+resampling_frequency = 50  # resampling frequency before fft
+tolerance = 4e4  # factor to median for boxcar removal
 prepick = 1.0  # s
 length = 8.0  # s
-filomin = 1  # Hz        # Buurman et al.
-filomax = 2  # Hz
-fiupmin = 10   # Hz
-fiupmax = 20   # Hz
+lowcut = 1  # Hz
+highcut = 10  # Hz
+filt_order = 4  # corners
+filomin = 1  # Hz
+filomax = 2.5  # Hz
+fiupmin = 5   # Hz
+fiupmax = 10   # Hz
 
 # Settings for magnitude calculation
 noise_window = (-20.0, -prepick)  # s
 signal_window = (-prepick, -prepick+length)  # s
 shift_len = 1.5  # s
 min_cc = 0.6
-min_snr = 2
+min_snr = 1
 
 #%% Define functions
 
@@ -77,6 +82,12 @@ tribe = reader(create_tribe_output_dir + tribe_filename)
 print('\nBefore cleaning:')
 print(tribe)
 
+# First remove template traces that are all nans
+for t in tribe:
+    for tr in t.st:
+        if np.isnan(tr.data).all():
+            t.st.traces.remove(tr)
+
 # Remove based on min_stations
 tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= min_stations]
 print('\nAfter removing templates with < %d stations...' % min_stations)
@@ -86,33 +97,6 @@ print(tribe)
 tribe.templates = [t for t in tribe if len(t.event.picks) >= min_picks]
 print('\nAfter removing templates with < %d valid picks...' % min_picks)
 print(tribe)
-
-#%% If we are generating a repicked catalog, we need to exclude templates without a location
-if generate_repicked_catalog:
-
-    # Unpickle the list of unassociated template numbers for comparison
-    with open(convert_redpy_output_dir + 'unassociated_clusters.txt', 'rb') as cluster_pickle:
-        unassociated_clusters = pickle.load(cluster_pickle)
-        #associated_clusters = pickle.load(cluster_pickle)
-
-    # Initialize a master repicked catalog for appending in main loop later
-    master_repicked_catalog = Catalog()
-
-    # Initialize placeholder empty tribe
-    new_tribe = Tribe()
-
-    # Loop through templates
-    for template in tribe:
-
-        # Extract cluster number to compare with unassociated cluster list
-        cluster_number = int(template.event.origins[0].comments[0].text.split(' ')[1])
-
-        # Only carry over templates that are associated to the pre-existing catalog
-        if cluster_number not in unassociated_clusters:
-            new_tribe += template
-
-    # Replace tribe in main workflow for next steps (the templates now all point to events with location)
-    tribe = new_tribe
 
 #%% If using local data, get a unique list of all template station-channel combinations for data fetching later
 if local:
@@ -138,34 +122,21 @@ if local:
 
 #%% Brute force scan: load each day's data and scan day-by-day
 
-# Loop over half-month long chunks
-time_list = [UTCDateTime(2005, 4, 1, 0, 0, 0),
-             UTCDateTime(2005, 4, 15, 0, 0, 0),
-             UTCDateTime(2005, 5, 1, 0, 0, 0),
-             UTCDateTime(2005, 5, 15, 0, 0, 0),
-             UTCDateTime(2005, 6, 1, 0, 0, 0),
-             UTCDateTime(2005, 6, 15, 0, 0, 0),
-             UTCDateTime(2005, 7, 1, 0, 0, 0),
-             UTCDateTime(2005, 7, 15, 0, 0, 0),
-             UTCDateTime(2005, 8, 1, 0, 0, 0),
-             UTCDateTime(2005, 8, 15, 0, 0, 0),
-             UTCDateTime(2005, 9, 1, 0, 0, 0),
-             UTCDateTime(2005, 9, 15, 0, 0, 0),
-             UTCDateTime(2005,10, 1, 0, 0, 0),
-             UTCDateTime(2005,10, 15, 0, 0, 0),
-             UTCDateTime(2005,11, 1, 0, 0, 0),
-             UTCDateTime(2005,11, 15, 0, 0, 0),
-             UTCDateTime(2005,12, 1, 0, 0, 0),
-             UTCDateTime(2005,12, 15, 0, 0, 0),
-             UTCDateTime(2006, 1, 1, 0, 0, 0),
-             UTCDateTime(2006, 1, 15, 0, 0, 0),
-             UTCDateTime(2006, 2, 1, 0, 0, 0),
-             UTCDateTime(2006, 2, 15, 0, 0, 0),
-             UTCDateTime(2006, 3, 1, 0, 0, 0),
-             UTCDateTime(2006, 3, 15, 0, 0, 0),
-             UTCDateTime(2006, 4, 1, 0, 0, 0),
-             UTCDateTime(2006, 4, 15, 0, 0, 0),
-             UTCDateTime(2006, 5, 1, 0, 0, 0)]
+# Loop over month long chunks
+time_list = [UTCDateTime(2005,4,1),
+             UTCDateTime(2005,5,1),
+             UTCDateTime(2005,6,1),
+             UTCDateTime(2005,7,1),
+             UTCDateTime(2005,8,1),
+             UTCDateTime(2005,9,1),
+             UTCDateTime(2005,10,1),
+             UTCDateTime(2005,11,1),
+             UTCDateTime(2005,12,1),
+             UTCDateTime(2006,1,1),
+             UTCDateTime(2006,2,1),
+             UTCDateTime(2006,3,1),
+             UTCDateTime(2006,4,1),
+             UTCDateTime(2006,5,1)]
 
 # Loop over time list and save in monthly chunks
 for k in range(len(time_list)-1):
@@ -209,18 +180,28 @@ for k in range(len(time_list)-1):
                         continue
 
             # Remove bad traces (too many zeros or too little samples)
-            stream = remove_bad_traces(stream,max_zeros=max_zeros,npts_threshold=npts_threshold)
+            stream = remove_bad_traces(stream, max_zeros=max_zeros, npts_threshold=npts_threshold)
 
             # Process stream (remove spikes, downsample to match tribe, detrend, merge)
             stream = remove_boxcars(stream,tolerance)
             stream = stream.resample(sampling_rate=samp_rate)
             stream = stream.detrend("simple")
             stream = stream.merge()
+            stream = stream.trim(starttime=t1, endtime=t2, pad=True)
+
+            # Check if stream is already empty. If yes, declare failure and skip
+            if stream is None:
+                print('The stream is already empty.')
+                time_current = time.time()
+                print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+                continue
+
             # Remove traces that are overly masked (i.e. more zeros than actual data points)
             for tr in stream:
                 if len(np.nonzero(tr.data)[0]) < 0.5 * len(tr.data):
                     stream.remove(tr)
-            print('Stream despiked, resampled and merged. Getting party of detections...')
+
+            print('Stream despiked, resampled, merged and trimmed. Getting party of detections...')
 
             # Attempt to scan the current day
             try:
@@ -231,23 +212,6 @@ for k in range(len(time_list)-1):
                 party_all = party_all + party
                 time_current = time.time()
                 print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start)/3600))
-
-                # If generating a repicked catalog, we prep the stream differently for lag_calc
-                if generate_repicked_catalog:
-
-                    # Copy the party and stream, then re-merge the stream using method 1
-                    party_calc = party.copy()
-                    stream_calc = stream.copy()
-                    stream_calc = stream_calc.split()
-                    stream_calc = stream_calc.merge(method=1)
-
-                    # Use lag_calc to produce the repicked catalog section
-                    repicked_catalog = party_calc.lag_calc(stream_calc, pre_processed=False, shift_len=1.5, min_cc=0.7, export_cc=False)
-
-                    # Add the repicked catalog section to the master repicked catalog
-                    master_repicked_catalog += repicked_catalog
-                    time_current = time.time()
-                    print('Repicked catalog generated. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
 
             # If the scan for the day fails, print a notification
             except:
@@ -279,9 +243,6 @@ for k in range(len(time_list)-1):
     # Conclude process
     time_end = time.time()
     print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_start)/3600))
-    if generate_repicked_catalog:
-        writer(scan_data_output_dir + repicked_catalog_filename, master_repicked_catalog)
-        print('Number of relocated events with picks: %d out of %d total' % (len([1 for event in master_repicked_catalog if (event.picks != [])]), len(master_repicked_catalog)))
 
     #%% Process catalog derived from party, then write out both the party and the catalog
 
@@ -336,6 +297,9 @@ for k in range(len(time_list)-1):
             time_text = event.resource_id.id.split('_')[-1]
             UTCdt = UTCDateTime(time_text)
 
+            # Reweight arrivals and add phase weight information [TO BE DONE]
+            pass
+
             # Create an ObsPy Origin object and store it in the event
             event.origins = [Origin(time= UTCdt, latitude = lat, longitude = lon, depth = dep)]
 
@@ -361,17 +325,39 @@ for k in range(len(time_list)-1):
     writer(scan_data_output_dir + relocatable_catalog_filename[0:-4] + time_tag + relocatable_catalog_filename[-4:], relocatable_catalog)
 
     # # Calculate FI for relocatable catalog
-    # relocatable_catalog = calculate_catalog_FI(relocatable_catalog, data_dir, reference_station, reference_channel, prepick,
-    #                                            length, filomin, filomax, fiupmin, fiupmax, histogram=False)
+    # relocatable_catalog = calculate_catalog_FI(relocatable_catalog, data_dir, reference_stations, reference_channels,
+    #                                            min_match, resampling_frequency, tolerance, prepick, length, lowcut,
+    #                                            highcut, filt_order, filomin, filomax, fiupmin, fiupmax, histogram=False)
     # print('\nFIs calculated. Now calculating magnitudes...')
     #
-    # # # Calculate magnitude for relocatable catalog
-    # # relocatable_catalog = calculate_relative_magnitudes(relocatable_catalog, tribe, data_dir, noise_window, signal_window,
-    # #                                                     min_cc, min_snr, shift_len, tolerance, samp_rate)
-    # # print('\nMagnitudes calculated. Saving catalog...')
-    # print('Magnitude calculation was commented out.')
+    # # Calculate magnitude for relocatable catalog
+    # relocatable_catalog = calculate_relative_magnitudes(relocatable_catalog, tribe, data_dir, noise_window, signal_window,
+    #                                                     min_cc, min_snr, shift_len, tolerance, samp_rate)
+    # print('\nMagnitudes calculated. Saving catalog...')
     #
     # # Write out catalog with relocatable detections
     # writer(scan_data_output_dir + relocatable_catalog_filename[0:-4] + time_tag + relocatable_catalog_filename[-4:], relocatable_catalog)
     # time_end = time.time()
     # print('\nRelocatable catalog saved. Time taken: %.2f hours' % ((time_end - time_start)/3600))
+
+# Now combine all time tag catalogs to get the full party catalog and relocatable catalog
+
+print('\nCombining all sub-catalogs...')
+time_start = time.time()
+
+full_party_catalog = Catalog()
+full_relocatable_catalog = Catalog()
+
+# Loop over time list and save in monthly chunks
+for k in range(len(time_list)-1):
+    start_time = time_list[k]
+    end_time = time_list[k+1]
+    time_tag = '_%4d%02d%02d_%4d%02d%02d' % (start_time.year,start_time.month,start_time.day,end_time.year,end_time.month,end_time.day)
+    sub_party_catalog = reader(scan_data_output_dir + detected_catalog_filename[0:-4] + time_tag + detected_catalog_filename[-4:])
+    sub_relocatable_catalog = reader(scan_data_output_dir + relocatable_catalog_filename[0:-4] + time_tag + relocatable_catalog_filename[-4:])
+    full_party_catalog += sub_party_catalog
+    full_relocatable_catalog += sub_relocatable_catalog
+
+writer(scan_data_output_dir + detected_catalog_filename, full_party_catalog)
+writer(scan_data_output_dir + relocatable_catalog_filename, full_relocatable_catalog)
+print('\nCombination complete. Time taken: %.2f hours' % ((time_end - time_start)/3600))

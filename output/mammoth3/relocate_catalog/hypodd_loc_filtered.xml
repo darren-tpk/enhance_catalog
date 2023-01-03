@@ -1,0 +1,1214 @@
+<?xml version='1.0' encoding='utf-8'?>
+<q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2">
+  <eventParameters publicID="smi:local/b4ebf6ec-59f3-4f1b-a739-58dd994d28a9">
+    <event publicID="smi:local/21a701fa-a0a2-44d7-a7a3-f8e5cdcc4559">
+      <comment id="smi:local/a9031c63-4b8d-46d8-a0dd-40bc38a5e055">
+        <text>Template: 2012_10_23t19_37_26</text>
+      </comment>
+      <comment id="smi:local/119f5f6e-3d80-49b4-ac41-586f10b4596d">
+        <text>threshold=3.5</text>
+      </comment>
+      <comment id="smi:local/ce473b00-efc2-4cc8-8e08-711c21685013">
+        <text>detect_val=4.999999046325684</text>
+      </comment>
+      <comment id="smi:local/7d504cfe-f12b-44b8-ba40-6e4817ce66e6">
+        <text>channels used: ('MCV', 'EHZ') ('MDC', 'EHZ') ('MINS', 'HHZ') ('MMP', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/69c4a657-223b-42ac-88dd-bc96e17c5c14">
+        <text>FI=0.29755</text>
+      </comment>
+      <origin publicID="smi:local/51f0d151-114c-4793-b522-a027a2acdefe">
+        <time>
+          <value>2012-10-23T19:19:26.620000Z</value>
+        </time>
+        <latitude>
+          <value>37.5825</value>
+        </latitude>
+        <longitude>
+          <value>-119.001297</value>
+        </longitude>
+        <depth>
+          <value>3.1500000000000004</value>
+        </depth>
+        <comment id="smi:local/a5a50f78-e513-400b-bae1-468b719cc50e">
+          <text>Event ID: 23</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/3ba41305-b36c-4055-8594-1509dbbb77f0">
+        <mag>
+          <value>0.47</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/c51dcf65-3062-4d4f-be7d-08690c0edee2">
+      <comment id="smi:local/ac45f2f0-a061-430a-95c4-c7ca86d59e4f">
+        <text>Template: 2012_10_30t14_38_11</text>
+      </comment>
+      <comment id="smi:local/5d41aa56-e6d6-4503-94b4-2bf7f6120736">
+        <text>threshold=7.0</text>
+      </comment>
+      <comment id="smi:local/8e07159b-ff4d-4406-b0c7-ddea4f696a68">
+        <text>detect_val=9.99999713897705</text>
+      </comment>
+      <comment id="smi:local/34ebfe88-0f03-4929-90a2-3c0646d9e05a">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHN') ('MDPB', 'HHZ') ('MLC', 'EHZ') ('MMP', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHE') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/371dd352-7e08-4d09-b3f9-5251710d11bc">
+        <text>FI=0.62122</text>
+      </comment>
+      <origin publicID="smi:local/dec45d33-9687-4ba2-83b4-019654c6789e">
+        <time>
+          <value>2012-10-30T14:14:11.660000Z</value>
+        </time>
+        <latitude>
+          <value>37.632301</value>
+        </latitude>
+        <longitude>
+          <value>-119.017197</value>
+        </longitude>
+        <depth>
+          <value>1.62</value>
+        </depth>
+        <comment id="smi:local/4b3655ba-98aa-449d-9890-7462f8826375">
+          <text>Event ID: 263</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/54d08d2e-f57f-4bc1-ac31-dd8df403003e">
+        <mag>
+          <value>0.33</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/1cb6b774-4e8b-49e6-9db9-82f180c54263">
+      <comment id="smi:local/66a3afda-2af0-4c9d-9f59-5f5e92dabf64">
+        <text>Template: 2012_10_15t09_20_01</text>
+      </comment>
+      <comment id="smi:local/b06c873a-c4b8-412a-a36f-b320d3918b4d">
+        <text>threshold=4.900000095367432</text>
+      </comment>
+      <comment id="smi:local/fa2bd035-ab9a-4c81-8c6c-662981a603f7">
+        <text>detect_val=6.999999046325684</text>
+      </comment>
+      <comment id="smi:local/7930168c-6ef7-4a75-9720-ec7929f4c4f6">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MMP', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/5265b259-e8c5-474b-9a60-b4f80a329a94">
+        <text>FI=0.34821</text>
+      </comment>
+      <origin publicID="smi:local/23546663-1c2f-4b89-ad8c-ede13ed78f33">
+        <time>
+          <value>2012-10-15T09:09:01.720000Z</value>
+        </time>
+        <latitude>
+          <value>37.574299</value>
+        </latitude>
+        <longitude>
+          <value>-119.013199</value>
+        </longitude>
+        <depth>
+          <value>3.75</value>
+        </depth>
+        <comment id="smi:local/e0b65078-53a2-4beb-afcb-e3fed2546093">
+          <text>Event ID: 362</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/175336f9-310a-46c9-b8d9-f3aeb5547687">
+        <mag>
+          <value>0.46</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/10eb6359-5464-4002-b85f-78b0b7139c4a">
+      <comment id="smi:local/62873840-b1e6-4800-86d7-f13a4d9209f2">
+        <text>Template: 2012_10_20t14_26_57</text>
+      </comment>
+      <comment id="smi:local/13f7e0d6-8bf9-45e3-be2d-34e13bffe08a">
+        <text>threshold=3.5</text>
+      </comment>
+      <comment id="smi:local/b2903446-51b8-44a7-926e-4fd6f0eb401a">
+        <text>detect_val=4.999999046325684</text>
+      </comment>
+      <comment id="smi:local/eaabb506-509a-4c64-9722-2834a14d5ed6">
+        <text>channels used: ('MDC', 'EHZ') ('MDPB', 'HHE') ('MINS', 'HHZ') ('MMP', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/3722c34b-51fc-42c9-8e13-4dbf2253b8db">
+        <text>FI=0.19056</text>
+      </comment>
+      <origin publicID="smi:local/c26cf45c-e64a-48bc-90b7-ba25552de1fd">
+        <time>
+          <value>2012-10-20T14:14:57.620000Z</value>
+        </time>
+        <latitude>
+          <value>37.589802</value>
+        </latitude>
+        <longitude>
+          <value>-119.011299</value>
+        </longitude>
+        <depth>
+          <value>0.7799999999999998</value>
+        </depth>
+        <comment id="smi:local/c2b85592-9652-40d3-98b0-6ee75ac01425">
+          <text>Event ID: 364</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/776b4901-8db0-46c0-877e-5f2717a69b68">
+        <mag>
+          <value>-0.07</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/0edd5bb5-9090-4d12-ad03-a3bff4a45171">
+      <comment id="smi:local/5414bf1b-47b4-4192-8673-c2e7453ba8b1">
+        <text>Template: 2012_10_29t17_34_19</text>
+      </comment>
+      <comment id="smi:local/bf85da09-08ae-49c0-9aab-501f11dafadd">
+        <text>threshold=8.399999618530273</text>
+      </comment>
+      <comment id="smi:local/436a744a-da4a-45a9-82d3-b288ff601919">
+        <text>detect_val=11.999998092651367</text>
+      </comment>
+      <comment id="smi:local/d5c9b510-de0a-4edc-b22e-9309bce76e72">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHN') ('MDPB', 'HHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MMP', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHE') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/e7670014-31d4-4210-8b0f-8796489e7e5f">
+        <text>FI=0.25303</text>
+      </comment>
+      <origin publicID="smi:local/b83434b2-07fc-4f8a-9149-133f091e646d">
+        <time>
+          <value>2012-10-29T17:17:19.260000Z</value>
+        </time>
+        <latitude>
+          <value>37.674</value>
+        </latitude>
+        <longitude>
+          <value>-119.039703</value>
+        </longitude>
+        <depth>
+          <value>17.74</value>
+        </depth>
+        <comment id="smi:local/fe511735-a54c-4788-8480-28a941683008">
+          <text>Event ID: 412</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/79c995ce-ebd1-47f3-bdad-c8c5d807f178">
+        <mag>
+          <value>0.92</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/1231d405-5992-471a-afbb-3cc1254af17d">
+      <comment id="smi:local/884e6841-238f-415b-a338-5121cd39bda1">
+        <text>Template: 2012_10_21t17_04_20</text>
+      </comment>
+      <comment id="smi:local/4ce9ea2e-ac51-4d67-bbc5-9df2052d877b">
+        <text>threshold=4.900000095367432</text>
+      </comment>
+      <comment id="smi:local/ab18af6c-b680-4f74-988c-ec1fd9772e8e">
+        <text>detect_val=6.999999046325684</text>
+      </comment>
+      <comment id="smi:local/5fb79ee9-3a04-48db-b12f-7280c78a7fc3">
+        <text>channels used: ('MCM', 'EHZ') ('MDC', 'EHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MMP', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/11445a9e-9483-4e15-a07d-0637a6f3cc2e">
+        <text>FI=0.28301</text>
+      </comment>
+      <origin publicID="smi:local/56f4de1e-9217-428e-b113-8c634bf78f70">
+        <time>
+          <value>2012-10-21T17:17:20.380000Z</value>
+        </time>
+        <latitude>
+          <value>37.632</value>
+        </latitude>
+        <longitude>
+          <value>-119.122002</value>
+        </longitude>
+        <depth>
+          <value>1.54</value>
+        </depth>
+        <comment id="smi:local/42220795-e9fc-49b6-a75f-358dc0151eb6">
+          <text>Event ID: 413</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/806ce3dd-3f2d-4f06-8567-da9bab416509">
+        <mag>
+          <value>0.47</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/3ce8e312-1d60-46aa-9310-5921307934fc">
+      <comment id="smi:local/551a2bb1-95d4-4e89-8f6c-c97202ef8874">
+        <text>Template: 2012_10_27t19_45_53</text>
+      </comment>
+      <comment id="smi:local/1166d55f-47bb-468a-bceb-b65eccc0154c">
+        <text>threshold=7.699999809265137</text>
+      </comment>
+      <comment id="smi:local/b7b02681-79c0-4767-8df0-a0d1102eff6d">
+        <text>detect_val=10.999999046325684</text>
+      </comment>
+      <comment id="smi:local/126b4f66-9307-4bf9-8bb8-e843537b8abf">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHZ') ('MINS', 'HHE') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MMP', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHN') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/15cb201c-5a42-4300-b32a-48dc7dc99afa">
+        <text>FI=0.32675</text>
+      </comment>
+      <origin publicID="smi:local/a11e5d6c-635d-4783-b040-720e0a292e47">
+        <time>
+          <value>2012-10-27T19:19:53.720000Z</value>
+        </time>
+        <latitude>
+          <value>37.5812</value>
+        </latitude>
+        <longitude>
+          <value>-119.0317</value>
+        </longitude>
+        <depth>
+          <value>4.14</value>
+        </depth>
+        <comment id="smi:local/f001a525-bc26-48b9-8325-08d999be5abb">
+          <text>Event ID: 431</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/f57a7d69-fb4b-441d-8482-1a9471e3129b">
+        <mag>
+          <value>0.17</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/8ab549ab-ae08-4430-8347-bd6ac9eaac4d">
+      <comment id="smi:local/7e11e557-600f-4041-9443-5c5f0f7a1177">
+        <text>Template: 2012_11_15t15_44_21</text>
+      </comment>
+      <comment id="smi:local/7758c470-9da8-47fd-aa71-ea19b9e88604">
+        <text>threshold=4.199999809265137</text>
+      </comment>
+      <comment id="smi:local/a59f1c1b-682d-4213-a91d-9e06e79d75d5">
+        <text>detect_val=5.999998569488525</text>
+      </comment>
+      <comment id="smi:local/750da628-c050-4d2e-9bc6-f3f97827001a">
+        <text>channels used: ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHZ') ('MMP', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/01b384ef-790e-4cfd-9848-94cff39a9dd1">
+        <text>FI=0.36094</text>
+      </comment>
+      <origin publicID="smi:local/737c1eca-685a-4b6e-bc9a-0d7a61ade626">
+        <time>
+          <value>2012-11-15T15:15:21.420000Z</value>
+        </time>
+        <latitude>
+          <value>37.612</value>
+        </latitude>
+        <longitude>
+          <value>-119.022003</value>
+        </longitude>
+        <depth>
+          <value>0.96</value>
+        </depth>
+        <comment id="smi:local/8dbe1277-e610-450b-a680-43271e474741">
+          <text>Event ID: 489</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/e794ab16-4fa6-4b94-abdc-8833c20ce509">
+        <mag>
+          <value>-0.12</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/6b702ce1-d974-4e9c-8ba2-ca327e306411">
+      <comment id="smi:local/b1f70431-8ab5-46fd-8c38-248f34d02fdd">
+        <text>Template: 2012_11_30t19_43_33</text>
+      </comment>
+      <comment id="smi:local/57b34b5d-b254-4c84-877e-9a32082e42fb">
+        <text>threshold=4.199999809265137</text>
+      </comment>
+      <comment id="smi:local/51479ea9-e00e-4d34-b437-3d8925b33679">
+        <text>detect_val=5.999998092651367</text>
+      </comment>
+      <comment id="smi:local/3ea20f76-37f4-451a-aee3-d3959d99c453">
+        <text>channels used: ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHZ') ('MMP', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/d1aa0d4c-0234-47d5-9dda-9d22053ca152">
+        <text>FI=0.22325</text>
+      </comment>
+      <origin publicID="smi:local/167f1382-3820-4d3a-a47c-7ab65144f040">
+        <time>
+          <value>2012-11-30T19:19:33.680000Z</value>
+        </time>
+        <latitude>
+          <value>37.637299</value>
+        </latitude>
+        <longitude>
+          <value>-119.028999</value>
+        </longitude>
+        <depth>
+          <value>0.9900000000000002</value>
+        </depth>
+        <comment id="smi:local/4bf977f0-f0ca-46ce-8377-ed4ad8636fcf">
+          <text>Event ID: 541</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/12478371-b446-47b3-98db-c4df5965b7e4">
+        <mag>
+          <value>0.31</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/e14833eb-67e9-4e67-8e55-7e4c65ce6419">
+      <comment id="smi:local/6556c25e-f547-4b98-8dbb-f5ce03039886">
+        <text>Template: 2012_11_30t19_43_17</text>
+      </comment>
+      <comment id="smi:local/ffe07141-8d28-4937-bae5-2942c4f8a595">
+        <text>threshold=4.900000095367432</text>
+      </comment>
+      <comment id="smi:local/9dc466ea-3074-46cb-90d0-1a0bf025fa2e">
+        <text>detect_val=6.999999046325684</text>
+      </comment>
+      <comment id="smi:local/582e0b0f-8528-4eb9-a231-80df0462b504">
+        <text>channels used: ('MCM', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/51100f94-5bd1-436c-9aa3-629fcb782f3e">
+        <text>FI=0.27170</text>
+      </comment>
+      <origin publicID="smi:local/74342068-5e8a-43b4-8fcf-a275e88e2335">
+        <time>
+          <value>2012-11-30T19:19:17.100000Z</value>
+        </time>
+        <latitude>
+          <value>37.638199</value>
+        </latitude>
+        <longitude>
+          <value>-119.025703</value>
+        </longitude>
+        <depth>
+          <value>2.76</value>
+        </depth>
+        <comment id="smi:local/d99a4a97-379c-499c-9ccd-d9ceb1362f97">
+          <text>Event ID: 547</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/3f4bfbe7-78d5-42ec-ac40-716bf3af80a5">
+        <mag>
+          <value>0.38</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/c8452806-aadb-4299-8bb3-a38f5f161683">
+      <comment id="smi:local/4e8116f9-d99f-4952-8e78-25b033378235">
+        <text>Template: 2012_11_24t02_26_41</text>
+      </comment>
+      <comment id="smi:local/6d0658c7-d2ff-4644-aff2-185fa5e00f0f">
+        <text>threshold=5.599999904632568</text>
+      </comment>
+      <comment id="smi:local/660a584f-99ca-403c-acee-80630bff7b58">
+        <text>detect_val=7.999999046325684</text>
+      </comment>
+      <comment id="smi:local/f1724765-c2ea-4b55-b1be-dd48fce43ba0">
+        <text>channels used: ('MDC', 'EHZ') ('MDPB', 'HHN') ('MDPB', 'HHZ') ('MINS', 'HHE') ('MINS', 'HHZ') ('MMP', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHN')</text>
+      </comment>
+      <comment id="smi:local/36dbbb19-e5db-46c5-b412-4319aa6691df">
+        <text>FI=-0.63383</text>
+      </comment>
+      <origin publicID="smi:local/d0d41893-5d2d-4d3e-bf29-8d2eacc62c83">
+        <time>
+          <value>2012-11-24T02:02:41.500000Z</value>
+        </time>
+        <latitude>
+          <value>37.637299</value>
+        </latitude>
+        <longitude>
+          <value>-119.085999</value>
+        </longitude>
+        <depth>
+          <value>13.18</value>
+        </depth>
+        <comment id="smi:local/24c8bca3-7f75-4833-8dc5-8e7b74ef548c">
+          <text>Event ID: 565</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/cb67394a-067f-4413-b756-9cbdb2e91743">
+        <mag>
+          <value>0.47</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/815ee805-a0fd-48fc-8a1b-8ff713bf3525">
+      <comment id="smi:local/0bf6a483-85ae-407e-a370-27f0e8ed385b">
+        <text>Template: 2012_11_18t11_42_11</text>
+      </comment>
+      <comment id="smi:local/c2ee864e-0833-4bf0-923e-caeeddbd6037">
+        <text>threshold=5.599999904632568</text>
+      </comment>
+      <comment id="smi:local/41e33a8c-c1fb-49a4-b3c2-73ee4c28de49">
+        <text>detect_val=7.999998092651367</text>
+      </comment>
+      <comment id="smi:local/9c7b3b4b-9fc5-4daf-9fc1-6b2c19046d6b">
+        <text>channels used: ('MCM', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHE') ('MINS', 'HHZ') ('MMP', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/e71b3245-9fdd-45cd-b878-ae702d6fda1a">
+        <text>FI=0.15377</text>
+      </comment>
+      <origin publicID="smi:local/5e342758-56bf-4e9d-96c6-ab45d701029d">
+        <time>
+          <value>2012-11-18T11:11:11.740000Z</value>
+        </time>
+        <latitude>
+          <value>37.6422</value>
+        </latitude>
+        <longitude>
+          <value>-119.062698</value>
+        </longitude>
+        <depth>
+          <value>17.84</value>
+        </depth>
+        <comment id="smi:local/217cf701-d744-4bc1-8b28-7e80a242be86">
+          <text>Event ID: 566</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/24e9e8af-c8b0-4edc-8e06-140581efe13c">
+        <mag>
+          <value>0.96</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/d9073612-e5d6-4e3d-9175-c92e76ea6242">
+      <comment id="smi:local/2c9910f5-d6a8-4d5b-9c55-720f785c7f80">
+        <text>Template: 2012_12_28t02_32_02</text>
+      </comment>
+      <comment id="smi:local/a2d557ec-bc1d-4489-b66a-6f54951f0758">
+        <text>threshold=4.199999809265137</text>
+      </comment>
+      <comment id="smi:local/e97e5ae4-ddce-48d9-b1d5-f80408e8bd89">
+        <text>detect_val=5.999999046325684</text>
+      </comment>
+      <comment id="smi:local/00efdeba-32c6-413e-b2ac-4ae1bdba27d0">
+        <text>channels used: ('MDC', 'EHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MRD', 'EHZ') ('OMMB', 'HHE') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/c8ec3814-4031-4ef6-acfc-c98518059487">
+        <text>FI=0.51747</text>
+      </comment>
+      <origin publicID="smi:local/09261c38-4d7a-46fd-b9bc-e25507c502d0">
+        <time>
+          <value>2012-12-28T02:02:02.060000Z</value>
+        </time>
+        <latitude>
+          <value>37.633202</value>
+        </latitude>
+        <longitude>
+          <value>-119.025299</value>
+        </longitude>
+        <depth>
+          <value>1.9699999999999998</value>
+        </depth>
+        <comment id="smi:local/7ea00f63-9ac6-4b9f-a245-fc5a92bef157">
+          <text>Event ID: 693</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/a54a907f-102e-4198-b062-71671690ebbe">
+        <mag>
+          <value>0.18</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/437f56e6-4939-43e0-a5a6-b7020fe27746">
+      <comment id="smi:local/61ef5bf8-65a8-4f37-a55e-2ae36791cdf7">
+        <text>Template: 2012_12_24t23_42_37</text>
+      </comment>
+      <comment id="smi:local/b532c6ac-c498-4488-8092-d82d9c3d0750">
+        <text>threshold=2.799999952316284</text>
+      </comment>
+      <comment id="smi:local/35ac7a39-25bf-4e5f-9176-bd0cff41fdd7">
+        <text>detect_val=3.9999988079071045</text>
+      </comment>
+      <comment id="smi:local/39ef4e9a-3742-4771-baec-b0a3cf260475">
+        <text>channels used: ('MDC', 'EHZ') ('MINS', 'HHE') ('MINS', 'HHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/22bd627b-d52f-4e14-a1a8-8409e18029e0">
+        <text>FI=0.12269</text>
+      </comment>
+      <origin publicID="smi:local/f7206c49-cad7-4a99-90e1-57eabde21a3b">
+        <time>
+          <value>2012-12-24T23:23:37.360000Z</value>
+        </time>
+        <latitude>
+          <value>37.594002</value>
+        </latitude>
+        <longitude>
+          <value>-119.0168</value>
+        </longitude>
+        <depth>
+          <value>1.9699999999999998</value>
+        </depth>
+        <comment id="smi:local/31fcedb5-64fd-4f0b-8300-3d9a33ca2f30">
+          <text>Event ID: 788</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/b687c413-ce3a-4fba-8d88-48794bce6a0d">
+        <mag>
+          <value>-0.03</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/a5e3c142-ff21-49e4-b03b-7855eb0cc4c6">
+      <comment id="smi:local/f98ebb20-bf57-4561-8772-23ed188601d1">
+        <text>Template: 2012_12_27t20_53_10</text>
+      </comment>
+      <comment id="smi:local/2159c7a0-cb9b-4b91-b17e-11f046ac3284">
+        <text>threshold=6.300000190734863</text>
+      </comment>
+      <comment id="smi:local/b034c68d-42de-4ec3-9117-b8a79e1b1713">
+        <text>detect_val=8.999999046325684</text>
+      </comment>
+      <comment id="smi:local/882a764e-1d46-4827-a2ed-2bab309c8aff">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MMP', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHE')</text>
+      </comment>
+      <comment id="smi:local/65706a10-1a1c-4d5c-9ac4-1cbb3d561dd7">
+        <text>FI=-0.81815</text>
+      </comment>
+      <origin publicID="smi:local/1ab21de0-7a6e-49cd-8c60-765313a2619c">
+        <time>
+          <value>2012-12-27T20:20:10.460000Z</value>
+        </time>
+        <latitude>
+          <value>37.628201</value>
+        </latitude>
+        <longitude>
+          <value>-119.035797</value>
+        </longitude>
+        <depth>
+          <value>12.88</value>
+        </depth>
+        <comment id="smi:local/08133124-347f-4f3f-a73a-0f799f1b184a">
+          <text>Event ID: 811</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/7567a21c-8196-4e23-87b2-f7e6a14d486e">
+        <mag>
+          <value>0.55</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/10f8cea6-f096-48ba-9d4b-17f41dc087e2">
+      <comment id="smi:local/e5851d3b-3fed-4dc5-b0ba-54eac39fd80b">
+        <text>Template: 2012_12_16t07_46_28</text>
+      </comment>
+      <comment id="smi:local/3826948a-05db-41cc-8da9-2ffdfc7c6e47">
+        <text>threshold=6.300000190734863</text>
+      </comment>
+      <comment id="smi:local/04c80ce5-fa88-40b4-97de-9092661244ed">
+        <text>detect_val=8.999999046325684</text>
+      </comment>
+      <comment id="smi:local/2c8fe8d1-389c-4b60-b76b-9f1870ed059b">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHN') ('MDPB', 'HHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MRD', 'EHZ') ('OMMB', 'HHN')</text>
+      </comment>
+      <comment id="smi:local/e61759c3-a29a-4996-bf63-684999fae92d">
+        <text>FI=-0.57486</text>
+      </comment>
+      <origin publicID="smi:local/c583349c-8bb4-4ad4-9d37-969b3b0d1371">
+        <time>
+          <value>2012-12-16T07:07:28.580000Z</value>
+        </time>
+        <latitude>
+          <value>37.6385</value>
+        </latitude>
+        <longitude>
+          <value>-119.058296</value>
+        </longitude>
+        <depth>
+          <value>13.940000000000001</value>
+        </depth>
+        <comment id="smi:local/78bbf5ff-05b1-490e-90d6-572aa7b67e59">
+          <text>Event ID: 817</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/70ef3ef8-d59d-4760-8905-02d9c2b4eae8">
+        <mag>
+          <value>0.49</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/b5d78e73-de5f-469e-9d4f-8d361c79c71a">
+      <comment id="smi:local/313ee8b7-a655-4e39-b942-4b7e087a0753">
+        <text>Template: 2012_12_14t17_06_10</text>
+      </comment>
+      <comment id="smi:local/ef0515d0-f584-44e5-bca4-a9f4b4b31360">
+        <text>threshold=5.599999904632568</text>
+      </comment>
+      <comment id="smi:local/2d09bf62-f53d-462f-a874-20f33a3c2b4c">
+        <text>detect_val=7.999998569488525</text>
+      </comment>
+      <comment id="smi:local/90f9913f-6ba6-4959-aa68-dfa71ec2ae3b">
+        <text>channels used: ('MCM', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/72f8aa44-b4e0-4e61-ba9f-bb52d10acd86">
+        <text>FI=0.29855</text>
+      </comment>
+      <origin publicID="smi:local/a3172500-183f-408a-a5d6-f40a3e8ca052">
+        <time>
+          <value>2012-12-14T17:17:10.400000Z</value>
+        </time>
+        <latitude>
+          <value>37.633499</value>
+        </latitude>
+        <longitude>
+          <value>-119.0242</value>
+        </longitude>
+        <depth>
+          <value>14.280000000000001</value>
+        </depth>
+        <comment id="smi:local/7d5c23f5-0c2a-42e8-94ba-872a8cdda899">
+          <text>Event ID: 822</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/869b7857-cf9f-44a3-8d59-e9d7de38fa62">
+        <mag>
+          <value>0.78</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/a112e79e-7dc4-44c0-993c-d1755012c279">
+      <comment id="smi:local/ebdd348c-d192-487c-9c25-320563406764">
+        <text>Template: 2012_12_26t07_32_18</text>
+      </comment>
+      <comment id="smi:local/a5fa3d9e-5082-4231-8ea9-2b349876083e">
+        <text>threshold=3.5</text>
+      </comment>
+      <comment id="smi:local/36be8213-7d11-4f15-8a1a-377ea5f42332">
+        <text>detect_val=4.999999046325684</text>
+      </comment>
+      <comment id="smi:local/9dbe7dc2-17b2-402a-9374-c539c48e8845">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MLC', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/39d139eb-e80a-42b5-bb5b-6ea1b61f952e">
+        <text>FI=0.10872</text>
+      </comment>
+      <origin publicID="smi:local/c79cbdcb-db63-4c5f-98bb-15d9b6d99cfa">
+        <time>
+          <value>2012-12-26T07:07:18.540000Z</value>
+        </time>
+        <latitude>
+          <value>37.6255</value>
+        </latitude>
+        <longitude>
+          <value>-119.047302</value>
+        </longitude>
+        <depth>
+          <value>15.96</value>
+        </depth>
+        <comment id="smi:local/1b1fe5f2-cf99-4e4e-974a-df9c61e99dde">
+          <text>Event ID: 853</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/769621dc-062f-42e6-abbb-ff79fc1d56da">
+        <mag>
+          <value>0.67</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/0067059d-d580-4f6a-a122-98ba8810ce44">
+      <comment id="smi:local/09b08434-85e5-43dd-b9b2-0bc2186ec8fd">
+        <text>Template: 2012_12_28t02_32_16</text>
+      </comment>
+      <comment id="smi:local/1ba07ce0-480a-4278-b3ab-6e1d926cdf83">
+        <text>threshold=3.5</text>
+      </comment>
+      <comment id="smi:local/b9e348bb-aa0e-4646-9c78-70e5abc6145e">
+        <text>detect_val=4.999999046325684</text>
+      </comment>
+      <comment id="smi:local/5b8881f9-0db2-43f1-bb11-64bea7ed3ef0">
+        <text>channels used: ('MDC', 'EHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MRD', 'EHZ') ('OMMB', 'HHN')</text>
+      </comment>
+      <comment id="smi:local/0489e78b-7c36-4658-b188-59364197c105">
+        <text>FI=0.30405</text>
+      </comment>
+      <origin publicID="smi:local/6af20a1c-8634-445a-9938-9ae5492c9ec2">
+        <time>
+          <value>2012-12-28T02:02:16.340000Z</value>
+        </time>
+        <latitude>
+          <value>37.633999</value>
+        </latitude>
+        <longitude>
+          <value>-119.024803</value>
+        </longitude>
+        <depth>
+          <value>2.0999999999999996</value>
+        </depth>
+        <comment id="smi:local/44055337-c396-4631-bb3a-d79f9a4b2970">
+          <text>Event ID: 859</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/3765f5ea-e539-4737-83b1-7a18b17dd0b6">
+        <mag>
+          <value>0.04</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/c45bc885-68cf-49e4-954f-faeb3d228e3a">
+      <comment id="smi:local/efdce434-cd3e-421a-af45-7f6c85decfcd">
+        <text>Template: 2012_12_08t03_26_43</text>
+      </comment>
+      <comment id="smi:local/0f1e346a-6369-4d78-aed5-5a3637c51ef8">
+        <text>threshold=7.699999809265137</text>
+      </comment>
+      <comment id="smi:local/5ef44ea8-591b-4d30-b307-f645b5717f37">
+        <text>detect_val=10.999999046325684</text>
+      </comment>
+      <comment id="smi:local/a6b05ce1-94b7-4f11-a7ac-94361d4ee7fd">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHE') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MMP', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHN')</text>
+      </comment>
+      <comment id="smi:local/1b0961d9-0958-48d3-b159-2deba532a615">
+        <text>FI=0.29010</text>
+      </comment>
+      <origin publicID="smi:local/1b24855d-72e1-4efb-8ce2-6fbacc895413">
+        <time>
+          <value>2012-12-08T03:03:43.680000Z</value>
+        </time>
+        <latitude>
+          <value>37.627701</value>
+        </latitude>
+        <longitude>
+          <value>-119.046501</value>
+        </longitude>
+        <depth>
+          <value>15.649999999999999</value>
+        </depth>
+        <comment id="smi:local/b95aef7c-2ccd-459e-a09b-93873baabe06">
+          <text>Event ID: 881</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/b467d0e2-457b-4e5a-a078-81d1e7d82d36">
+        <mag>
+          <value>0.5</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/b62d0807-639e-403a-9950-dd9715031aa0">
+      <comment id="smi:local/e1a78f73-a72f-49ac-9f86-0c08c23273e0">
+        <text>Template: 2012_12_07t09_24_47</text>
+      </comment>
+      <comment id="smi:local/fe04068f-6932-424b-899b-09d1eeff28f9">
+        <text>threshold=7.0</text>
+      </comment>
+      <comment id="smi:local/07ba0cef-0cb9-41c5-acf1-92441178a11a">
+        <text>detect_val=9.99999713897705</text>
+      </comment>
+      <comment id="smi:local/9b702aac-6145-47a7-91b2-95966300ffc5">
+        <text>channels used: ('MCM', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHN') ('MDPB', 'HHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHE') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/2bdec590-af3d-4542-8fbd-4f36381bfb4c">
+        <text>FI=0.14714</text>
+      </comment>
+      <origin publicID="smi:local/f6b10573-8139-437c-a8e3-a58c99744937">
+        <time>
+          <value>2012-12-07T09:09:47.820000Z</value>
+        </time>
+        <latitude>
+          <value>37.631302</value>
+        </latitude>
+        <longitude>
+          <value>-119.032997</value>
+        </longitude>
+        <depth>
+          <value>12.39</value>
+        </depth>
+        <comment id="smi:local/04814c86-9042-4c18-8719-d0ca4100d8dd">
+          <text>Event ID: 912</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/cb6b3f76-db65-44dd-9b7e-d5f4ab164f60">
+        <mag>
+          <value>0.25</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/f2d6ddf5-6e27-4073-9ffa-e5f039e36ea9">
+      <comment id="smi:local/c1c3d42f-5a0c-4728-9880-f886aa7e6c38">
+        <text>Template: 2013_01_15t00_29_06</text>
+      </comment>
+      <comment id="smi:local/0cd8aa29-92b5-4c17-b6dd-7e02e4517faa">
+        <text>threshold=4.199999809265137</text>
+      </comment>
+      <comment id="smi:local/2464eeba-0154-48f8-9ff6-b9130693a11c">
+        <text>detect_val=5.999999046325684</text>
+      </comment>
+      <comment id="smi:local/3d024614-382e-444b-a4c5-6a78344bef44">
+        <text>channels used: ('MDC', 'EHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MRD', 'EHZ') ('OMMB', 'HHE') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/3a619cae-4999-4d0a-b120-d8e4faea15c1">
+        <text>FI=0.33613</text>
+      </comment>
+      <origin publicID="smi:local/b62e3804-60fd-461c-91aa-adbba31df01a">
+        <time>
+          <value>2013-01-15T00:00:06.940000Z</value>
+        </time>
+        <latitude>
+          <value>37.633801</value>
+        </latitude>
+        <longitude>
+          <value>-119.027496</value>
+        </longitude>
+        <depth>
+          <value>1.7400000000000002</value>
+        </depth>
+        <comment id="smi:local/b1035041-4ea2-457e-93b7-9d61ff90ece1">
+          <text>Event ID: 997</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/9942d3c2-9293-4cbb-a20a-4fa36e9c52f3">
+        <mag>
+          <value>0.33</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/40b5f43d-2e9d-46ca-9b0f-047b04787810">
+      <comment id="smi:local/9f1581fc-d77b-4929-9968-f00db3253929">
+        <text>Template: 2013_01_29t04_49_19</text>
+      </comment>
+      <comment id="smi:local/f2e0c7e2-fe42-419d-a1be-77c5cdb249b5">
+        <text>threshold=3.5</text>
+      </comment>
+      <comment id="smi:local/52263fab-27ae-4ee5-813c-ac54deac5486">
+        <text>detect_val=4.999999046325684</text>
+      </comment>
+      <comment id="smi:local/cc139401-eeea-4fdc-8bbc-479ea01ba1d9">
+        <text>channels used: ('MDC', 'EHZ') ('MDPB', 'HHZ') ('MINS', 'HHZ') ('MRD', 'EHZ') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/931f7f6f-33dd-495f-a720-7226f185919d">
+        <text>FI=0.68566</text>
+      </comment>
+      <origin publicID="smi:local/b1aaa686-2bf5-4865-8839-cfbfdf6128a8">
+        <time>
+          <value>2013-01-29T04:04:19.620000Z</value>
+        </time>
+        <latitude>
+          <value>37.618999</value>
+        </latitude>
+        <longitude>
+          <value>-119.0187</value>
+        </longitude>
+        <depth>
+          <value>2.25</value>
+        </depth>
+        <comment id="smi:local/08b4b1a1-6efc-4145-af0d-835fdc690564">
+          <text>Event ID: 1024</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/2c7520ee-b784-41c2-9462-ccd367361a09">
+        <mag>
+          <value>0.33</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/06e50f9f-66d3-444a-a799-f93629a444d2">
+      <comment id="smi:local/3fde33e7-6cfc-4402-9643-71e9e0588f2b">
+        <text>Template: 2013_01_24t06_23_55</text>
+      </comment>
+      <comment id="smi:local/b27b1a18-6733-46ee-9979-47c30ba4e0cc">
+        <text>threshold=7.699999809265137</text>
+      </comment>
+      <comment id="smi:local/1184fb0c-a9ac-4e53-82d6-92628460068c">
+        <text>detect_val=10.999999046325684</text>
+      </comment>
+      <comment id="smi:local/758da62c-6f70-4427-9c8a-914a6dada16d">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHE') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/2675f866-a924-4fcc-a4ea-1a87f41b31c4">
+        <text>FI=0.60997</text>
+      </comment>
+      <origin publicID="smi:local/02ec51ed-a9d3-4fbf-8c80-fd9e5fb28298">
+        <time>
+          <value>2013-01-24T06:06:55.340000Z</value>
+        </time>
+        <latitude>
+          <value>37.604698</value>
+        </latitude>
+        <longitude>
+          <value>-119.097298</value>
+        </longitude>
+        <depth>
+          <value>7.359999999999999</value>
+        </depth>
+        <comment id="smi:local/71a4c4a7-158a-4b1c-92c0-e356c3dffe3c">
+          <text>Event ID: 1052</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/5eee8a90-1e28-4781-b779-d334f5cffc61">
+        <mag>
+          <value>1.35</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/f0b8053a-53c9-4a88-b270-8733ad07bd7b">
+      <comment id="smi:local/24e22de8-7c6e-42e2-949d-88688b91dbc9">
+        <text>Template: 2013_01_04t19_53_02</text>
+      </comment>
+      <comment id="smi:local/f5895443-d09a-4c16-ac1f-112889db0fe7">
+        <text>threshold=5.599999904632568</text>
+      </comment>
+      <comment id="smi:local/2cc47367-e261-4be6-afff-ef9584c53cea">
+        <text>detect_val=7.999997615814209</text>
+      </comment>
+      <comment id="smi:local/e317277d-a1d0-405a-86fe-ffb2bb6f0097">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MINS', 'HHE') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHE')</text>
+      </comment>
+      <comment id="smi:local/70bcad5e-897c-4dba-b44d-ce629d3015f4">
+        <text>FI=0.22943</text>
+      </comment>
+      <origin publicID="smi:local/14a53de4-4d0a-4bf2-be91-f27048d3c10f">
+        <time>
+          <value>2013-01-04T19:19:02.300000Z</value>
+        </time>
+        <latitude>
+          <value>37.640301</value>
+        </latitude>
+        <longitude>
+          <value>-119.028999</value>
+        </longitude>
+        <depth>
+          <value>11.44</value>
+        </depth>
+        <comment id="smi:local/648ffdb3-2f48-4a09-aba4-0e4f6d732093">
+          <text>Event ID: 1054</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/07cd268d-d819-4484-a84b-0105280c9a20">
+        <mag>
+          <value>0.76</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/4b613b22-0c40-4fd0-852e-105845afd758">
+      <comment id="smi:local/5af7b252-7320-4a3d-afd3-d78713a35411">
+        <text>Template: 2013_01_07t09_58_33</text>
+      </comment>
+      <comment id="smi:local/afb3d6c0-822e-4719-b632-c4d6327d985c">
+        <text>threshold=3.5</text>
+      </comment>
+      <comment id="smi:local/cbd5aa40-1018-4c1b-98ce-03f06f2a6794">
+        <text>detect_val=4.999999046325684</text>
+      </comment>
+      <comment id="smi:local/bb939176-e62e-4faf-bf4a-6703447f548a">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MLC', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/ce1fd3fd-abe6-4577-aa61-4eb863ffc567">
+        <text>FI=0.12403</text>
+      </comment>
+      <origin publicID="smi:local/4af2c41a-cca6-4cd6-b66c-9e01290e4401">
+        <time>
+          <value>2013-01-07T09:09:33.140000Z</value>
+        </time>
+        <latitude>
+          <value>37.582199</value>
+        </latitude>
+        <longitude>
+          <value>-119.0112</value>
+        </longitude>
+        <depth>
+          <value>2.0</value>
+        </depth>
+        <comment id="smi:local/56d8d828-d119-4e66-b097-7ce2b5fd3564">
+          <text>Event ID: 1082</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/e4b13259-62a5-46b4-90d8-de7714002413">
+        <mag>
+          <value>0.2</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/6fdfd616-a20d-4247-a0ff-2c72e4635912">
+      <comment id="smi:local/b2c9a14c-d34a-4691-a078-996c9124adb1">
+        <text>Template: 2013_01_16t13_42_04</text>
+      </comment>
+      <comment id="smi:local/950ff970-ce49-4e0f-b93c-475e72db61e6">
+        <text>threshold=4.900000095367432</text>
+      </comment>
+      <comment id="smi:local/8a2e0548-4969-4412-ad69-5b3c4d1e3bde">
+        <text>detect_val=6.999997615814209</text>
+      </comment>
+      <comment id="smi:local/6a0059cd-b5b7-4637-8230-d0e46511b2bb">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/c34c1a2b-5905-43cc-a256-f80ebdbe9221">
+        <text>FI=0.07572</text>
+      </comment>
+      <origin publicID="smi:local/437cab6c-5829-4bb1-8c0a-0169b06cd124">
+        <time>
+          <value>2013-01-16T13:13:04.400000Z</value>
+        </time>
+        <latitude>
+          <value>37.597</value>
+        </latitude>
+        <longitude>
+          <value>-119.001297</value>
+        </longitude>
+        <depth>
+          <value>2.08</value>
+        </depth>
+        <comment id="smi:local/20561685-59fa-493e-bb6f-5745079c1a15">
+          <text>Event ID: 1096</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/54d6293e-c80f-44e4-a7ed-e67a7135de6a">
+        <mag>
+          <value>0.03</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/9518af64-43a0-434d-96d3-6747c542a022">
+      <comment id="smi:local/29d75770-859d-41db-b8ca-dbe283bed421">
+        <text>Template: 2013_01_02t13_44_07</text>
+      </comment>
+      <comment id="smi:local/235207aa-0c78-4e9b-b174-419a84025776">
+        <text>threshold=2.0999999046325684</text>
+      </comment>
+      <comment id="smi:local/c2e56ca5-0438-4790-83e9-9ee15c960aa1">
+        <text>detect_val=2.999999523162842</text>
+      </comment>
+      <comment id="smi:local/d85f3463-25bf-4518-a54c-c0d3c16c2d2f">
+        <text>channels used: ('MDC', 'EHZ') ('MINS', 'HHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/6d83cb2a-70e7-4651-92ff-232e2e672582">
+        <text>FI=0.26148</text>
+      </comment>
+      <origin publicID="smi:local/2945d839-50cd-4558-a6ca-d03ec0a0a80f">
+        <time>
+          <value>2013-01-02T13:13:07.600000Z</value>
+        </time>
+        <latitude>
+          <value>37.632801</value>
+        </latitude>
+        <longitude>
+          <value>-119.0327</value>
+        </longitude>
+        <depth>
+          <value>0.20000000000000018</value>
+        </depth>
+        <comment id="smi:local/1e2a3bab-8c31-45d9-87bf-a9e9cf20bf1c">
+          <text>Event ID: 1198</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/290d5d74-6c19-45fa-9e89-a637e99dd746">
+        <mag>
+          <value>0.64</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/17218af7-2abb-47d7-b84a-0d6b1f25bba0">
+      <comment id="smi:local/fbc21180-a57d-4558-b5cf-322101365f83">
+        <text>Template: 2012_10_29t13_14_48</text>
+      </comment>
+      <comment id="smi:local/f286174b-34fb-4605-be34-450fa5aef34f">
+        <text>threshold=8.399999618530273</text>
+      </comment>
+      <comment id="smi:local/67113835-36e5-4729-9082-e3327793c4cf">
+        <text>detect_val=8.498295783996582</text>
+      </comment>
+      <comment id="smi:local/da64ead4-7838-4109-b5b6-e5195e49b890">
+        <text>channels used: ('MCM', 'EHZ') ('MCV', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHN') ('MDPB', 'HHZ') ('MINS', 'HHN') ('MINS', 'HHZ') ('MLC', 'EHZ') ('MMP', 'EHZ') ('MRD', 'EHZ') ('OMMB', 'HHE') ('OMMB', 'HHZ')</text>
+      </comment>
+      <comment id="smi:local/607bf164-40c2-4fb7-99f0-4bc43d3dd1da">
+        <text>FI=-0.00892</text>
+      </comment>
+      <origin publicID="smi:local/fc53abc9-4792-429c-953c-588b0eb182b2">
+        <time>
+          <value>2012-10-29T12:12:36.580000Z</value>
+        </time>
+        <latitude>
+          <value>37.6437</value>
+        </latitude>
+        <longitude>
+          <value>-119.043198</value>
+        </longitude>
+        <depth>
+          <value>21.74</value>
+        </depth>
+        <comment id="smi:local/bcb7d91b-078f-42c2-94a5-ddd1b223ccfd">
+          <text>Event ID: 218</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/91c0b109-3289-4e0c-89e9-4f56300079d3">
+        <mag>
+          <value>1.38</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/52107b2e-3689-410a-be96-88dac8ebc21c">
+      <comment id="smi:local/6fd2f756-934e-4402-a909-0d4af2d8dcd4">
+        <text>Template: 2012_12_13t13_44_53</text>
+      </comment>
+      <comment id="smi:local/9c6b1cf1-5676-4ec3-81e4-2541f03c6e15">
+        <text>threshold=4.900000095367432</text>
+      </comment>
+      <comment id="smi:local/7f16ce7f-3962-49c6-9fad-26fe8e4ecc55">
+        <text>detect_val=-4.981544494628906</text>
+      </comment>
+      <comment id="smi:local/35d7a74d-bc77-4682-914e-f50cd7f282be">
+        <text>channels used: ('MCM', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHE') ('MLC', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/effd4f50-4f54-499d-9b0a-37ddd57764e0">
+        <text>FI=-0.79317</text>
+      </comment>
+      <origin publicID="smi:local/1aa0c1da-8bf4-49f5-8cb7-c1ac57c8343b">
+        <time>
+          <value>2012-11-24T08:08:56.260000Z</value>
+        </time>
+        <latitude>
+          <value>37.624802</value>
+        </latitude>
+        <longitude>
+          <value>-119.096199</value>
+        </longitude>
+        <depth>
+          <value>14.469999999999999</value>
+        </depth>
+        <comment id="smi:local/812c072c-0850-4358-8c8c-d84df3fa999f">
+          <text>Event ID: 482</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/5846d93d-c93f-4c67-9428-380d94714611">
+        <mag>
+          <value>1.23</value>
+        </mag>
+      </magnitude>
+    </event>
+    <event publicID="smi:local/fbdbb7c3-bde9-430a-81c0-425a6cbd8ea5">
+      <comment id="smi:local/87c761fa-483a-49ce-a754-34df7c5c7c39">
+        <text>Template: 2012_12_13t13_44_53</text>
+      </comment>
+      <comment id="smi:local/16c03637-74c1-47c6-9586-2a61ee580747">
+        <text>threshold=4.900000095367432</text>
+      </comment>
+      <comment id="smi:local/2f2c3fa3-7a3b-4a5c-beae-3a655635e925">
+        <text>detect_val=-5.188392162322998</text>
+      </comment>
+      <comment id="smi:local/cc75b55f-1190-4543-9f2c-a42bb69c1e80">
+        <text>channels used: ('MCM', 'EHZ') ('MDC', 'EHZ') ('MDPB', 'HHE') ('MDPB', 'HHZ') ('MINS', 'HHE') ('MLC', 'EHZ') ('MRD', 'EHZ')</text>
+      </comment>
+      <comment id="smi:local/0008f8f3-5140-4f03-8224-619c59955e57">
+        <text>FI=-0.78192</text>
+      </comment>
+      <origin publicID="smi:local/df3ed772-848c-42bb-9fcc-2e57f58b4f88">
+        <time>
+          <value>2012-12-16T07:07:02.140000Z</value>
+        </time>
+        <latitude>
+          <value>37.624802</value>
+        </latitude>
+        <longitude>
+          <value>-119.096199</value>
+        </longitude>
+        <depth>
+          <value>14.469999999999999</value>
+        </depth>
+        <comment id="smi:local/5f89b19d-ae7a-441a-b1a4-346454c037c9">
+          <text>Event ID: 638</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/192889f1-c7fe-4feb-8251-aceb19994c63">
+        <mag>
+          <value>1.04</value>
+        </mag>
+      </magnitude>
+    </event>
+  </eventParameters>
+</q:quakeml>

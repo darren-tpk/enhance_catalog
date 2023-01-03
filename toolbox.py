@@ -1,5 +1,578 @@
 #%% Toolbox of all functions
 
+#%% [read_hypoi] Reads in a hypoinverse.pha file as an obspy catalog with numerous catalog filtering options.
+def read_hypoi(hypoi_file,
+               time_lim=None,
+               radial_lim=None,
+               bbox_lim=None,
+               nsta_min=None,
+               nobs_min=None,
+               rmse_max=None,
+               gap_max=None,
+               dist2sta_max=None,
+               eh_max=None,
+               ev_max=None,
+               depth_req=True,
+               depth_lim=None,
+               mag_req=True,
+               mag_lim=None,
+               num_P_min=None,
+               num_S_min=None,
+               channel_convention=True,
+               summary=True):
+    """
+    Reads in a hypoinverse.pha file as an obspy catalog with numerous catalog filtering options.
+    :param hypoi_file (str): file path for hypoinverse.pha file
+    :param time_lim (tuple): time bounds for events in output catalog (length 2 tuple with UTCDateTime entries)
+    :param radial_lim (tuple): radial distance bound for events in output catalog (length 3 tuple storing latitude, longitude, in decimal degrees and radius in km)
+    :param bbox_lim (tuple): bounding box for events in output catalog (length 4 tuple storing latitude and longitude of the top left corner followed by the bottom right corner)
+    :param nsta_min (int): minimum number of picked stations for an event to be kept
+    :param nobs_min (int): minimum number of valid picks (weight >= 0.1) for an event to be kept
+    :param rmse_max (float): maximum travel time root-mean-squared-error for an event to be kept
+    :param gap_max (degrees): maximum azimuthal gap between picked stations for an event to be kept
+    :param dist2sta_max (float): maximum event-to-nearest-station distance allowed for an event to be kept
+    :param eh_max (float): maximum horizontal error allowed to be kept (km)
+    :param ev_max (float): maximum vertical error allowed for an event to be kept (km)
+    :param depth_req (bool): if `True`, only events with a valid depth entry are kept
+    :param depth_lim (tuple): depth bounds for an event to be kept (length 2 tuple storing minimum and maximum depth in m)
+    :param mag_req (bool): if `True`, only events with a valid magnitude entry are kept
+    :param mag_lim (tuple): magnitude bounds for an event to be kept (length 2 tuple storing minimum and maximum magnitude)
+    :param num_P_min (int): minimum number of valid (weight >= 0.1) P phases needed for an event to be kept
+    :param num_S_min (int): minimum number of valid (weight >= 0.1) S phases needed for an event to be kept
+    :param channel_convention (bool): if `True`, enforces channel convention for P and S picks (P on vertical, S on horizontal)
+    :param summary (bool): if `True`, prints out a summary of all conditions imposed
+    :return: obspy Catalog object
+    """
+
+    # Import dependencies
+    import pandas as pd
+    import numpy as np
+    from obspy import UTCDateTime, Catalog
+    from obspy.core.event import Event, Origin, Magnitude, Comment, Pick, WaveformStreamID, Arrival, ResourceIdentifier, \
+        OriginQuality
+    import geopy.distance
+    import time
+
+    # Start timer for code
+    time_start = time.time()
+
+    # Read input file
+    data_frame = pd.read_csv(hypoi_file, header=None, skipfooter=1, engine='python')
+    input = data_frame[0]
+
+    # Initialize catalog object and header count
+    catalog = Catalog()
+    total_headers = 0
+
+    # Initialize valid event
+    valid_event = False
+
+    # Loop through every line in input file
+    for i in range(len(input)):
+
+        # Extract line
+        line = input[i]
+
+        # Check what type of line it is
+
+        # If it is a new earthquake location line
+        if '19' in line[0:2] or '20' in line[0:2]:
+
+            # Add header count
+            total_headers += 1
+
+            # Initialize valid event bool
+            valid_event = True
+
+            # Construct latitude (convert to decimal degrees)
+            if 'S' in line[18]:
+                latitude = -1 * (float(line[16:18]) + (0.01 * float(line[19:23]) / 60))
+            elif ' ' in line[18]:
+                latitude = (float(line[16:18]) + (0.01 * float(line[19:23]) / 60))
+            else:
+                raise ValueError("Hypoinverse file has an invalid latitude entry.")
+
+            # Construct longitude (convert to decimal degrees)
+            if 'E' in line[26]:
+                longitude = (float(line[23:26]) + (0.01 * float(line[27:31]) / 60))
+            elif ' ' in line[26]:
+                longitude = -1 * (float(line[23:26]) + (0.01 * float(line[27:31]) / 60))
+            else:
+                raise ValueError("Hypoinverse file has an invalid longitude entry.")
+
+            # Check if event falls within radial limits
+            if radial_lim is not None:
+                if len(radial_lim) != 3:
+                    raise ValueError(
+                        'Input radial_lim provided is not of length 3. Please follow the (latitude,longitude,radius) format.')
+                circle_center = radial_lim[0:2]
+                radial_distance = geopy.distance.GeodesicDistance((latitude, longitude), circle_center).km
+                if radial_distance > radial_lim[-1]:
+                    valid_event = False
+                    continue
+
+            # Check if event falls within bounding box limits
+            if bbox_lim is not None:
+                if type(bbox_lim) != tuple and len(bbox_lims) != 4:
+                    raise ValueError(
+                        'Input bbox_lim provided is not of length 4. Please follow the (latitude1,longitude1,latitude2,longitude2) format.')
+                if latitude < bbox_lim[0] or latitude > bbox_lim[2] or longitude > bbox_lim[1] or longitude < bbox_lim[
+                    3]:
+                    valid_event = False
+                    continue
+
+            # Construct event UTCDateTime
+            year = int(line[0:4])
+            month = int(line[4:6])
+            day = int(line[6:8])
+            hour = int(line[8:10])
+            minute = int(line[10:12])
+            second = 0.01 * float(line[12:16])
+            datetime = UTCDateTime(year, month, day, hour, minute, second)
+
+            # Check if event falls within temporal limits
+            if time_lim is not None:
+                if datetime < time_lim[0] or datetime > time_lim[1]:
+                    valid_event = False
+                    continue
+
+            # Extract most filter params (except for mag and depth requirement)
+            nobs = int(line[39:42])
+            rmse = 0.01 * float(line[48:52])  # travel time residual
+            gap = int(line[42:45])
+            dist2sta = int(line[45:48])
+            eh = 0.01 * float(line[85:89])
+            ev = 0.01 * float(line[89:93])
+            num_S = int(line[82:85])
+            num_P = nobs - num_S
+
+            # Now do filtering
+            if nobs_min is not None and nobs < nobs_min:
+                valid_event = False
+                continue
+            if rmse_max is not None and rmse > rmse_max:
+                valid_event = False
+                continue
+            if gap_max is not None and gap > gap_max:
+                valid_event = False
+                continue
+            if dist2sta_max is not None and dist2sta > dist2sta_max:
+                valid_event = False
+                continue
+            if eh_max is not None and eh > eh_max:
+                valid_event = False
+                continue
+            if ev_max is not None and ev > ev_max:
+                valid_event = False
+                continue
+            if num_P_min is not None and num_P < num_P_min:
+                valid_event = False
+                continue
+            if num_S_min is not None and num_S < num_S_min:
+                valid_event = False
+                continue
+
+            # Now do check for depth
+            if (line[31:36]).isspace():
+                if depth_req:
+                    valid_event = False
+                    continue
+                else:
+                    depth = -999
+                    print('WARNING: The catalog has an event that does not have a depth entry. Setting depth=-999.')
+            else:
+                depth = float(line[31:36]) / 100
+                if depth_lim is not None and (depth < depth_lim[0] or depth > depth_lim[1]):
+                    valid_event = False
+                    continue
+
+            # Now do check for magnitude
+            if (line[147:150]).isspace():
+                if mag_req:
+                    valid_event = False
+                    continue
+                else:
+                    mag = -999
+                    print('WARNING: The catalog has an event that does not have a depth entry. Setting magnitude=-999.')
+            else:
+                mag = float(line[147:150]) / 100
+                if mag_lim is not None and (mag < mag_lim[0] or mag > mag_lim[1]):
+                    valid_event = False
+                    continue
+
+            # With all checks done, we craft the event
+            event = Event(resource_id=ResourceIdentifier(id="smi:local/event/" + line[136:146].strip()),
+                          preferred_origin_id=ResourceIdentifier(id="smi:local/origin/" + line[136:146].strip()),
+                          preferred_magnitude_id=ResourceIdentifier(id="smi:local/magnitude/" + line[136:146].strip()),
+                          origins=[
+                              Origin(resource_id=ResourceIdentifier(id="smi:local/origin/" + line[136:146].strip()),
+                                     time=datetime, latitude=latitude, longitude=longitude, depth=depth,
+                                     quality=OriginQuality(standard_error=rmse))],
+                          magnitudes=[Magnitude(
+                              resource_id=ResourceIdentifier(id="smi:local/magnitude/" + line[136:146].strip()),
+                              mag=mag)])
+
+        # If it is a new phase line with potential S picks:
+        elif line[0:2].isalpha():
+
+            # Check if the event header is valid in the first place. If event was kicked out, skip all phase lines
+            if not valid_event:
+                continue
+
+            # Check for phase hint
+            if channel_convention == True:
+
+                # Check if vertical component has P arrival
+                if (line[11] == 'Z') and (line[14] == 'P'):
+
+                    # Convert P weight
+                    p_weight_code = int(line[16])
+                    if p_weight_code == 0:
+                        p_weight = 1.0
+                    elif p_weight_code == 1:
+                        p_weight = 0.5
+                    elif p_weight_code == 2:
+                        p_weight = 0.2
+                    elif p_weight_code == 3:
+                        p_weight = 0.1
+                    else:
+                        # p weight is zero and we skip the phase
+                        continue
+
+                    # Construct pick UTCDateTime
+                    phase_year = int(line[17:21])
+                    phase_month = int(line[21:23])
+                    phase_day = int(line[23:25])
+                    phase_hour = int(line[25:27])
+                    phase_minute = int(line[27:29])
+                    phase_second = 0.01 * float(line[29:34])
+                    # Fix if phase seconds spill over to the next minute (>= 60s)
+                    if phase_second >= 60:
+                        if phase_minute < 59:
+                            phase_minute = phase_minute + 1
+                            phase_second = phase_second - 60
+                        else:
+                            phase_minute = 0
+                            phase_second = phase_second - 60
+                    phase_datetime = UTCDateTime(phase_year, phase_month, phase_day, phase_hour, phase_minute,
+                                                 phase_second)
+
+                    # Construct waveform id
+                    network = line[5:7]
+                    station = (line[0:5]).strip()  # input is left justified
+                    channel = line[9:12]
+                    location = line[111:113]
+                    if location == '--':
+                        location = ''
+
+                    # Construct and add pick
+                    pick = Pick(
+                        waveform_id=WaveformStreamID(network_code=network, station_code=station, channel_code=channel,
+                                                     location_code=location),
+                        time=phase_datetime, phase_hint='P')
+                    event.picks.append(pick)
+
+                    # Read in other arrival information
+                    p_travel_time_residual = 0.01 * float(line[34:38])
+                    # p_weight_used = 0.01 * float(line[38:41])
+                    # p_delay_time = 0.01 * float(line[66:70])
+                    phase_epicentral_distance = 0.1 * float(line[74:78])
+                    phase_emergence_angle = int(line[78:81])
+                    phase_azimuth_to_station = int(line[91:94])
+                    p_importance = 0.001 * float(line[100:104])
+                    # If phase importance is larger than 0.5, hypoinverse weight is flagged as negative for auto-inclusion
+                    # See HypoDD manual for Hat matrix explanation
+                    if p_importance > 0.5:
+                        p_weight = -abs(p_weight)
+
+                    # Construct and add arrival
+                    arrival = Arrival(phase='P',
+                                      azimuth=phase_azimuth_to_station,
+                                      distance=phase_epicentral_distance,
+                                      takeoff_angle=phase_emergence_angle,
+                                      time_residual=p_travel_time_residual,
+                                      time_weight=p_weight)
+                    event.origins[0].arrivals.append(arrival)
+
+                # Check if horizontal component has S arrival
+                elif (line[11] in ['E', 'N', '1', '2']) and len(line) > 46 and (line[47] == 'S'):
+
+                    # Convert S weight
+                    s_weight_code = int(line[49])
+                    if s_weight_code == 0:
+                        s_weight = 1.0
+                    elif s_weight_code == 1:
+                        s_weight = 0.5
+                    elif s_weight_code == 2:
+                        s_weight = 0.2
+                    elif s_weight_code == 3:
+                        s_weight = 0.1
+                    else:
+                        # s weight is zero and we skip the phase
+                        continue
+
+                    # Construct pick UTCDateTime
+                    phase_year = int(line[17:21])
+                    phase_month = int(line[21:23])
+                    phase_day = int(line[23:25])
+                    phase_hour = int(line[25:27])
+                    phase_minute = int(line[27:29])
+                    phase_second = 0.01 * float(line[41:46])
+                    # Fix if phase seconds spill over to the next minute (>= 60s)
+                    if phase_second >= 60:
+                        if phase_minute < 59:
+                            phase_minute = phase_minute + 1
+                            phase_second = phase_second - 60
+                        else:
+                            phase_minute = 0
+                            phase_second = phase_second - 60
+                    phase_datetime = UTCDateTime(phase_year, phase_month, phase_day, phase_hour, phase_minute,
+                                                 phase_second)
+
+                    # Construct waveform id
+                    network = line[5:7]
+                    station = (line[0:5]).strip()  # input is left justified
+                    channel = line[9:12]
+                    location = line[111:113]
+                    if location == '--':
+                        location = ''
+
+                    # Construct and add pick
+                    pick = Pick(
+                        waveform_id=WaveformStreamID(network_code=network, station_code=station, channel_code=channel,
+                                                     location_code=location),
+                        time=phase_datetime, phase_hint='S')
+                    event.picks.append(pick)
+
+                    # Read in other arrival information
+                    s_travel_time_residual = 0.01 * float(line[50:54])
+                    # s_weight_used = 0.01 * float(line[63:66])
+                    # s_delay_time = 0.01 * float(line[70:74])
+                    phase_epicentral_distance = 0.1 * float(line[74:78])
+                    phase_emergence_angle = int(line[78:81])
+                    phase_azimuth_to_station = int(line[91:94])
+                    s_importance = 0.001 * float(line[104:108])
+                    # If phase importance is larger than 0.5, hypoinverse weight is flagged as negative for auto-inclusion
+                    # See HypoDD manual for Hat matrix explanation
+                    if s_importance > 0.5:
+                        s_weight = -abs(s_weight)
+
+                    # Construct and add arrival
+                    arrival = Arrival(phase='S',
+                                      azimuth=phase_azimuth_to_station,
+                                      distance=phase_epicentral_distance,
+                                      takeoff_angle=phase_emergence_angle,
+                                      time_residual=s_travel_time_residual,
+                                      time_weight=s_weight)
+                    event.origins[0].arrivals.append(arrival)
+
+            # If we are not using channel conventions, then we can have P and S picks on any component
+            else:
+
+                # Check if this line has a P pick
+                if line[14] == 'P':
+
+                    # Convert P weight
+                    p_weight_code = int(line[16])
+                    if p_weight_code == 0:
+                        p_weight = 1.0
+                    elif p_weight_code == 1:
+                        p_weight = 0.5
+                    elif p_weight_code == 2:
+                        p_weight = 0.2
+                    elif p_weight_code == 3:
+                        p_weight = 0.1
+                    else:
+                        # p weight is zero and we skip the phase
+                        continue
+
+                    # Construct pick UTCDateTime
+                    phase_year = int(line[17:21])
+                    phase_month = int(line[21:23])
+                    phase_day = int(line[23:25])
+                    phase_hour = int(line[25:27])
+                    phase_minute = int(line[27:29])
+                    phase_second = 0.01 * float(line[29:34])
+                    # Fix if phase seconds spill over to the next minute (>= 60s)
+                    if phase_second >= 60:
+                        if phase_minute < 59:
+                            phase_minute = phase_minute + 1
+                            phase_second = phase_second - 60
+                        else:
+                            phase_minute = 0
+                            phase_second = phase_second - 60
+                    phase_datetime = UTCDateTime(phase_year, phase_month, phase_day, phase_hour, phase_minute,
+                                                 phase_second)
+
+                    # Construct waveform id
+                    network = line[5:7]
+                    station = (line[0:5]).strip()  # input is left justified
+                    channel = line[9:12]
+                    location = line[111:113]
+                    if location == '--':
+                        location = ''
+
+                    # Construct and add pick
+                    pick = Pick(
+                        waveform_id=WaveformStreamID(network_code=network, station_code=station, channel_code=channel,
+                                                     location_code=location),
+                        time=phase_datetime, phase_hint='P')
+                    event.picks.append(pick)
+
+                    # Read in other arrival information
+                    p_travel_time_residual = 0.01 * float(line[34:38])
+                    # p_weight_used = 0.01 * float(line[38:41])
+                    # p_delay_time = 0.01 * float(line[66:70])
+                    phase_epicentral_distance = 0.1 * float(line[74:78])
+                    phase_emergence_angle = int(line[78:81])
+                    phase_azimuth_to_station = int(line[91:94])
+                    p_importance = 0.001 * float(line[100:104])
+                    # If phase importance is larger than 0.5, hypoinverse weight is flagged as negative for auto-inclusion
+                    # See HypoDD manual for Hat matrix explanation
+                    if p_importance > 0.5:
+                        p_weight = -abs(p_weight)
+
+                    # Construct and add arrival
+                    arrival = Arrival(phase='P',
+                                      azimuth=phase_azimuth_to_station,
+                                      distance=phase_epicentral_distance,
+                                      takeoff_angle=phase_emergence_angle,
+                                      time_residual=p_travel_time_residual,
+                                      time_weight=p_weight)
+                    event.origins[0].arrivals.append(arrival)
+
+                # Check if this line has an S pick:
+                if len(line) > 46 and line[47] == 'S':
+
+                    # Convert S weight
+                    s_weight_code = int(line[49])
+                    if s_weight_code == 0:
+                        s_weight = 1.0
+                    elif s_weight_code == 1:
+                        s_weight = 0.5
+                    elif s_weight_code == 2:
+                        s_weight = 0.2
+                    elif s_weight_code == 3:
+                        s_weight = 0.1
+                    else:
+                        # s weight is zero and we skip the phase
+                        continue
+
+                    # Construct pick UTCDateTime
+                    phase_year = int(line[17:21])
+                    phase_month = int(line[21:23])
+                    phase_day = int(line[23:25])
+                    phase_hour = int(line[25:27])
+                    phase_minute = int(line[27:29])
+                    phase_second = 0.01 * float(line[41:46])
+                    # Fix if phase seconds spill over to the next minute (>= 60s)
+                    if phase_second >= 60:
+                        if phase_minute < 59:
+                            phase_minute = phase_minute + 1
+                            phase_second = phase_second - 60
+                        else:
+                            phase_minute = 0
+                            phase_second = phase_second - 60
+                    phase_datetime = UTCDateTime(phase_year, phase_month, phase_day, phase_hour, phase_minute,
+                                                 phase_second)
+
+                    # Construct waveform id
+                    network = line[5:7]
+                    station = (line[0:5]).strip()  # input is left justified
+                    channel = line[9:12]
+                    location = line[111:113]
+                    if location == '--':
+                        location = ''
+
+                    # Construct and add pick
+                    pick = Pick(
+                        waveform_id=WaveformStreamID(network_code=network, station_code=station, channel_code=channel,
+                                                     location_code=location),
+                        time=phase_datetime, phase_hint='S')
+                    event.picks.append(pick)
+
+                    # Read in other arrival information
+                    s_travel_time_residual = 0.01 * float(line[50:54])
+                    # s_weight_used = 0.01 * float(line[63:66])
+                    # s_delay_time = 0.01 * float(line[70:74])
+                    phase_epicentral_distance = 0.1 * float(line[74:78])
+                    phase_emergence_angle = int(line[78:81])
+                    phase_azimuth_to_station = int(line[91:94])
+                    s_importance = 0.001 * float(line[104:108])
+                    # If phase importance is larger than 0.5, hypoinverse weight is flagged as negative for auto-inclusion
+                    # See HypoDD manual for Hat matrix explanation
+                    if s_importance > 0.5:
+                        s_weight = -abs(s_weight)
+
+                    # Construct and add arrival
+                    arrival = Arrival(phase='S',
+                                      azimuth=phase_azimuth_to_station,
+                                      distance=phase_epicentral_distance,
+                                      takeoff_angle=phase_emergence_angle,
+                                      time_residual=s_travel_time_residual,
+                                      time_weight=s_weight)
+                    event.origins[0].arrivals.append(arrival)
+
+        # If it is shadow line or blank line, skip:
+        elif '$' in line[0] or '  ' in line[0:2]:
+
+            # If it has passed all the checks, valid_event = True
+            if valid_event:
+
+                # Execute final check of nsta
+                nsta = len(np.unique([pick.waveform_id.station_code for pick in event.picks]))
+                if nsta_min is not None and nsta < nsta_min:
+                    continue
+                # If it passes, append the event
+                else:
+                    catalog.events.append(event)
+
+            # Reset valid event boolean
+            valid_event = False
+
+    # If a summary is desired, print a summary of the output event count and the conditions imposed
+    if summary:
+
+        print('The output catalog retained %d out of %d events from the hypoi.pha input file.' % (
+        len(catalog), total_headers))
+        print('The following are the conditions used:')
+        if time_lim is not None:
+            print('- Temporal limits (in UTC): %s to %s' % (
+            time_lim[0].strftime('%y/%m/%dT%H:%M:%S'), time_lim[1].strftime('%y/%m/%dT%H:%M:%S')))
+        if radial_lim is not None:
+            print('- Radial limit of %.2f km from coordinates (%f,%f)' % (radial_lim[2], radial_lim[0], radial_lim[1]))
+        if bbox_lim is not None:
+            print('- Bounding box from (%f,%f) to (%f,%f)' % (bbox_lim[0], bbox_lim[1], bbox_lim[2], bbox_lim[3]))
+        if nsta_min is not None:
+            print('- Minimum of %d stations with valid picks' % nsta_min)
+        if nobs_min is not None:
+            print('- Minimum number of %d valid picks' % nobs_min)
+        if rmse_max is not None:
+            print('- Maximum allowed travel time RMSE of %.2f s' % rmse_max)
+        if gap_max is not None:
+            print('- Maximum azimuthal gap of %.2f degrees' % gap_max)
+        if dist2sta_max is not None:
+            print('- Maximum event-to-nearest-picked-station distance of %.2f km')
+        if eh_max is not None:
+            print('- Maximum horizontal error of %.2f km')
+        if ev_max is not None:
+            print('- Maximum vertical error of %.2f km')
+        if mag_req is not None:
+            print('- Events must have a valid magnitude assigned')
+        if depth_req is not None:
+            print('- Events must have a valid depth assigned')
+        if num_P_min is not None:
+            print('- Minimum of %d P picks' % num_P_min)
+        if num_S_min is not None:
+            print('- Minimum of %d S picks' % num_S_min)
+        if channel_convention == True:
+            print('- Retained picks must conform to their channel convention (P on vertical, S on horizontal)')
+
+    # End timer for code
+    print('Total time taken: %.2f s' % (time.time() - time_start))
+
+    return catalog
+
 #%% [download_catalog] function to download catalog along with its phase data using libcomcat
 def download_catalog(start_time,end_time,contributor,latitude,longitude,max_radius,max_depth,review_status='reviewed',verbose=False):
 
@@ -12,7 +585,7 @@ def download_catalog(start_time,end_time,contributor,latitude,longitude,max_radi
     # Pull earthquakes from libcomcat
     earthquakes = search(starttime=start_time.datetime,
                          endtime=end_time.datetime,
-                         contributor=contributor,
+                         contributor=contributor.lower(),
                          latitude=latitude,
                          longitude=longitude,
                          maxradiuskm=max_radius,
@@ -153,108 +726,6 @@ def remove_bad_traces(st,max_zeros=100,npts_threshold=100):
     # Return filtered stream object
     return st
 
-# [compare_tr] function to compare the same trace on local data vs its counterpart on IRIS
-def compare_tr(tr):
-
-    # Import dependencies
-    from obspy import Stream
-    from waveform_collection import gather_waveforms
-
-    # Define net-sta-chan, starttime, endtime
-    network = tr.stats.network
-    station = tr.stats.station
-    channel = tr.stats.channel
-    starttime = tr.stats.starttime
-    endtime = tr.stats.endtime
-
-    # Gather waveforms
-    tr_client = gather_waveforms(source='IRIS', network=network, station=station,
-                          location='*', channel=channel, starttime=starttime,
-                          endtime=endtime)
-
-    # Combine both traces and plot on the same figure
-    combine = Stream()
-    combine = combine + tr
-    combine = combine + tr_client
-    combine.plot()
-
-# [remove_repeats] function to clean repeating events in a party
-# Note that this has been replaced by party.decluster()
-def remove_repeats(party,time_interval):
-
-    # Import dependencies
-    import numpy as np
-    from eqcorrscan import Party, Family
-
-    # Initialize an inclusion list, list of all i&j, and arrays of detection times, values, and thresholds
-    include_list = []
-    all_i = []
-    all_j = []
-    all_detection_time = []
-    all_detection_val = []
-    all_detection_threshold = []
-
-    # Loop through each family in the party
-    for i in range(len(party.families)):
-
-        # Populate include list with ones (we start by including all detections in each family)
-        include_list.append(np.ones(len(party[i])))
-        family = party[i]
-
-        # Loop through each detection in the family, storing detection info (time, val, threshold)
-        for j in range(len(family)):
-            all_i.append(i)
-            all_j.append(j)
-            all_detection_time.append(family[j].detect_time)
-            all_detection_val.append(family[j].detect_val)
-            all_detection_threshold.append(family[j].threshold)
-
-    # Convert all lists to arrays
-    all_detection_time = np.array(all_detection_time)
-    all_detection_val = np.array(all_detection_val)
-    all_detection_threshold = np.array(all_detection_threshold)
-
-    # Loop through all families' detections again, making comparisons
-    for i in range(len(party.families)):
-
-        # Extract family
-        family = party[i]
-
-        # Loop through family's detections
-        for j in range(len(family)):
-
-            # If the event is already excluded, continue
-            if include_list[i][j] == 0:
-                continue
-
-            # Calculate time difference with all other detections
-            time_difference = abs(all_detection_time-family[j].detect_time)
-            matching_index = np.where(time_difference<time_interval)[0]
-
-            # If the only matching event is itself, continue
-            if len(matching_index) == 1:
-                continue
-
-            # Otherwise, find highest detection value, and exclude other events
-            else:
-                matching_detection_diff = all_detection_val[matching_index] - all_detection_threshold[matching_index]
-                max_detection_index = matching_index[np.argmax(abs(matching_detection_diff))]
-                exclude_index = matching_index[matching_index!=max_detection_index]
-                for k in exclude_index:
-                    include_list[all_i[k]][all_j[k]] = 0
-
-    # Populate new party with only unrepeated detections
-    party_clean = Party()
-    for i in range(len(party.families)):
-        family_clean = Family(template=party[i].template)
-        for j in range(len(party[i])):
-            if include_list[i][j] == 1:
-                family_clean = family_clean + party[i][j]
-        party_clean = party_clean + family_clean
-
-    # Return cleaned party object
-    return party_clean
-
 # [get_local_stations] function to get all stations within a radius of a volcano
 def get_local_stations(list_dir,volcano_name,radius):
 
@@ -386,6 +857,7 @@ def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
 
     # Import dependencies
     import glob
+    import numpy as np
     from obspy import Stream, read
     from toolbox import remove_boxcars
 
@@ -419,15 +891,13 @@ def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
                 continue
 
     # Remove boxcars and spikes, detrend, merge, and trim to desired starttime and endtime
-    tr_merged = tr_unmerged.copy()
-    tr_merged.trim(starttime=starttime, endtime=endtime)
-    tr_merged = remove_boxcars(tr_merged, tolerance)
-    tr_merged = tr_merged.detrend("simple")
-    try:
-        tr_merged.merge()
-    except:
-        tr_merged.resample(tr_merged[0].stats.sampling_rate)
-        tr_merged.merge()
+    tr_split = tr_unmerged.copy()
+    for tr in tr_split:
+        tr.stats.sampling_rate = np.round(tr.stats.sampling_rate)
+    tr_split.trim(starttime=starttime, endtime=endtime)
+    tr_split = remove_boxcars(tr_split, tolerance)
+    tr_split = tr_split.detrend("simple")
+    tr_merged = tr_split.merge()
 
     # Since a single station and channel is provided, the traces should merge into 1
     if len(tr_merged) == 0:
@@ -467,8 +937,8 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance,max_z
             data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year) + ':' + f'{pick_julday:03}' + ':*'
             data_filenames.append(data_filename)
 
-            # Add next day if pick occurs in the first 15 minutes of the day
-            if pick.time.hour == 0 and pick.time.minute < 15:
+            # Add next day if pick occurs in the first minute of the day
+            if pick.time.hour == 0 and pick.time.minute <= 1:
                 if pick.time.julday == 1:  # special case for first day of the year
                     data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year - 1) + ':365:*'
                     data_filenames.append(data_filename)
@@ -477,8 +947,8 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance,max_z
                         pick_year) + ':' + f'{(pick_julday - 1):03}' + ':*'
                     data_filenames.append(data_filename)
 
-            # Add previous day if pick occurs in the last 15 minutes of the day
-            if pick.time.hour == 23 and pick.time.minute > 45:
+            # Add previous day if pick occurs in the last minute of the day
+            if pick.time.hour == 23 and pick.time.minute >= 59:
                 if pick.time.julday == 365:  # special case for last day of the year
                     data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year + 1) + ':001:*'
                     data_filenames.append(data_filename)
@@ -509,13 +979,6 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance,max_z
     stream = remove_boxcars(stream, tolerance)
     if resampling_frequency:
         stream = stream.resample(resampling_frequency)
-    else:
-        for tr in stream:
-            sr = tr.stats.sampling_rate
-            if abs(100 - sr) < abs(50 - sr):
-                tr.resample(100)
-            else:
-                tr.resample(50)
     stream = stream.merge()
 
     # Return stream object
@@ -621,7 +1084,7 @@ def get_detection(detection,data_dir='/home/data/redoubt/',client_name='IRIS',le
 
     # Filter and taper
     stream = stream.filter('bandpass',freqmax=highcut,freqmin=lowcut)
-    stream = stream.taper(0.05, type='hann', max_length=(0.75 * 1024 / 50))
+    stream = stream.taper(0.05, type='hann') # max_length=(0.75 * 1024 / 50)
     stream = stream.merge()
 
     # Plot if desired
@@ -632,7 +1095,7 @@ def get_detection(detection,data_dir='/home/data/redoubt/',client_name='IRIS',le
     return stream
 
 # [prepare_stream_dict] prepare stream dictionary pertaining to input catalog
-def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",data_dir=None,resampling_frequency=50):
+def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",data_dir=None):
 
     # Import dependencies
     from toolbox import read_trace
@@ -668,7 +1131,6 @@ def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",d
                 tr = read_trace(data_dir, station, channel, starttime, endtime, tolerance=4e4)
             else:
                 tr = client.get_waveforms(network, station, '*', channel, starttime, endtime)
-                tr = tr.resample(resampling_frequency)  # for my EQcorrscan attempt
 
             # Add trace to stream object
             event_st += tr
@@ -684,7 +1146,7 @@ def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",d
     return stream_dict
 
 # [adjust_weights] adjust weights within a dt.cc file and write/append to another file
-def adjust_weights(dtcc_filepath,target_filepath,append=False):
+def adjust_weights(dtcc_filepath,target_filepath,dt_cap=None,min_link=0,append=False,weight_func=None):
 
     # Import dependencies
     import os
@@ -709,15 +1171,40 @@ def adjust_weights(dtcc_filepath,target_filepath,append=False):
         # If the dt.cc line is not an event pair header, it stores a channel's dt and weight
         else:
 
+            # Check for dt_cap if defined:
+            if dt_cap:
+                dt_str = dtcc_line.split()[1]
+                dt = float(dt_str)
+                if abs(dt) > dt_cap:
+                    continue
+
             # Extract old weight and apply sqrt
             old_weight_str = dtcc_line.split()[2]
             old_weight = float(old_weight_str)
-            new_weight = np.sqrt(old_weight)  # THIS FUNCTION CAN BE CHANGED
+            if weight_func and callable(weight_func):
+                new_weight = weight_func(old_weight)
+            elif weight_func:
+                raise ValueError('weight_func input is not a callable function!')
+            else:
+                new_weight = old_weight
             new_weight_str = '%0.4f' % new_weight
 
             # Construct a new line and append
             target_line = dtcc_line.replace(old_weight_str,new_weight_str)
             target_lines.append(target_line)
+
+    # Remove event pairs that have less than min_link observations
+    header_indices = np.flatnonzero([target_line[0] == '#' for target_line in target_lines])
+    num_link = np.diff(np.append(header_indices, len(target_lines)-1))
+    failed_pair_indices = header_indices[np.flatnonzero(num_link < min_link)]
+    for failed_pair_index in failed_pair_indices:
+        target_lines[failed_pair_index] = ''
+        if failed_pair_index != (len(target_lines) - 1):
+            i = 1
+            while target_lines[failed_pair_index+i][0] != '#' and (failed_pair_index+i) != (len(target_lines)-1):
+                target_lines[failed_pair_index+i] = ''
+                i += 1
+    target_lines = [target_line for target_line in target_lines if target_line != '']
 
     # If the target filepath does not exist
     if not os.path.exists(target_filepath):
@@ -793,110 +1280,115 @@ def raster2array(geotif_file):
     return array, metadata
 
 # [calculate_catalog_FI] Calculate the FIs of events in a catalog using a reference sta-chan.
-def calculate_catalog_FI(catalog, data_dir, reference_station, reference_channel, prepick, length, filomin, filomax,
-                         fiupmin, fiupmax, histogram=False):
+def calculate_catalog_FI(catalog, data_dir, reference_stations, reference_channels, min_match, resampling_frequency,
+                         tolerance, prepick, length, lowcut, highcut, filt_order, filomin, filomax, fiupmin, fiupmax,
+                         verbose=False, histogram=False):
 
     # Import all dependencies
     import glob
     import numpy as np
-    from obspy import Stream, read
+    from itertools import compress
+    from obspy import Stream, Catalog, read, UTCDateTime
     from obspy.core.event import Comment
     from scipy.fftpack import fft, fftfreq
+    from toolbox import prepare_catalog_stream
     import matplotlib.pyplot as plt
 
+    # Zip reference station and channels
+    reference_stachans = tuple(zip(reference_stations, reference_channels))
+
+    # Create a boolean list to keep track of which events have been attempted
+    tracker = np.array([False for i in range(len(catalog))])
+
+    # Print progress count for the number of successfully calculated magnitudes
+    if verbose:
+        print('Count of successful FI computations:')
+        count = 0
+
+    # Initialize array of all event times
+    catalog_times = np.array([event.origins[0].time for event in catalog])
+
     # Loop over events in catalog
-    for event in catalog:
+    for i, event in enumerate(catalog):
 
-        # Look through event picks and collate a list of stations with vertical picks
-        event_stachans = []
-        for pick in event.picks:
-            event_stachans.append((pick.waveform_id.station_code, pick.waveform_id.channel_code))
-
-        # Check if the vertical channel pick on the reference station is missing
-        if (reference_station, reference_channel) not in event_stachans:
-            event_id = event.resource_id.id
-            print('Event %s does not have a vertical pick on the reference station. Inserting FI=None.' % event_id)
-            comment_text = 'FI from %s=None' % reference_station
-            event.comments.append(Comment(text=comment_text))
+        # Check if event has had its FI calculation attempted. If True, skip to next
+        if tracker[i]:
             continue
+        # Otherwise check for other events occuring on the same day so that we load the local data at one go
         else:
-            reference_pick = event.picks[event_stachans.index((reference_station, reference_channel))]
+            event_daystart = UTCDateTime(event.origins[0].time.date)
+            event_dayend = event_daystart + 86400
+            sub_catalog_bool = (np.array(catalog_times) > event_daystart) & (np.array(catalog_times) < event_dayend)
+            sub_catalog_index = np.flatnonzero(sub_catalog_bool)
+            sub_catalog = Catalog(list(compress(catalog, sub_catalog_bool)))
+            tracker[sub_catalog_index] = True
 
-        # If the reference station is present, we try to load the appropriate data
-        reference_pick_year = reference_pick.time.year
-        reference_pick_julday = reference_pick.time.julday
+        # Remove picks in sub_catalog events that are not on reference stachans
+        for event in sub_catalog:
+            for pick in event.picks:
+                if (pick.waveform_id.station_code, pick.waveform_id.channel_code) not in reference_stachans:
+                    event.picks.remove(pick)
 
-        # Craft file string and append
-        data_filenames = [data_dir + reference_station + '.' + reference_channel + '.' +
-                          str(reference_pick_year) + ':' + f'{reference_pick_julday:03}' + ':*']
+        # Load the appropriate data for sub_catalog
+        master_stream = prepare_catalog_stream(data_dir, sub_catalog, resampling_frequency, tolerance)
+        master_stream = master_stream.trim(starttime=event_daystart, endtime=event_dayend, pad=True)
 
-        # Add next day if pick occurs in the first 15 minutes of the day
-        if reference_pick.time.hour == 0 and reference_pick.time.minute < 15:
-            if reference_pick.time.julday == 1:  # special case for first day of the year
-                data_filename = data_dir + reference_station + '.' + reference_channel + '.' + str(
-                    reference_pick_year - 1) + ':365:*'
-                data_filenames.append(data_filename)
-            else:
-                data_filename = data_dir + reference_station + '.' + reference_channel + '.' + str(
-                    reference_pick_year) + ':' + f'{(reference_pick_julday - 1):03}' + ':*'
-                data_filenames.append(data_filename)
+        # Now loop through sub_catalog to compute FI
+        for j, event in enumerate(sub_catalog):
 
-        # Add previous day if pick occurs in the last 15 minutes of the day
-        if reference_pick.time.hour == 23 and reference_pick.time.minute > 45:
-            if reference_pick.time.julday == 365:  # special case for last day of the year
-                data_filename = data_dir + reference_station + '.' + reference_channel + '.' + str(
-                    reference_pick_year + 1) + ':001:*'
-                data_filenames.append(data_filename)
-            else:
-                data_filename = data_dir + reference_station + '.' + reference_channel + '.' + str(
-                    reference_pick_year) + ':' + f'{(reference_pick_julday + 1):03}' + ':*'
-                data_filenames.append(data_filename)
+            # Derive a subset of the master stream that correspond to picked stachans
+            event_netstachans = [
+                (pick.waveform_id.network_code, pick.waveform_id.station_code, pick.waveform_id.channel_code) for pick
+                in event.picks]
+            stream_boolean = [(trace.stats.network, trace.stats.station, trace.stats.channel) in event_netstachans for
+                              trace in master_stream]
+            sub_stream = Stream(compress(master_stream, stream_boolean)).copy()
 
-        # Read in all required traces, merging into a stream object
-        stream = Stream()
-        for data_filename in data_filenames:
-            matching_filenames = (glob.glob(data_filename))
-            for matching_filename in matching_filenames:
-                try:
-                    stream_contribution = read(matching_filename)
-                    stream = stream + stream_contribution
-                except:
-                    continue
+            # Now trim the sub_stream based on pick times and execute fft
+            for trace in sub_stream:
+                trace_netstachan = (trace.stats.network, trace.stats.station, trace.stats.channel)
+                pick_index = event_netstachans.index(trace_netstachan)
+                reference_pick = event.picks[pick_index]
+                trace.trim(reference_pick.time - prepick - 0.05 * length,
+                           reference_pick.time - prepick + length + 0.05 * length)
+                # Do some stream checks before detrending and filtering
+                if (type(trace.data) == np.ndarray or sum(trace.data.mask) == 0) and len(trace.data) > (
+                        length * trace.stats.sampling_rate):
+                    trace.detrend('simple')
+                    trace.taper(max_percentage=None, max_length=0.05 * length)
+                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=filt_order, zerophase=True)
+                    trace.trim(reference_pick.time - prepick, reference_pick.time - prepick + length)
+                else:
+                    sub_stream.remove(trace)
 
-        # Since we only reference one station, the data should merge to 1 trace
-        stream.trim(reference_pick.time - prepick, reference_pick.time - prepick + length)
+            # If sub_stream is empty or if the number of matching stachans is below the user-specified threshold
+            if len(sub_stream) == 0 or len(sub_stream) < min_match:
+                comment_text = 'FI=None'
+                catalog[sub_catalog_index[j]].comments.append(Comment(text=comment_text))
+                if verbose:
+                    print('Inserting FI=None for %s. Sub stream object is empty.' % (event.resource_id.id))
+                continue
 
-        # If the stream object is empty, we insert FI=None and continue
-        if len(stream) == 0:
-            print('Event %s does not have the data to calculate FI. Inserting FI=None.' % event_id)
-            comment_text = 'FI from %s=None' % reference_station
-            event.comments.append(Comment(text=comment_text))
-            continue
+            # Execute fft on data
+            fft_amplitude_stack = np.zeros((sub_stream[0].data.size,))
+            sample_frequency = fftfreq(sub_stream[0].data.size, d=sub_stream[0].stats.delta)
+            for trace in sub_stream:
+                fft_amplitude = np.abs(fft(trace.data))
+                fft_amplitude_stack += fft_amplitude[0:sub_stream[0].data.size]
+            fft_amplitude_average = fft_amplitude_stack * (1 / len(sub_stream))
 
-        # If the stream object is not a singular trace, we spit out a warning
-        if len(stream) != 1:
-            print('WARNING: Event %s has a stream object that contains more than 1 trace' % event_id)
+            # Calculate FI
+            FI_highband_indices = np.where((sample_frequency > fiupmin) & (sample_frequency < fiupmax))
+            FI_lowband_indices = np.where((sample_frequency > filomin) & (sample_frequency < filomax))
+            FI = np.log10(np.mean(fft_amplitude_average[FI_highband_indices]) / np.mean(
+                fft_amplitude_average[FI_lowband_indices]))
 
-        # Execute fft on data
-        trace = stream[0]
-
-        # trace = trace.filter('bandpass', freqmax=10, freqmin=1)
-        # trace = trace.taper(0.05, type='hann', max_length=(0.75 * 1024 / 50))
-
-        trace.trim()
-        data = trace.data
-        data_fft = fft(data)
-        fft_amplitude = np.abs(data_fft)
-        sample_frequency = fftfreq(data.size, d=trace.stats.delta)
-
-        # Calculate FI
-        FI_highband_indices = np.where((sample_frequency > fiupmin) & (sample_frequency < fiupmax))
-        FI_lowband_indices = np.where((sample_frequency > filomin) & (sample_frequency < filomax))
-        FI = np.log10(np.mean(fft_amplitude[FI_highband_indices]) / np.mean(fft_amplitude[FI_lowband_indices]))
-
-        # Add FI to event as comment
-        comment_text = 'FI from %s=%.5f' % (reference_station, FI)
-        event.comments.append(Comment(text=comment_text))
+            # Add FI to event as comment
+            comment_text = 'FI=%.5f' % FI
+            catalog[sub_catalog_index[j]].comments.append(Comment(text=comment_text))
+            if verbose:
+                count += 1
+                print('%d (Index [i,j] = [%d,%d])' % (count,i,j))
 
     # If a histogram is desired, plot a histogram of FI
     if histogram:
@@ -911,203 +1403,300 @@ def calculate_catalog_FI(catalog, data_dir, reference_station, reference_channel
         # Plot histogram
         fig, ax = plt.subplots()
         ax.grid(True)
-        ax.hist(all_FIs, bins=np.arange(-2.5, 0.5, 0.05), color='teal', edgecolor='black')
-        ax.set_xlim([-2.5, 0.5])
+        ax.hist(all_FIs, bins=np.arange(-1.25, 1.25, 0.05), color='teal', edgecolor='black')
+        ax.set_xlim([-1.25, 1.25])
         ax.set_xlabel('Frequency Index (FI)')
         ax.set_ylabel('Number of Events')
-        ax.set_title('Frequency Index for %d out of %d Events' % (len(all_FIs),len(catalog)))
+        ax.set_title('Frequency Index for %d out of %d Events' % (len(all_FIs), len(catalog)))
         fig.show()
 
     # Return catalog
     return catalog
 
-# [relative_magnitude] edited from eqcorrscan package
-
-def relative_magnitude(st1, st2, event1, event2, noise_window=(-20, -1),
-                       signal_window=(-.5, 20), min_snr=5.0, min_cc=0.7,
-                       use_s_picks=False, correlations=None, shift=.2,
-                       return_correlations=False, correct_mag_bias=True):
-
-    import math
-    from obspy.signal.cross_correlation import correlate
-    from eqcorrscan.utils.mag_calc import relative_amplitude, _get_pick_for_station
-
-    relative_magnitudes = {}
-    compute_correlations = False
-    if correlations is None:
-        correlations = {}
-        compute_correlations = True
-    relative_amplitudes, snrs_1, snrs_2 = relative_amplitude(
-        st1=st1, st2=st2, event1=event1, event2=event2,
-        noise_window=noise_window, signal_window=signal_window,
-        min_snr=min_snr, use_s_picks=use_s_picks)
-    for seed_id, amplitude_ratio in relative_amplitudes.items():
-        tr1 = st1.select(id=seed_id)[0]
-        tr2 = st2.select(id=seed_id)[0]
-        pick1 = _get_pick_for_station(
-            event=event1, station=tr1.stats.station, use_s_picks=use_s_picks)
-        pick2 = _get_pick_for_station(
-            event=event2, station=tr2.stats.station, use_s_picks=use_s_picks)
-        if compute_correlations:
-            cc = correlate(
-                tr1.slice(
-                    starttime=pick1.time + signal_window[0],
-                    endtime=pick1.time + signal_window[1]),
-                tr2.slice(
-                    starttime=pick2.time + signal_window[0],
-                    endtime=pick2.time + signal_window[1]),
-                shift=int(shift * tr1.stats.sampling_rate))
-            cc = abs(cc).max() #cc.max()
-            correlations.update({seed_id: cc})
-        else:
-            cc = correlations.get(seed_id, 0.0)
-        if cc < min_cc:
-            continue
-        snr_x = snrs_1[seed_id]
-        snr_y = snrs_2[seed_id]
-        if not correct_mag_bias:
-            cc = 1.0
-            snr_x = 1.0
-            snr_y = 1.0
-        # Correct for CC and SNR-bias and add to relative_magnitudes
-        # This is equation 10 from Schaff & Richards 2014:
-        rel_mag = math.log10(amplitude_ratio) + math.log10(math.sqrt( (1 + 1 / snr_y**2) / (1 + 1 / snr_x**2) ) * cc)
-        relative_magnitudes.update({seed_id: rel_mag})
-    if return_correlations:
-        return relative_magnitudes, correlations
-    return relative_magnitudes
-
 # [calculate_relative_magnitudes] function to calculate magnitudes using CC based on Schaff & Richards (2014)
 # Uses template events in PEC as reference magnitudes for relocatable catalog
 # This function rethresholds the detected catalog by min_cc while processing it
 def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal_window, min_cc, min_snr,
-                                  shift_len, tolerance, resampling_frequency, use_s_picks=False):
+                                  shift_len, tolerance, resampling_frequency, lowcut, highcut, filt_order,
+                                  use_s_picks=False, verbose=False):
 
     # Import dependencies
     import numpy as np
-    # from eqcorrscan.utils.mag_calc import relative_magnitude
-    from mag_calc_copy import relative_magnitude
+    from itertools import compress
+    from eqcorrscan.utils.mag_calc import relative_magnitude
     from toolbox import prepare_catalog_stream
-    from obspy import Catalog
+    from obspy import Catalog, UTCDateTime, Stream
     from obspy.core.event import Magnitude
-
-    # Copy catalog so we don't mess with input
-    catalog_in = catalog.copy()
 
     # Derive template names from tribe
     template_names = [template.name for template in tribe]
 
-    # Initialize output catalog
-    catalog_out = Catalog()
-
-    # Loop through events in target catalog
-    for i, target_event in enumerate(catalog_in):
-
-        # Print progress
-        print('Now at event %d of %d in catalog.' % (i+1,len(catalog_in)))
-
-        # Do a check on detection threshold. Skip events that record an av_chan_corr < min_cc
-        # This makes sure that there are enough picks to compute relative magnitude
-        av_chan_corr = float(target_event.comments[2].text.split('=')[1]) / target_event.comments[3].text.count(')')
-        if abs(av_chan_corr) < min_cc:
-            print('Skipping event %s. abs(av_chan_corr) is %.2f, lower than min_cc %.2f.' % (target_event.resource_id.id, abs(av_chan_corr), min_cc))
-            continue
-
+    # Determine all detection-template date combinations
+    catalog_times = []
+    template_times = []
+    for event in catalog:
         # Obtain template event
-        template_index = template_names.index(target_event.comments[0].text.split(' ')[1])
-        template_event = tribe[template_index].event.copy()
+        template_index = template_names.index(event.comments[0].text.split(' ')[1])
+        # Append catalog and template times
+        catalog_times.append(event.origins[0].time)
+        template_time = np.min([p.time for p in tribe[template_index].event.picks]) - signal_window[0]
+        template_times.append(template_time)
+    # Get unique list of date pairs
+    date_pairs = list(zip([t.date for t in catalog_times], [t.date for t in template_times]))
+    date_pairs_unique = list(dict.fromkeys(date_pairs))
 
-        # If the detection value is very high, it is a self-detection. Give target event the same mag as template
-        if abs(av_chan_corr) > 0.999:
+    # Create a boolean list to keep track of which events have been attempted
+    tracker = np.array([False for i in range(len(catalog))])
+
+    # Print progress count for the number of successfully calculated magnitudes
+    if verbose:
+        print('Count of successful magnitude computations:')
+        count = 0
+
+    # Loop through events in catalog
+    for i, event in enumerate(catalog):
+
+        # Check if event has had its magnitude calculation attempted. If True, skip to next
+        if tracker[i]:
+            continue
+        # Otherwise check for other events occuring on the same day so that we load the local data at one go
+        else:
+            date_pair = date_pairs[i]
+            sub_catalog_bool = [dp == date_pair for dp in date_pairs]
+            sub_catalog_index = np.flatnonzero(sub_catalog_bool)
+            tracker[sub_catalog_index] = True
+
+        # Obtain day-long streams for the sub-catalog
+        sub_catalog = Catalog(list(compress(catalog, sub_catalog_bool)))
+        master_catalog_stream = prepare_catalog_stream(data_dir, sub_catalog, resampling_frequency, tolerance)
+        master_catalog_stream = master_catalog_stream.trim(starttime=UTCDateTime(date_pair[0]),
+                                                           endtime=UTCDateTime(date_pair[0]) + 86400, pad=True)
+
+        # Craft catalog from their templates and obtain their corresponding stream
+        sub_templates_list = []
+        for event in sub_catalog:
+            template_index = template_names.index(event.comments[0].text.split(' ')[1])
+            sub_templates_list.append(tribe[template_index].event)
+        sub_templates = Catalog(sub_templates_list)
+        master_template_stream = prepare_catalog_stream(data_dir, sub_templates, resampling_frequency, tolerance)
+        master_template_stream = master_template_stream.trim(starttime=UTCDateTime(date_pair[1]),
+                                                             endtime=UTCDateTime(date_pair[1]) + 86400, pad=True)
+
+        # Now loop through sub_catalog to compute magnitudes
+        for j, event in enumerate(sub_catalog):
+
+            # Do a check on detection threshold. Skip events that record an av_chan_corr < min_cc
+            # This makes sure that there are enough picks to compute relative magnitude
+            av_chan_corr = float(event.comments[2].text.split('=')[1]) / event.comments[3].text.count(')')
+            if abs(av_chan_corr) < min_cc:
+                if verbose:
+                    print('Skipping event %s. abs(av_chan_corr) is %.2f, lower than min_cc %.2f.' % (
+                    event.resource_id.id, abs(av_chan_corr), min_cc))
+                continue
+
+            # Obtain template event
+            template = sub_templates[j]
+
+            # If the detection value is very high, and the two events are close in time, it is a self-detection.
+            # Give target event the same mag as template
+            template_time = np.min([p.time for p in template.picks]) - signal_window[0]
+            if abs(av_chan_corr) > 0.9 and abs(event.origins[0].time - template_time) < 0.1:
+                try:
+                    original_mag = template.preferred_magnitude().mag
+                except:
+                    original_mag = template.magnitudes[0].mag
+                catalog[sub_catalog_index[j]].magnitudes.append(Magnitude(mag=original_mag))
+                if verbose:
+                    count += 1
+                    print('%d (Index [i,j] = [%d,%d])' % (count, i, j))
+                continue
+
+            # Derive a subset of the master stream that correspond to picked stachans
+            event_netstachans = [
+                (pick.waveform_id.network_code, pick.waveform_id.station_code, pick.waveform_id.channel_code) for pick
+                in event.picks]
+            stream_boolean = [(trace.stats.network, trace.stats.station, trace.stats.channel) in event_netstachans for
+                              trace in master_catalog_stream]
+            sub_catalog_stream = Stream(compress(master_catalog_stream, stream_boolean)).copy()
+
+            # Now trim the sub catalog stream based on pick times and execute fft
+            for trace in sub_catalog_stream:
+                trace_netstachan = (trace.stats.network, trace.stats.station, trace.stats.channel)
+                pick_index = event_netstachans.index(trace_netstachan)
+                reference_pick = event.picks[pick_index]
+                length = signal_window[1] - signal_window[0]
+                trace.trim(reference_pick.time + noise_window[0] - shift_len - 0.05 * length,
+                           reference_pick.time + signal_window[1] + shift_len + 0.05 * length)
+                # Do some stream checks before detrending and filtering
+                if (type(trace.data) == np.ndarray or sum(trace.data.mask) == 0) and len(trace.data) > (
+                        length * trace.stats.sampling_rate):
+                    trace.detrend('simple')
+                    trace.taper(max_percentage=None, max_length=0.05 * length)
+                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=filt_order, zerophase=True)
+                    trace.trim(reference_pick.time + noise_window[0], reference_pick.time + signal_window[1])
+                else:
+                    sub_catalog_stream.remove(trace)
+
+            # Derive a subset of the template stream that corresponds to template picked stachans
+            template_netstachans = [
+                (pick.waveform_id.network_code, pick.waveform_id.station_code, pick.waveform_id.channel_code) for pick
+                in template.picks]
+            stream_boolean = [(trace.stats.network, trace.stats.station, trace.stats.channel) in template_netstachans for
+                              trace in master_template_stream]
+            sub_template_stream = Stream(compress(master_template_stream, stream_boolean)).copy()
+
+            # Now trim the sub template stream based on pick times and execute fft
+            for trace in sub_template_stream:
+                trace_netstachan = (trace.stats.network, trace.stats.station, trace.stats.channel)
+                pick_index = template_netstachans.index(trace_netstachan)
+                reference_pick = template.picks[pick_index]
+                trace.trim(reference_pick.time + noise_window[0] - shift_len - 0.05 * length,
+                           reference_pick.time + signal_window[1] + shift_len + 0.05 * length)
+                # Do some stream checks before detrending and filtering
+                if (type(trace.data) == np.ndarray or sum(trace.data.mask) == 0) and len(trace.data) > (
+                        length * trace.stats.sampling_rate):
+                    trace.detrend('simple')
+                    trace.taper(max_percentage=None, max_length=0.05 * length)
+                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=filt_order, zerophase=True)
+                    trace.trim(reference_pick.time + noise_window[0], reference_pick.time + signal_window[1])
+                else:
+                    sub_template_stream.remove(trace)
+
+            # Calculate magnitude differences determined by each channel
+            delta_mags, ccs = relative_magnitude(sub_catalog_stream, sub_template_stream, event, template,
+                                                 noise_window=noise_window, signal_window=signal_window,
+                                                 min_snr=0, min_cc=min_cc, use_s_picks=False, correlations=None,
+                                                 shift=shift_len, return_correlations=True, correct_mag_bias=True)
+
+            # If the SNR window fails to record above min_snr, we skip the event
+            # It is likely that there is a larger event preceding it in the noise window
+            # The magnitude estimation will therefore be inaccurate
+            if len(delta_mags) == 0:
+                if verbose:
+                    print('Skipping event %s. No channels record above min_snr.' % (event.resource_id.id))
+                continue
+
+            # Now calculate event's magnitude
+            # Weight each channel's delta_mag by cc so that well correlated channels hold higher weight in mag change
+            delta_mag_values = [delta_mag[1] for delta_mag in delta_mags.items() if not np.isnan(delta_mag[1])]
+            if len(delta_mag_values) == 0:
+                if verbose:
+                    print('Skipping event %s. All calculated delta magnitudes are nan.' % (event.resource_id.id))
+                continue
+            cc_values = [cc[1] for cc in ccs.items() if (cc[1] > min_cc) and not np.isnan(cc[1])]
             try:
-                original_mag = template_event.preferred_magnitude().mag
+                original_mag = template.preferred_magnitude().mag
             except:
-                original_mag = template_event.magnitudes[0].mag
-            target_mag = original_mag
-            # Add target magnitude into event and append to output catalog
-            catalog_out += target_event
-            catalog_out[-1].magnitudes.append(Magnitude(mag=target_mag))
-            continue
+                original_mag = template.magnitudes[0].mag
+            target_mag = original_mag + np.dot(delta_mag_values, cc_values) / np.sum(cc_values)
 
-        # Remove S picks for maximum reliability in magnitude calculation
-        # Note that the "use_s_picks" argument in relative_magnitude() is buggy
-        # We remove the S picks in the copied events before using the function to enforce this
-        if not use_s_picks:
-            for pick in target_event.picks:
-                if pick.phase_hint == 'S':
-                    target_event.picks.remove(pick)
-            for pick in template_event.picks:
-                if pick.phase_hint == 'S':
-                    template_event.picks.remove(pick)
-
-        # Obtain day-long streams for both the target event and the template event. (Also detrend and filter)
-        target_st = prepare_catalog_stream(data_dir, Catalog() + target_event, resampling_frequency, tolerance)
-        target_st = target_st.split()
-        target_st = target_st.detrend('simple')
-        target_st = target_st.filter(type='bandpass', freqmin=1, freqmax=10, corners=4)
-        target_st = target_st.merge()
-        template_st = prepare_catalog_stream(data_dir, Catalog() + template_event, resampling_frequency, tolerance)
-        template_st = template_st.split()
-        template_st = template_st.detrend('simple')
-        template_st = template_st.filter(type='bandpass', freqmin=1, freqmax=10, corners=4)
-        template_st = template_st.merge()
-
-        # Calculate magnitude differences determined by each channel
-        delta_mags, ccs = relative_magnitude(target_st, template_st, target_event, template_event,
-                                             noise_window=noise_window, signal_window=signal_window,
-                                             min_snr=2, min_cc=min_cc, use_s_picks=use_s_picks, correlations=None,
-                                             shift=shift_len, return_correlations=True, correct_mag_bias=True)
-
-        # If the SNR window fails to record above min_snr, we skip the event
-        # It is likely that there is a larger event preceding it in the noise window
-        # The magnitude estimation will therefore be inaccurate
-        if len(delta_mags) == 0:
-            print('Skipping event %s. No channels record above min_snr.' % (target_event.resource_id.id))
-            continue
-
-        # Now calculate target event's magnitude
-        # Weight each channel's delta_mag by cc so that well correlated channels hold higher weight in mag change
-        delta_mag_values = [delta_mag[1] for delta_mag in delta_mags.items() if not np.isnan(delta_mag[1])]
-        if len(delta_mag_values) == 0:
-            print('Skipping event %s. All calculated delta magnitudes are nan.' % (target_event.resource_id.id))
-            continue
-        cc_values = [cc[1] for cc in ccs.items() if (cc[1] > min_cc) and not np.isnan(cc[1])]
-        try:
-            original_mag = template_event.preferred_magnitude().mag
-        except:
-            original_mag = template_event.magnitudes[0].mag
-        target_mag = original_mag + np.dot(delta_mag_values, cc_values) / np.sum(cc_values)
-
-        # Add target magnitude into event and append to output catalog
-        catalog_out += target_event
-        catalog_out[-1].magnitudes.append(Magnitude(mag=target_mag))
+            # Add magnitude to target event
+            catalog[sub_catalog_index[j]].magnitudes.append(Magnitude(mag=target_mag))
+            if verbose:
+                count += 1
+                print('%d (Index [i,j] = [%d,%d])' % (count, i, j))
 
     # Return catalog
-    return catalog_out
+    return catalog
 
-# [trim_around_picks] use event information to trim the picks
-# Uses template events in PEC as reference magnitudes for relocatable catalog
-def trim_around_picks(st,event,prepick,length):
+# [clean_cc_file] removes repeated event pairs and observations in dt.cc file
+# WARNING: this function works in place.
+def clean_cc_file(dtcc_filepath):
+    # Open dt.cc file
+    with open(dtcc_filepath, 'r') as dtcc_file:
+        # Read all lines and split by line break
+        all_lines = dtcc_file.read()
+        lines = all_lines.split('\n')
+        # Initialize list storing new lines and event pairs
+        new_lines = []
+        event_pairs = []
+        # Loop through lines and add lines to list if they are new
+        for line in lines:
+            # Check if line is a header line
+            if line != '' and line[0] == '#':
+                # Switch off phase inclusion and define both permutations of the current event pair
+                include_phases = False
+                event_pair = (int(line.split()[1]),int(line.split()[2]))
+                event_pair_flipped = (int(line.split()[2]), int(line.split()[1]))
+                # Check against current list
+                if event_pair not in event_pairs and event_pair_flipped not in event_pairs:
+                    # Append if unique, and switch on phase inclusion
+                    new_lines.append(line)
+                    event_pairs.append(event_pair)
+                    include_phases = True
+            # Append phase line if phase inclusion is switched on
+            elif include_phases:
+                new_lines.append(line)
+            # Otherwise, skip line
+            else:
+                continue
+        # Add final empty line and join by line break
+        new_lines.append('')
+        new_all_lines = '\n'.join(new_lines)
+    # Overwrite input dt.cc file
+    with open(dtcc_filepath, 'w') as dtcc_file:
+        dtcc_file.write(new_all_lines)
 
-    # Obtain list of pick waveform ids from event
-    pick_ids = []
-    for pick in event.picks:
-        pick_id = pick.waveform_id.network_code + '.' + pick.waveform_id.station_code + '.' + pick.waveform_id.channel_code
-        pick_ids.append(pick_id)
-
-    # Duplicate input stream for trimming
-    st_out = st.copy()
-
-    # Loop through traces
-    for i in range(len(st_out)):
-
-        # Obtain corresponding pick
-        waveform_id_chunks = st_out[i].id.split('.')
-        waveform_id_chunks.remove(waveform_id_chunks[2])
-        waveform_id = '.'.join(waveform_id_chunks)
-        pick = event.picks[pick_ids.index(waveform_id)]
-
-        # Trim based on pick time, prepick and length
-        st_out[i].trim(starttime=(pick.time-prepick),endtime=(pick.time-prepick+length))
-
-    return st_out
+def get_color_codes(volcano,as_lists=True):
+    # Import dependencies
+    import pymysql
+    import pandas
+    from obspy import UTCDateTime
+    """
+        Retrieve a dataframe of color code changes for a specified volcano
+        PARAMETERS
+        __________
+        volcano: str
+            The volcano for which to retrieve color code changes. Must match the
+            volcano_name column in the database
+        RETURNS
+        -------
+        change_dates:DataFrame
+            A data frame with a datetime index and one column which is the
+            color code to which the volcano was changed at that time.
+    """
+    SQL = """
+    SELECT
+        sent_utc,
+        color_code
+    FROM code_change_date
+    INNER JOIN volcano ON volcano.volcano_id=code_change_date.volcano_id
+    WHERE volcano_name=%s
+    ORDER BY sent_utc
+    """
+    # Create class to be used as a context manager for MySQL database
+    class MYSQlCursor():
+        """
+            MySQL cursor class to be used as a context manager for connecting to a MySQL database
+        """
+        def __init__(self, DB, user, password):
+            self._conn = None
+            self._db = DB
+            self._user = user
+            self._pass = password
+            self._server = 'augustine.snap.uaf.edu'
+        def __enter__(self):
+            self._conn = pymysql.connect(user=self._user, password=self._pass,
+                                         database=self._db, host=self._server)
+            return self._conn.cursor()
+        def __exit__(self, *args, **kwargs):
+            self._conn.rollback()
+            self._conn.close()
+    ###################
+    # NOTE: you will need to replace my_user and  my_pass with valid DB credentials that have
+    # at least SELECT privileges on the hans2 schema
+    ###################
+    with MYSQlCursor('hans2', 'preevent', '716467D85036A8893191A870F5152F63') as cursor:
+        cursor.execute(SQL, (volcano,))
+        change_dates = cursor.fetchall()
+    if as_lists:
+        # return as separate lists
+        color_codes = [change_dates[i][1] for i in range(len(change_dates))]
+        color_code_times = [UTCDateTime(change_dates[i][0]) for i in range(len(change_dates))]
+        return color_codes, color_code_times
+    else:
+        # return as pandas data frame
+        change_dates = pandas.DataFrame(change_dates, columns=["date", "Code"])
+        change_dates["date"] = pandas.to_datetime(change_dates["date"])
+        change_dates.set_index('date', inplace=True)
+        return change_dates

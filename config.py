@@ -28,7 +28,7 @@ redpy_channel_list = [['EHZ'],['EHZ'],['EHZ']]
 tolerance = 4e4  # tolerance for boxcar removal from data (as a factor to median)
                  # used to be 5e4?
 
-#%% create_tribe.py
+#%% create_tribe_old.py
 tribe_filename = 'tribe_test.tgz'
 channel_convention = True  # strict compliance for P/S picks on vertical/horizontal components
 resampling_frequency = 50  # for resampling traces prior to final merge

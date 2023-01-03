@@ -1,4 +1,10 @@
-﻿station,site,latitude,longitude,elevation
+station,site,latitude,longitude,elevation
+AU11,"AU11",59.3596,-153.4803,234
+AU12,"AU12",59.3835,-153.4519,210
+AU13,"AU13",59.34635,-153.4341,518
+AU14,"AU14",59.3711,-153.39685,303
+AU15,"AU15",59.3507,-153.4856,168
+AU20,"AU20",59.3703,-153.3541,102
 ACH,"Angle Creek Headwaters, Katmai, Alaska",58.21,-155.3281,960
 ADAG,"Mount Adagdak, Regional Station, Alaska",51.98,-176.6001,281
 ADKI,"Adak infrasound array, Adak Island, Alaska",51.8619,-176.6439,5

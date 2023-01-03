@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="ptan@tamarack.gi.alaska.edu:22 (12)" remoteFilesAllowedToDisappearOnAutoupload="false" autoUploadExternalChanges="true">
+  <component name="PublishConfigData" autoUpload="Always" serverName="ptan@tamarack.gi.alaska.edu:22 (16)" remoteFilesAllowedToDisappearOnAutoupload="false" autoUploadExternalChanges="true">
     <serverData>
+      <paths name="ptan@137.229.16.17:22">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/ptan/enhance_catalog" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="ptan@tamarack.gi.alaska.edu:22">
         <serverdata>
           <mappings>
@@ -10,6 +17,20 @@
         </serverdata>
       </paths>
       <paths name="ptan@tamarack.gi.alaska.edu:22 (12)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/ptan/enhance_catalog" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="ptan@tamarack.gi.alaska.edu:22 (14)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/ptan/enhance_catalog" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="ptan@tamarack.gi.alaska.edu:22 (16)">
         <serverdata>
           <mappings>
             <mapping deploy="/home/ptan/enhance_catalog" local="$PROJECT_DIR$" />

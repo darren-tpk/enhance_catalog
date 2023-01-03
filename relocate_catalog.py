@@ -21,34 +21,34 @@ from toolbox import reader, writer, prepare_stream_dict, adjust_weights
 #%% Define variables
 
 # Define variables
-main_dir = '/Users/darrentpk/Desktop/GitHub/enhance_catalog/' # '/home/ptan/enhance_catalog/'
-data_dir = '/home/data/redoubt/'
-output_dir = main_dir + 'output/redoubt2/'
+main_dir = '/home/ptan/enhance_catalog/' # '/Users/darrentpk/Desktop/GitHub/enhance_catalog/' #
+data_dir = '/home/data/augustine/'
+output_dir = main_dir + 'output/augustine3/'
 create_tribe_output_dir = output_dir + 'create_tribe/'
 tribe_filename = 'tribe.tgz'
 scan_data_output_dir = output_dir + 'scan_data/'
-relocatable_catalog_filename = 'sub_catalog.xml' # ALSO: sub_catalog.xml, may_swarm.xml
-relocate_catalog_output_dir =  '/Users/darrentpk/Desktop/OUTPUT/' # '/home/ptan/enhance_catalog/output/redoubt2/relocate_catalog/'
-relocated_catalog_filename = 'sub_catalog_01202022.xml'
+relocatable_catalog_filename = 'relocatable_catalog_FImag.xml' # ALSO: sub_catalog.xml, may_swarm.xml
+relocate_catalog_output_dir = '/home/ptan/enhance_catalog/output/augustine3/relocate_catalog/' # '/Users/darrentpk/Desktop/OUTPUT/' #
+relocated_catalog_filename = 'relocated_catalog_FImag.xml.xml'
 raw_station_list_dir = main_dir + 'data/stations/'
 raw_station_list_filename = 'avo_station_list.csv'
 raw_vzmodel_dir = main_dir + 'data/vz/'
-raw_vzmodel_filename = 'redoubt_vzmodel.txt'
+raw_vzmodel_filename = 'augustine_nodemodel_sampled.txt'
 vzmodel_type = 'layer' # accepted: 'node' for linear gradient, 'layer' for step wise
 ratio_provided = True
 by_cluster = True
 growclust_exe = main_dir + 'growclust/SRC/growclust'
 
-length_actual = 8       # same as template
-length_excess = 15      # in excess for stream_dict
-pre_pick_actual = 1     # same as template
-pre_pick_excess = 3     # in excess for stream_dict
-shift_len = 1.5         # width of search for max_cc
+length_actual = 2.65       # same as template
+length_excess = 4       # in excess for stream_dict
+pre_pick_actual = 0.15  # shorter than template
+pre_pick_excess = 1     # in excess for stream_dict
+shift_len = 0.4         # width of search for max_cc
 lowcut = 1              # same as template
 highcut = 10            # same as template
 max_sep = 8             # max separation tolerated (8km)
-min_link = 3            # minimum number of matching pick stachans (3)
-min_cc = 0.75            # minimum cc to be considered pick
+min_link = 4            # minimum number of matching pick stachans (4)
+min_cc = 0.6            # minimum cc to be considered pick
 
 #%% Prepare GrowClust .inp file (configurations)
 
@@ -96,7 +96,7 @@ outboot_filename = growclust_out + 'out.growclust_boot'
 # For detailed description look at GrowClust manual
 
 # vpvs_factor, rayparam_min (-1 = default)
-vpvs_rayparam = '1.78 -1'
+vpvs_rayparam = '1.80 -1'
 
 # tt_dep0, tt_dep1, tt_ddep
 tt_deps = '0. 50. 0.25'
@@ -123,342 +123,282 @@ nboot_nbranch = '50 1'
 # Load in catalog
 catalog = reader(scan_data_output_dir + relocatable_catalog_filename)
 
-# # If we are writing correlations in bulk of the whole catalog, we process the entire catalog at one go
-# if not by_cluster:
-#
-#     # Generate stream dictionary (refer to toolbox.py)
-#     # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
-#     stream_dict = prepare_stream_dict(catalog,pre_pick=pre_pick_excess,length=length_excess,local=True,data_dir=data_dir)
-#
-#     # Execute cross correlations and write out a .cc file using write_correlations (refer to EQcorrscan docs)
-#     # Note this stores a file called "dt.cc" in your current working directory
-#     event_id_mapper = write_correlations(catalog=catalog, stream_dict=stream_dict, extract_len=length_actual,
-#                                          pre_pick=pre_pick_actual, shift_len=shift_len, lowcut=lowcut,
-#                                          highcut=highcut, max_sep=max_sep, min_link=min_link, min_cc=min_cc,
-#                                          interpolate=False, max_workers=None, parallel_process=False)
-#
-#     # Define source and target cc filepaths
-#     original_dt_dir = os.getcwd() + '/dt.cc'
-#     target_dt_dir = os.getcwd() + '/master_dt.cc'
-#     adjust_weights(original_dt_dir, target_dt_dir, append=False)
-#
-# # If we are correlating by cluster
-# else:
-#
-#     # Start by generating event id mapper for full catalog
-#     event_id_mapper = _generate_event_id_mapper(catalog, event_id_mapper=None)
-#
-#     # Obtain a unique list of source templates
-#     templates = []
-#     for event in catalog:
-#         templates.append(event.comments[0].text.split()[1])
-#     unique_templates = np.unique(templates)
-#
-#     # Initialize a list to store the catalog index of every template's self-detection
-#     template_indices = []
-#
-#     # Define source and target cc filepaths
-#     original_dt_dir = os.getcwd() + '/dt.cc'
-#     target_dt_dir = os.getcwd() + '/master_dt.cc'
-#
-#     # Loop through each unique template
-#     for i, unique_template in enumerate(unique_templates):
-#
-#         # Find index of catalog events that correspond to this template
-#         template_detection_indices = [k for k, template in enumerate(templates) if unique_template in template]
-#
-#         # Craft sub-catalog
-#         sub_catalog = Catalog()
-#         detect_vals = []
-#         for template_detection_index in template_detection_indices:
-#             template_detection = catalog[template_detection_index]
-#             detect_val = float(template_detection.comments[2].text.split('=')[1])
-#             detect_vals.append(detect_val)
-#             sub_catalog += template_detection
-#
-#         # Store the index of the template's self-detection, this will be used for our final inter-cluster step
-#         template_indices.append(template_detection_indices[np.argmax(detect_vals)])
-#
-#         # Now craft stream dictionary
-#         stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True, data_dir=data_dir)
-#
-#         # Execute cross correlations
-#         _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
-#                                extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
-#                                lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
-#                                min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
-#
-#         # Write/append dt.cc to target cc file
-#         if i == 0:
-#             adjust_weights(original_dt_dir, target_dt_dir, append=False)
-#         else:
-#             adjust_weights(original_dt_dir, target_dt_dir, append=True)
-#
-#     ##################################################################
-#     # # now deal with extra large cluster
-#     # unique_template = unique_templates[1039]
-#     #
-#     # # Find index of catalog events that correspond to this template
-#     # template_detection_indices = [k for k, template in enumerate(templates) if unique_template in template]
-#     # template_index = 4598
-#     # template_detection_indices.remove(template_index)
-#     #
-#     # import random
-#     # random.shuffle(template_detection_indices)
-#     #
-#     # # chunk into 50 event steps with 10 event overlap
-#     # for j in range(int(np.ceil(len(template_detection_indices) / 40))):
-#     #     if j < (int(np.ceil(len(template_detection_indices) / 40)) - 1):
-#     #         current_indices = template_detection_indices[(j * 40):((j * 40) + 50)]
-#     #     else:
-#     #         current_indices = template_detection_indices[(j * 40):]
-#     #
-#     #     # Craft sub-catalog
-#     #     sub_catalog = Catalog()
-#     #     for template_detection_index in current_indices:
-#     #         template_detection = catalog[template_detection_index]
-#     #         sub_catalog += template_detection
-#     #
-#     #     # Now craft stream dictionary
-#     #     stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
-#     #                                       data_dir=data_dir)
-#     #
-#     #     # Execute cross correlations
-#     #     _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
-#     #                            extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
-#     #                            lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
-#     #                            min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
-#     #
-#     #     # Write/append dt.cc to target cc file
-#     #     adjust_weights(original_dt_dir, target_dt_dir, append=True)
-#     #
-#     # # now cross correlate template with each one of its detections
-#     # # (note the big cluster's template was added manually)
-#     # for template_detection_index in template_detection_indices:
-#     #
-#     #     # Craft sub-catalog
-#     #     sub_catalog = Catalog()
-#     #     sub_catalog += catalog[4598] # add template
-#     #     sub_catalog += catalog[template_detection_index]
-#     #
-#     #     # Now craft stream dictionary
-#     #     stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
-#     #                                       data_dir=data_dir)
-#     #
-#     #     # Execute cross correlations
-#     #     _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
-#     #                            extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
-#     #                            lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
-#     #                            min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
-#     #
-#     #     # Write/append dt.cc to target cc file
-#     #     adjust_weights(original_dt_dir, target_dt_dir, append=True)
-#     ##################################################################
-#
-#     # Now execute inter-template cross correlation by generating a sub-catalog containing template self-detections
-#     sub_catalog = Catalog()
-#     for template_index in template_indices:
-#         sub_catalog += catalog[template_index]
-#
-#     # Now craft stream dictionary
-#     stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
-#                                       data_dir=data_dir)
-#
-#     # Execute cross correlations
-#     _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
-#                            extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
-#                            lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
-#                            min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
-#
-#     # Append dt.cc to master dt.cc
-#     adjust_weights(original_dt_dir, target_dt_dir, append=True)
-#
-# # Write event_id_mapper
-# with open(relocate_catalog_output_dir + 'event_id_mapper.pkl', 'wb') as evid_pickle:  # Pickling
-#     pickle.dump(event_id_mapper, evid_pickle)
-#
-# print('Cross correlations done!')
+# If we are writing correlations in bulk of the whole catalog, we process the entire catalog at one go
+if not by_cluster:
 
-# Read event_id mapper
-with open(relocate_catalog_output_dir + 'event_id_mapper.pkl', 'rb') as evid_pickle:
-    event_id_mapper = pickle.load(evid_pickle)
+    # Generate stream dictionary (refer to toolbox.py)
+    # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
+    stream_dict = prepare_stream_dict(catalog,pre_pick=pre_pick_excess,length=length_excess,local=True,data_dir=data_dir)
 
-#%% Prepare all files for GrowClust
+    # Execute cross correlations and write out a .cc file using write_correlations (refer to EQcorrscan docs)
+    # Note this stores a file called "dt.cc" in your current working directory
+    event_id_mapper = write_correlations(catalog=catalog, stream_dict=stream_dict, extract_len=length_actual,
+                                         pre_pick=pre_pick, shift_len=shift_len, lowcut=lowcut,
+                                         highcut=highcut, max_sep=max_sep, min_link=min_link, min_cc=min_cc,
+                                         interpolate=False, max_workers=None, parallel_process=False)
 
-# Craft the .inp file
-inp_file = open(relocate_catalog_output_dir + 'config.inp', 'w')
-inp_file.write(evlist_format + '\n' +
-               evlist_filename + '\n' +
-               stlist_format + '\n' +
-               stlist_filename + '\n' +
-               xcordata_format + '\n' +
-               xcordata_filename + '\n' +
-               vzmodel_filename + '\n' +
-               vzmodel_fileout + '\n' +
-               output_travel_time_table_P + '\n' +
-               output_travel_time_table_S + '\n' +
-               vpvs_rayparam + '\n' +
-               tt_deps + '\n' +
-               tt_dels + '\n' +
-               tt_thres + '\n' +
-               tt_thres2 + '\n' +
-               nboot_nbranch + '\n' +
-               outcat_filename + '\n' +
-               outclust_filename + '\n' +
-               outlog_filename + '\n' +
-               outboot_filename + '\n')
-inp_file.close()
+    # Define source and target cc filepaths
+    original_dt_dir = os.getcwd() + '/dt.cc'
+    target_dt_dir = os.getcwd() + '/master_dt.cc'
+    adjust_weights(original_dt_dir, target_dt_dir, append=False)
 
-# Create all necessary sub-directories for GrowClust
-print('Creating subdirectories for growclust run...')
-for dir in [growclust_in, growclust_tt, growclust_out]:
-    try:
-        os.mkdir(dir)
-    except FileExistsError:
-        print('Subdirectory %s already exists.' % dir)
-
-# Also create all necessary output destinations for GrowClust
-print('Creating necessary output destinations for growclust run...')
-
-for output_file in ['out.growclust_boot', 'out.growclust_cat', 'out.growclust_clust', 'out.growclust_log']:
-    output_fullfile = growclust_out + output_file
-    try:
-        open(output_fullfile, 'a').close()
-    except FileExistsError:
-        print('Output file %s already exists.' % output_file)
-
-# Copy dt.cc file to its appropriate directory and rename
-original_dt_dir = os.getcwd() + '/master_dt.cc'
-target_dt_dir = xcordata_filename
-shutil.copyfile(original_dt_dir, target_dt_dir)
-
-# Prepare station list file
-raw_station_list = pd.read_csv(raw_station_list_dir + raw_station_list_filename)
-
-# Loop through catalog event picks to get a unique list of stations used
-stations_used = []
-for event in catalog:
-    for pick in event.picks:
-        stations_used.append(pick.waveform_id.station_code)
-stations_used = list(set(stations_used))
-
-# Write GrowClust's station list input
-stlist_file = open(stlist_filename, 'w')
-for station_used in stations_used:
-    index = list(raw_station_list.station).index(station_used)
-    station_lat = raw_station_list.latitude[index]
-    station_lon = raw_station_list.longitude[index]
-    station_elev = raw_station_list.elevation[index]
-    entry = '%s %9.4f %9.4f %4.1f' % (station_used, station_lat, station_lon, station_elev)
-    stlist_file.write(entry + '\n')
-stlist_file.close()
-
-# Format velocity model to layer cake or node and write
-# (Current velocity model is from Toth and Kisslinger, 1984 for Adak, and Power et al., 2012 for Redoubt)
-# (Also added the node model option, after Deshon et al. (2007)'s 3D model work on Redoubt)
-vzmodel = pd.read_csv(raw_vzmodel_dir + raw_vzmodel_filename, header=None)
-vzmodel_file = open(vzmodel_filename, 'w')
-if vzmodel_type == 'layer':
-    if ratio_provided:
-        for i in range(len(vzmodel.values)):
-            if i != len(vzmodel.values)-1:
-                vz_str1 = vzmodel.values[i][0].split(' ')
-                entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
-                vz_str2 = vzmodel.values[i + 1][0].split(' ')
-                entry2 = '%5.1f %4.2f %4.2f' % (float(vz_str2[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
-                vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
-            else:
-                vz_str1 = vzmodel.values[i][0].split(' ')
-                entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
-                vzmodel_file.write(entry1)
-    else:
-        for i in range(len(vzmodel.values)):
-            if i != len(vzmodel.values)-1:
-                vz_str1 = vzmodel.values[i][0].split(' ')
-                entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
-                vz_str2 = vzmodel.values[i + 1][0].split(' ')
-                entry2 = '%5.1f %4.2f 0.0' % (float(vz_str2[0]), float(vz_str1[1]))
-                vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
-            else:
-                vz_str1 = vzmodel.values[i][0].split(' ')
-                entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
-                vzmodel_file.write(entry1)
-    vzmodel_file.close()
-elif vzmodel_type == 'node':
-    if ratio_provided:
-        for i in range(len(vzmodel.values)):
-            vz_str = vzmodel.values[i][0].split(' ')
-            entry = '%5.1f %4.2f %4.2f' % (float(vz_str[0]), float(vz_str[1]), float(vz_str[1]) / float(vz_str[2]))
-            if i != len(vzmodel.values)-1:
-                vzmodel_file.write(entry + '\n')
-            else:
-                vzmodel_file.write(entry)
-    else:
-        for i in range(len(vzmodel.values)):
-            vz_str = vzmodel.values[i][0].split(' ')
-            entry = '%5.1f %4.2f 0.0' % (float(vz_str[0]), float(vz_str[1]))
-            if i != len(vzmodel.values)-1:
-                vzmodel_file.write(entry + '\n')
-            else:
-                vzmodel_file.write(entry)
-    vzmodel_file.close()
+# If we are correlating by cluster
 else:
-    raise ValueError('Invalid vzmodel_type entered.')
 
-# Create vzfine file in TT directory
-vzfine_file = open(vzmodel_fileout, 'w')
-vzfine_file.close()
+    # Start by generating event id mapper for full catalog
+    event_id_mapper = _generate_event_id_mapper(catalog, event_id_mapper=None)
 
-# Format event list from post-processed detected catalog
-evlist_file = open(evlist_filename, 'w')
-for event in catalog:
-    time = event.origins[0].time
-    yr = time.year
-    mon = time.month
-    day = time.day
-    hr = time.hour
-    min = time.minute
-    sec = time.second + time.microsecond/(10**6)
-    lat = event.origins[0].latitude
-    lon = event.origins[0].longitude
-    dep = event.origins[0].depth / 1000 # km
-    mag = 0.0  # magnitude not calculated yet
-    eh = 0.0
-    ez = 0.0
-    rms = 0.0
-    evid = event_id_mapper[event.resource_id.id]
-    entry = '%4d %2d %2d %2d %2d %6.3f %9.5f %10.5f %7.3f %7.2f %6.3f %6.3f %6.3f %3d' % \
-            (yr, mon, day, hr, min, sec, lat, lon, dep, mag, eh, ez, rms, evid)
-    evlist_file.write(entry + '\n')
-evlist_file.close()
+    # Obtain a unique list of source templates
+    templates = []
+    for event in catalog:
+        templates.append(event.comments[0].text.split()[1])
+    unique_templates = np.unique(templates)
 
-#%% Run GrowClust
+    # Initialize a list to store the catalog index of every template's self-detection
+    template_indices = []
 
-# Craft command and call subprocess in shell
-growclust_command = growclust_exe + ' ' + relocate_catalog_output_dir + 'config.inp'
-subprocess.call(growclust_command, shell=True)
+    # Define source and target cc filepaths
+    original_dt_dir = os.getcwd() + '/dt.cc'
+    target_dt_dir = os.getcwd() + '/master_dt.cc'
 
-#%% Get GrowClust events in catalog form and save
+    # Loop through each unique template
+    for i, unique_template in enumerate(unique_templates):
 
-# Read in output catalog using pandas
-relocated_event_table = pd.read_csv(outcat_filename, header=None, sep='\s+',
-                                    names=['yr','mon','day','hr','mm','sec','evid','lat','lon','dep','mag','qID','cID',
-                                           'nbranch','qnpair','qndiffP','qndiffS','rmsP','rmsS','eh','ez','et','latC',
-                                           'lonC','depC'])
+        # Find index of catalog events that correspond to this template
+        template_detection_indices = [k for k, template in enumerate(templates) if unique_template in template]
 
-# Initialize ObsPy catalog object and populate with events on a row-by-row basis
-relocated_catalog = Catalog()
-for i in range(len(relocated_event_table)):
-    time = UTCDateTime(relocated_event_table.yr[i],relocated_event_table.mon[i],relocated_event_table.day[i],relocated_event_table.hr[i],relocated_event_table.mm[i],relocated_event_table.sec[i])
-    event = Event(origins=[Origin(time=time,latitude=relocated_event_table.lat[i],longitude=relocated_event_table.lon[i],depth=relocated_event_table.dep[i]*1000)])
-    event.comments = catalog[i].comments
-    event.picks = catalog[i].picks
-    event.magnitudes = catalog[i].magnitudes
-    relocated_catalog += event
-writer(relocate_catalog_output_dir + relocated_catalog_filename, relocated_catalog)
+        # Craft sub-catalog
+        sub_catalog = Catalog()
+        detect_vals = []
+        for template_detection_index in template_detection_indices:
+            template_detection = catalog[template_detection_index]
+            detect_val = float(template_detection.comments[2].text.split('=')[1])
+            detect_vals.append(detect_val)
+            sub_catalog += template_detection
 
-# Also copy bootstrap file for error analysis
-original_bootstrap_dir = relocate_catalog_output_dir + 'OUT/out.growclust_boot'
-target_bootstrap_dir = relocate_catalog_output_dir + 'layer_bootstrap_results.txt'
-shutil.copyfile(original_bootstrap_dir, target_bootstrap_dir)
+        # Store the index of the template's self-detection, this will be used for our final inter-cluster step
+        template_indices.append(template_detection_indices[np.argmax(detect_vals)])
 
+        # Now craft stream dictionary
+        stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True, data_dir=data_dir)
+
+        # Execute cross correlations
+        _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
+                               extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
+                               lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
+                               min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
+
+        # Write/append dt.cc to target cc file
+        if i == 0:
+            adjust_weights(original_dt_dir, target_dt_dir, append=False)
+        else:
+            adjust_weights(original_dt_dir, target_dt_dir, append=True)
+
+    # Now execute inter-template cross correlation by generating a sub-catalog containing template self-detections
+    sub_catalog = Catalog()
+    for template_index in template_indices:
+        sub_catalog += catalog[template_index]
+
+    # Now craft stream dictionary
+    stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
+                                      data_dir=data_dir)
+
+    # Execute cross correlations
+    _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
+                           extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
+                           lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
+                           min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
+
+    # Append dt.cc to master dt.cc
+    adjust_weights(original_dt_dir, target_dt_dir, append=True)
+
+# Write event_id_mapper
+with open(relocate_catalog_output_dir + 'event_id_mapper.pkl', 'wb') as evid_pickle:  # Pickling
+    pickle.dump(event_id_mapper, evid_pickle)
+
+print('Cross correlations done!')
+#
+# # Read event_id mapper
+# # with open(relocate_catalog_output_dir + 'event_id_mapper.pkl', 'rb') as evid_pickle:
+# #     event_id_mapper = pickle.load(evid_pickle)
+# event_id_mapper = _generate_event_id_mapper(catalog, event_id_mapper=None)
+#
+# #%% Prepare all files for GrowClust
+#
+# # Craft the .inp file
+# inp_file = open(relocate_catalog_output_dir + 'config.inp', 'w')
+# inp_file.write(evlist_format + '\n' +
+#                evlist_filename + '\n' +
+#                stlist_format + '\n' +
+#                stlist_filename + '\n' +
+#                xcordata_format + '\n' +
+#                xcordata_filename + '\n' +
+#                vzmodel_filename + '\n' +
+#                vzmodel_fileout + '\n' +
+#                output_travel_time_table_P + '\n' +
+#                output_travel_time_table_S + '\n' +
+#                vpvs_rayparam + '\n' +
+#                tt_deps + '\n' +
+#                tt_dels + '\n' +
+#                tt_thres + '\n' +
+#                tt_thres2 + '\n' +
+#                nboot_nbranch + '\n' +
+#                outcat_filename + '\n' +
+#                outclust_filename + '\n' +
+#                outlog_filename + '\n' +
+#                outboot_filename + '\n')
+# inp_file.close()
+#
+# # Create all necessary sub-directories for GrowClust
+# print('Creating subdirectories for growclust run...')
+# for dir in [growclust_in, growclust_tt, growclust_out]:
+#     try:
+#         os.mkdir(dir)
+#     except FileExistsError:
+#         print('Subdirectory %s already exists.' % dir)
+#
+# # Also create all necessary output destinations for GrowClust
+# print('Creating necessary output destinations for growclust run...')
+#
+# for output_file in ['out.growclust_boot', 'out.growclust_cat', 'out.growclust_clust', 'out.growclust_log']:
+#     output_fullfile = growclust_out + output_file
+#     try:
+#         open(output_fullfile, 'a').close()
+#     except FileExistsError:
+#         print('Output file %s already exists.' % output_file)
+#
+# # Copy dt.cc file to its appropriate directory and rename
+# original_dt_dir = os.getcwd() + '/master_dt_REDOUBT2.cc'
+# target_dt_dir = xcordata_filename
+# shutil.copyfile(original_dt_dir, target_dt_dir)
+#
+# # Prepare station list file
+# raw_station_list = pd.read_csv(raw_station_list_dir + raw_station_list_filename)
+#
+# # Loop through catalog event picks to get a unique list of stations used
+# stations_used = []
+# for event in catalog:
+#     for pick in event.picks:
+#         stations_used.append(pick.waveform_id.station_code)
+# stations_used = list(set(stations_used))
+#
+# # Write GrowClust's station list input
+# stlist_file = open(stlist_filename, 'w')
+# for station_used in stations_used:
+#     index = list(raw_station_list.station).index(station_used)
+#     station_lat = raw_station_list.latitude[index]
+#     station_lon = raw_station_list.longitude[index]
+#     station_elev = raw_station_list.elevation[index]
+#     entry = '%s %9.4f %9.4f %4.1f' % (station_used, station_lat, station_lon, station_elev)
+#     stlist_file.write(entry + '\n')
+# stlist_file.close()
+#
+# # Format velocity model to layer cake or node and write
+# # (Current velocity model is from Toth and Kisslinger, 1984 for Adak, and Power et al., 2012 for Redoubt)
+# # (Also added the node model option, after Deshon et al. (2007)'s 3D model work on Redoubt)
+# vzmodel = pd.read_csv(raw_vzmodel_dir + raw_vzmodel_filename, header=None)
+# vzmodel_file = open(vzmodel_filename, 'w')
+# if vzmodel_type == 'layer':
+#     if ratio_provided:
+#         for i in range(len(vzmodel.values)):
+#             if i != len(vzmodel.values)-1:
+#                 vz_str1 = vzmodel.values[i][0].split(' ')
+#                 entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+#                 vz_str2 = vzmodel.values[i + 1][0].split(' ')
+#                 entry2 = '%5.1f %4.2f %4.2f' % (float(vz_str2[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+#                 vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
+#             else:
+#                 vz_str1 = vzmodel.values[i][0].split(' ')
+#                 entry1 = '%5.1f %4.2f %4.2f' % (float(vz_str1[0]), float(vz_str1[1]), float(vz_str1[1])/float(vz_str1[2]))
+#                 vzmodel_file.write(entry1)
+#     else:
+#         for i in range(len(vzmodel.values)):
+#             if i != len(vzmodel.values)-1:
+#                 vz_str1 = vzmodel.values[i][0].split(' ')
+#                 entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
+#                 vz_str2 = vzmodel.values[i + 1][0].split(' ')
+#                 entry2 = '%5.1f %4.2f 0.0' % (float(vz_str2[0]), float(vz_str1[1]))
+#                 vzmodel_file.write(entry1 + '\n' + entry2 + '\n')
+#             else:
+#                 vz_str1 = vzmodel.values[i][0].split(' ')
+#                 entry1 = '%5.1f %4.2f 0.0' % (float(vz_str1[0]), float(vz_str1[1]))
+#                 vzmodel_file.write(entry1)
+#     vzmodel_file.close()
+# elif vzmodel_type == 'node':
+#     if ratio_provided:
+#         for i in range(len(vzmodel.values)):
+#             vz_str = vzmodel.values[i][0].split(' ')
+#             entry = '%5.1f %4.2f %4.2f' % (float(vz_str[0]), float(vz_str[1]), float(vz_str[1]) / float(vz_str[2]))
+#             if i != len(vzmodel.values)-1:
+#                 vzmodel_file.write(entry + '\n')
+#             else:
+#                 vzmodel_file.write(entry)
+#     else:
+#         for i in range(len(vzmodel.values)):
+#             vz_str = vzmodel.values[i][0].split(' ')
+#             entry = '%5.1f %4.2f 0.0' % (float(vz_str[0]), float(vz_str[1]))
+#             if i != len(vzmodel.values)-1:
+#                 vzmodel_file.write(entry + '\n')
+#             else:
+#                 vzmodel_file.write(entry)
+#     vzmodel_file.close()
+# else:
+#     raise ValueError('Invalid vzmodel_type entered.')
+#
+# # Create vzfine file in TT directory
+# vzfine_file = open(vzmodel_fileout, 'w')
+# vzfine_file.close()
+#
+# # Format event list from post-processed detected catalog
+# evlist_file = open(evlist_filename, 'w')
+# for event in catalog:
+#     time = event.origins[0].time
+#     yr = time.year
+#     mon = time.month
+#     day = time.day
+#     hr = time.hour
+#     min = time.minute
+#     sec = time.second + time.microsecond/(10**6)
+#     lat = event.origins[0].latitude
+#     lon = event.origins[0].longitude
+#     dep = event.origins[0].depth / 1000 # km
+#     mag = 0.0  # magnitude not calculated yet
+#     eh = 0.0
+#     ez = 0.0
+#     rms = 0.0
+#     evid = event_id_mapper[event.resource_id.id]
+#     entry = '%4d %2d %2d %2d %2d %6.3f %9.5f %10.5f %7.3f %7.2f %6.3f %6.3f %6.3f %3d' % \
+#             (yr, mon, day, hr, min, sec, lat, lon, dep, mag, eh, ez, rms, evid)
+#     evlist_file.write(entry + '\n')
+# evlist_file.close()
+#
+# #%% Run GrowClust
+#
+# # Craft command and call subprocess in shell
+# growclust_command = growclust_exe + ' ' + relocate_catalog_output_dir + 'config.inp'
+# subprocess.call(growclust_command, shell=True)
+#
+# #%% Get GrowClust events in catalog form and save
+#
+# # Read in output catalog using pandas
+# relocated_event_table = pd.read_csv(outcat_filename, header=None, sep='\s+',
+#                                     names=['yr','mon','day','hr','mm','sec','evid','lat','lon','dep','mag','qID','cID',
+#                                            'nbranch','qnpair','qndiffP','qndiffS','rmsP','rmsS','eh','ez','et','latC',
+#                                            'lonC','depC'])
+#
+# # Initialize ObsPy catalog object and populate with events on a row-by-row basis
+# relocated_catalog = Catalog()
+# for i in range(len(relocated_event_table)):
+#     time = UTCDateTime(relocated_event_table.yr[i],relocated_event_table.mon[i],relocated_event_table.day[i],relocated_event_table.hr[i],relocated_event_table.mm[i],relocated_event_table.sec[i])
+#     event = Event(origins=[Origin(time=time,latitude=relocated_event_table.lat[i],longitude=relocated_event_table.lon[i],depth=relocated_event_table.dep[i]*1000)])
+#     event.comments = catalog[i].comments
+#     event.picks = catalog[i].picks
+#     event.magnitudes = catalog[i].magnitudes
+#     relocated_catalog += event
+# writer(relocate_catalog_output_dir + relocated_catalog_filename, relocated_catalog)
+
+# # Also copy bootstrap file for error analysis
+# original_bootstrap_dir = relocate_catalog_output_dir + 'OUT/out.growclust_boot'
+# target_bootstrap_dir = relocate_catalog_output_dir + 'mm_bootstrap_results.txt'
+# shutil.copyfile(original_bootstrap_dir, target_bootstrap_dir)
+# #

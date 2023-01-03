@@ -1,4 +1,4 @@
-with open('/Users/darrentpk/Desktop/GitHub/enhance_catalog/output/redoubt2/relocate_catalog/layer_bootstrap_results.txt') as f:
+with open('/Users/darrentpk/Desktop/GitHub/enhance_catalog/output/redoubt2/relocate_catalog/node_bootstrap_results.txt') as f:
     lines = f.readlines()
 
 evid = []

@@ -13,11 +13,10 @@ from obspy.clients.fdsn import Client
 #%% Define variables
 
 # Define variables
-data_destination = '/home/data/augustine/'
-start_time = UTCDateTime(2005,11,1,0,0,0)
-end_time = UTCDateTime(2006,5,1,0,0,0)
-station_list_filename = '/home/ptan/enhance_catalog/data/augustine_stations.csv'
-
+data_destination = '/home/data/takawangha/'
+start_time = UTCDateTime(2022,11,22,0,0,0)
+end_time = UTCDateTime(2022,11,23,0,0,0)
+station_list_filename = '/home/ptan/enhance_catalog/data/stations/takawangha_stations.csv'
 
 #%% Define functions
 
@@ -42,23 +41,25 @@ for i in range(num_days):
     print('\nNow at %s...' % str(t1.date))
 
     # Loop over station list and extract relevant seed information
-    for j in range(5,len(station_list.Station)):
+    for j in range(len(station_list.Station)):
 
         client = Client(station_list.Client[j])
         station = station_list.Station[j]
         network = station_list.Network[j]
         channels = [channel.strip() for channel in station_list.Channels[j].split(',')]
+        # channels = ['BHZ']
         location = station_list.Location[j]
-
-        # Check if file already exists
-        seed_sample_filepath = data_destination + station + '.*.' + str(t1.year) + ':' + str(t1.julday) + ':*'
-        matching_data_files = glob.glob(seed_sample_filepath)
-        if len(matching_data_files) != 0:
-            print('%s already has data files for %s, skipping.' % (station,t1.date))
-            continue
 
         # Loop over channels
         for channel in channels:
+
+            # Check if file already exists
+            julday_str = '%03d' % t1.julday
+            seed_sample_filepath = data_destination + station + '.' + channel + '.' + str(t1.year) + ':' + julday_str + ':*'
+            matching_data_files = glob.glob(seed_sample_filepath)
+            if len(matching_data_files) != 0:
+                print('%s already has data files for %s, skipping.' % (station, t1.date))
+                continue
 
             # Get waveforms by querying client
             try:
@@ -82,7 +83,7 @@ for i in range(num_days):
 
             # continue if waveform retrieval fails
             except:
-                # print('%s.%s failed.' % (station,channel))
+                print('%s.%s failed.' % (station,channel))
                 continue
 
     # Print progression
@@ -92,21 +93,3 @@ for i in range(num_days):
 # Conclude process
 time_end = time.time()
 print('\nData collection complete. Time taken: %.2f hours' % ((time_end - time_start) / 3600))
-
-
-for data_file in data_files[2518:]:
-    st = read(data_file)
-    # Save every trace separately
-    for tr in st:
-        # Craft the seed file name
-        trace_year = str(tr.stats.starttime.year)
-        trace_julday = str(tr.stats.starttime.julday)
-        trace_time = str(tr.stats.starttime.time)[0:8]
-        trace_datetime_str = ":".join([trace_year, str(trace_julday).zfill(3), trace_time])
-        station = tr.stats.station
-        channel = tr.stats.channel
-        seed_filename = station + '.' + channel + '.' + trace_datetime_str
-
-        # Write to seed file
-        seed_filepath = directory + seed_filename
-        tr.write(seed_filepath, format="MSEED")
