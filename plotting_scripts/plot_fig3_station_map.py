@@ -60,7 +60,7 @@ RDW = (60.483,-152.810,"campaign","RDW")
 fig = pygmt.Figure()
 
 # Left plot: Top-down view
-with fig.subplot(nrows=1, ncols=1, figsize=("7c","7c"), autolabel="a)"):
+with fig.subplot(nrows=1, ncols=1, figsize=("7c","7c")):
 
     # Create basemap with correct dimensions
     pygmt.config(GMT_DATA_SERVER="https://oceania.generic-mapping-tools.org")
@@ -127,7 +127,7 @@ with fig.subplot(nrows=1, ncols=1, figsize=("7c","7c"), autolabel="a)"):
 fig.shift_origin(xshift="8.5c",yshift="0c")
 
 # Left plot: Top-down view
-with fig.subplot(nrows=1, ncols=1, figsize=("7c","7c"), autolabel="b)"):
+with fig.subplot(nrows=1, ncols=1, figsize=("7c","7c")):
 
     # Create basemap with correct dimensions
     pygmt.config(GMT_DATA_SERVER="https://oceania.generic-mapping-tools.org")
@@ -184,5 +184,5 @@ with fig.subplot(nrows=1, ncols=1, figsize=("7c","7c"), autolabel="b)"):
     fig.text(x=(-153.35-153.4378)/2, y=59.32, text="5 km", justify="CB", font="8.5p,Helvetica,black")
 
 fig.show(method="external")
-fig.savefig('/Users/darrentpk/Desktop/figures/paper/fig3_stations_v2.png')
-fig.savefig('/Users/darrentpk/Desktop/figures/paper/fig3_stations_v2.pdf')
+fig.savefig('/Users/darrentpk/Desktop/figures/paper/newest/fig3_stations_v2.png')
+fig.savefig('/Users/darrentpk/Desktop/figures/paper/newest/fig3_stations_v2.pdf')

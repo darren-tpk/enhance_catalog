@@ -48,12 +48,12 @@ MAX_PLOT_DEPTH = 1
 size_by_magnitude = True
 plot_temporal = False
 plot_FI = False
-plot_relocatable = False
+plot_relocatable = True
 plot_2Dhist = True
 migration_track = False
 swarm_focus = False
 plot_inset = False
-save_figs = True
+save_figs = False
 
 #%% Read catalog
 
@@ -187,7 +187,7 @@ if plot_temporal:
             fig.basemap(region=[0, 17, 0, 16.5], projection="X17.5c/16.5c", frame=plot_title)
 
     # Bottom plot: E-W cross section
-    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "5c"), autolabel="c)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "5c"), autolabel="(G)"):
 
         # Create basemap with correct dimensions
         fig.basemap(region=REGION_WE, projection="X10c/-5c", frame=["xa0.02f0.01+lLongitude", "ya1f0.25+lDepth", "WSne"],
@@ -227,7 +227,7 @@ if plot_temporal:
     fig.shift_origin(yshift="h+0.5c")
 
     # Left plot: Top-down view
-    with fig.subplot(nrows=1, ncols=1, figsize=("10c","10c"), autolabel="a)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("10c","10c"), autolabel="(E)"):
 
         # Create basemap with correct dimensions
         pygmt.config(GMT_DATA_SERVER="https://oceania.generic-mapping-tools.org")
@@ -271,7 +271,7 @@ if plot_temporal:
     fig.shift_origin(xshift="10.5c",yshift="0c")
 
     # Top-right plot: N-S cross section
-    with fig.subplot(nrows=1, ncols=1, figsize=("5c", "10c"), autolabel="b)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("5c", "10c"), autolabel="(F)"):
 
         # Create basemap with correct dimensions
         fig.basemap(region=REGION_NS, projection="X5c/10c", frame=["xa1f0.25+lDepth", "ya0.01f0.005+lLatitude", "wsNE"],
@@ -344,7 +344,7 @@ if plot_FI:
             fig.basemap(region=[0, 17, 0, 16.5], projection="X17.5c/16.5c", frame=plot_title)
 
     # Bottom plot: E-W cross section
-    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "5c"), autolabel="c)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "5c"), autolabel="(G)"):
 
         # Create basemap with correct dimensions
         fig.basemap(region=REGION_WE, projection="X10c/-5c", frame=["xa0.02f0.01+lLongitude", "ya1f0.25+lDepth", "WSne"],
@@ -379,7 +379,7 @@ if plot_FI:
     fig.shift_origin(yshift="h+0.5c")
 
     # Left plot: Top-down view
-    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "10c"), autolabel="a)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "10c"), autolabel="(E)"):
 
         # Create basemap with correct dimensions
         pygmt.config(GMT_DATA_SERVER="https://oceania.generic-mapping-tools.org")
@@ -423,7 +423,7 @@ if plot_FI:
     fig.shift_origin(xshift="10.5c", yshift="0c")
 
     # Top-right plot: N-S cross section
-    with fig.subplot(nrows=1, ncols=1, figsize=("5c", "10c"), autolabel="b)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("5c", "10c"), autolabel="(F)"):
 
         # Create basemap with correct dimensions
         fig.basemap(region=REGION_NS, projection="X5c/10c", frame=["xaf+lDepth", "ya0.01f0.002+lLatitude", "wsNE"],
@@ -552,7 +552,7 @@ if plot_relocatable:
             fig.basemap(region=[0, 17, 0, 16.5], projection="X17.5c/16.5c", frame=plot_title)
 
     # Bottom plot: E-W cross section
-    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "5c"), autolabel="c)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "5c"), autolabel="(G)"):
 
         # Create basemap with correct dimensions
         fig.basemap(region=REGION_WE, projection="X10c/-5c", frame=["xa0.02f0.01+lLongitude", "ya1f0.25+lDepth", "WSne"],
@@ -586,7 +586,7 @@ if plot_relocatable:
     fig.shift_origin(yshift="h+0.5c")
 
     # Left plot: Top-down view
-    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "10c"), autolabel="a)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "10c"), autolabel="(E)"):
 
         # Create basemap with correct dimensions
         pygmt.config(GMT_DATA_SERVER="https://oceania.generic-mapping-tools.org")
@@ -650,7 +650,7 @@ if plot_relocatable:
     fig.shift_origin(xshift="10.5c", yshift="0c")
 
     # Top-right plot: N-S cross section
-    with fig.subplot(nrows=1, ncols=1, figsize=("5c", "10c"), autolabel="b)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("5c", "10c"), autolabel="(F)"):
 
         # Create basemap with correct dimensions
         fig.basemap(region=REGION_NS, projection="X5c/10c", frame=["xa1f0.25+lDepth", "ya0.01f0.005+lLatitude", "wsNE"],
@@ -809,7 +809,7 @@ if plot_2Dhist:
             fig.basemap(region=[0, 17, 0, 16.5], projection="X17.5c/16.5c", frame=plot_title)
 
     # Bottom plot: E-W cross section
-    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "5c"), autolabel="c)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "5c"), autolabel="(G)"):
 
         # Create basemap with correct dimensions
         fig.basemap(region=REGION_WE, projection="X10c/-5c", frame=["xa0.02f0.01+lLongitude", "ya1f0.25+lDepth", "WSne"],
@@ -830,7 +830,7 @@ if plot_2Dhist:
     fig.shift_origin(yshift="h+0.5c")
 
     # Left plot: Top-down view
-    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "10c"), autolabel="a)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("10c", "10c"), autolabel="(E)"):
 
         # Create basemap with correct dimensions
         pygmt.config(GMT_DATA_SERVER="https://oceania.generic-mapping-tools.org")
@@ -855,7 +855,7 @@ if plot_2Dhist:
     fig.shift_origin(xshift="10.5c", yshift="0c")
 
     # Top-right plot: N-S cross section
-    with fig.subplot(nrows=1, ncols=1, figsize=("5c", "10c"), autolabel="b)"):
+    with fig.subplot(nrows=1, ncols=1, figsize=("5c", "10c"), autolabel="(F)"):
 
         # Create basemap with correct dimensions
         fig.basemap(region=REGION_NS, projection="X5c/10c", frame=["xa1f0.25+lDepth", "ya0.01f0.005+lLatitude", "wsNE"],

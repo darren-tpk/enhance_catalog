@@ -1599,6 +1599,30 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
     # Return catalog
     return catalog
 
+# [estimate_s_picks] function to go through a catalog to add estimated s picks
+def estimate_s_picks(catalog, vpvs_ratio=1.73, s_pick_component='N'):
+    # Loop over events in catalog
+    for event in catalog:
+        # Get list of picked stations
+        picked_stations = list(np.unique([p.waveform_id.station_code for p in event.picks]))
+        # Loop over picked stations
+        for picked_station in picked_stations:
+            # Get a sub-list of this station's picks
+            station_picks = [p for p in event.picks if p.waveform_id.station_code == picked_station]
+            # If there is only one P-pick, make an S-pick
+            if len(station_picks)==1 and station_picks[0].phase_hint == 'P':
+                # Copy P pick to work with
+                pick_copy = station_picks[0].copy()
+                # Calculate S pick traveltime
+                p_traveltime =  pick_copy.time - event.origins[0].time
+                s_traveltime = vpvs_ratio * p_traveltime
+                # Craft S pick and append
+                pick_copy.phase_hint = 'S'
+                pick_copy.waveform_id.channel_code = pick_copy.waveform_id.channel_code[:-1] + s_pick_component
+                pick_copy.time = event.origins[0].time + s_traveltime
+                event.picks.append(pick_copy)
+    return catalog
+
 # [clean_cc_file] removes repeated event pairs and observations in dt.cc file
 # WARNING: this function works in place.
 def clean_cc_file(dtcc_filepath):

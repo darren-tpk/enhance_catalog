@@ -23,7 +23,7 @@ xml_filepath = hypoddver_dir + 'IN/relocatable_catalog_FImag.xml'
 raw_station_list_filepath = main_dir + 'data/stations/avo_station_list.csv'
 # Edit problem setup
 correct_depths = True  # This shifts the problem down based on the max height of the input velocity model
-catalog_loaded = True
+catalog_loaded = False
 # Actual hypoDD operations
 run_ncsn2pha = False
 run_ph2dt = True
@@ -97,7 +97,7 @@ WTCTP = [1.00, 1.00, 1.00, 0.10, 0.01] #[1, 1, 0.001, 0.001] # Weight for ct P w
 WTCTS = [1.00, 1.00, 1.00, 0.10, 0.01] #[0.8, 0.8, 0.001, 0.001] # Weight for ct S wave (-9: omit)
 WRCT = [12, 6, 6, 6, 6] #[12, 6, 6, 6] # Cutoff threshold for outliers located on ct tails (-9: no outlier removed)
 WDCT = [10, 5, 2.5, 2.5, 2.5] #[8, 3, 3, 3] # Maximum event separation for ct data (-9: not activated)
-DAMP = [100, 100, 100, 100, 100] #[100, 100, 100, 100] # Damping (only for LSQR, ISOLV=2)
+DAMP = [250, 250, 250, 250, 250] #[100, 100, 100, 100] # Damping (only for LSQR, ISOLV=2)
 ###### 1D velocity model
 # Instead of parsing the velocity model via NLAY, RATIO, TOP and VEL, we process a txt file input accordingly (see vzmodel_file)
 ###### event selection
@@ -648,7 +648,7 @@ if plot_results:
     # Read in hypodd input events and remove overlaps with hypodd output of unrelocated events
     hypodd_in = dat2cat(evlist_file, event_id_mapper, catalog, depth_correction=depth_correction)
     hypodd_loc_filtered = remove_catalog_repeats(hypodd_loc, hypodd_reloc)
-    # writer(output_dir + 'hypodd_loc_filtered.xml', hypodd_loc_filtered)
+    writer(output_dir + 'hypodd_loc_filtered.xml', hypodd_loc_filtered)
 
     # Extract lat, lon and depth
     hypodd_in_lats = [event.origins[0].latitude for event in hypodd_in]

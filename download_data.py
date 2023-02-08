@@ -13,10 +13,10 @@ from obspy.clients.fdsn import Client
 #%% Define variables
 
 # Define variables
-data_destination = '/home/data/takawangha/'
-start_time = UTCDateTime(2022,11,22,0,0,0)
-end_time = UTCDateTime(2022,11,23,0,0,0)
-station_list_filename = '/home/ptan/enhance_catalog/data/stations/takawangha_stations.csv'
+data_destination = '/home/data/great_sitkin/2021/'
+start_time = UTCDateTime(2021,1,1,0,0,0)
+end_time = UTCDateTime(2022,1,1,0,0,0)
+station_list_filename = '/home/ptan/enhance_catalog/data/stations/greatsitkin_stations.csv'
 
 #%% Define functions
 

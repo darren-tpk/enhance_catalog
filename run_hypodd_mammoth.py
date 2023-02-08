@@ -23,7 +23,7 @@ xml_filepath = hypoddver_dir + 'IN/relocatable_catalog.xml'
 raw_station_list_filepath = main_dir + 'data/stations/mammoth_station_list.csv'
 # Edit problem setup
 correct_depths = True  # This shifts the problem down based on the max height of the input velocity model
-catalog_loaded = True
+catalog_loaded = False
 # Actual hypoDD operations
 run_ncsn2pha = False
 run_ph2dt = True

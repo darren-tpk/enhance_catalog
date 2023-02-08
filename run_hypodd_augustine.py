@@ -23,7 +23,7 @@ xml_filepath = hypoddver_dir + 'IN/relocatable_catalog_FImag.xml'
 raw_station_list_filepath = main_dir + 'data/stations/avo_station_list.csv'
 # Edit problem setup
 correct_depths = True  # This shifts the problem down based on the max height of the input velocity model
-catalog_loaded = True
+catalog_loaded = False
 # Actual hypoDD operations
 run_ncsn2pha = False
 run_ph2dt = True
@@ -86,28 +86,28 @@ MAXGAP = -999  # Max azimuthal gap between individual event pairs and stations. 
 ISTART = 2  # Initial locations; 1: start from centroid, 2: start from catalog locations
 ISOLV = 2  # Least squares solution: 1: SVD, 2: LSQR
 IAQ = 0  # Keep (0) or Remove (1) air quakes
-NSET = 4  # Number of sets of iteration specifications following (if NSET=2, next section should be 2 element lists)
+NSET = 5  # Number of sets of iteration specifications following (if NSET=2, next section should be 2 element lists)
 ###### data weight and re-weighting
-# NITER = [10, 10, 10, 10, 10] #[10, 10, 10, 10] # Number of iterations for the set of weighting parameters that follow
-# WTCCP = [0.01, 0.01, 0.10, 0.50, 1.00]  #[0.001, 0.001, 1, 1] #  Weight for cc P wave (-9: omit)
-# WTCCS = [0.01, 0.01, 0.10, 0.50, 1.00] #[0.001, 0.001, 0.8, 0.8] # Weight for cc S wave (-9: omit)
-# WRCC = [10, 10, 10, 6, 6] #[10, 10, 10, 6] # Cutoff threshold for outliers located on cc tails (-9: no outlier removed)
-# WDCC = [4, 4, 4, 2, 2] #[4, 4, 4, 0.5] # Maximum event separation for cc data (-9: not activated)
-# WTCTP = [1.00, 1.00, 1.00, 0.10, 0.01] #[1, 1, 0.001, 0.001] # Weight for ct P wave (-9: omit)
-# WTCTS = [1.00, 1.00, 1.00, 0.10, 0.01] #[0.8, 0.8, 0.001, 0.001] # Weight for ct S wave (-9: omit)
-# WRCT = [12, 6, 6, 6, 6] #[12, 6, 6, 6] # Cutoff threshold for outliers located on ct tails (-9: no outlier removed)
-# WDCT = [10, 5, 2.5, 2.5, 2.5] #[8, 3, 3, 3] # Maximum event separation for ct data (-9: not activated)
-# DAMP = [100, 100, 100, 100, 100] #[100, 100, 100, 100] # Damping (only for LSQR, ISOLV=2)
-NITER = [10, 10, 10, 10]
-WTCCP = [0.001, 0.001, 1, 1]
-WTCCS = [0.001, 0.001, 0.8, 0.8]
-WRCC = [10, 10, 10, 6]
-WDCC = [4, 4, 4, 0.5]
-WTCTP = [1, 1, 0.001, 0.001]
-WTCTS = [0.8, 0.8, 0.001, 0.001]
-WRCT = [12, 6, 6, 6]
-WDCT = [8, 3, 3, 3]
-DAMP = [100, 100, 100, 100]
+NITER = [10, 10, 10, 10, 10] #[10, 10, 10, 10] # Number of iterations for the set of weighting parameters that follow
+WTCCP = [0.01, 0.01, 0.10, 0.50, 1.00]  #[0.001, 0.001, 1, 1] #  Weight for cc P wave (-9: omit)
+WTCCS = [0.01, 0.01, 0.10, 0.50, 1.00] #[0.001, 0.001, 0.8, 0.8] # Weight for cc S wave (-9: omit)
+WRCC = [10, 10, 10, 6, 6] #[10, 10, 10, 6] # Cutoff threshold for outliers located on cc tails (-9: no outlier removed)
+WDCC = [4, 4, 4, 2, 2] #[4, 4, 4, 0.5] # Maximum event separation for cc data (-9: not activated)
+WTCTP = [1.00, 1.00, 1.00, 0.10, 0.01] #[1, 1, 0.001, 0.001] # Weight for ct P wave (-9: omit)
+WTCTS = [1.00, 1.00, 1.00, 0.10, 0.01] #[0.8, 0.8, 0.001, 0.001] # Weight for ct S wave (-9: omit)
+WRCT = [12, 6, 6, 6, 6] #[12, 6, 6, 6] # Cutoff threshold for outliers located on ct tails (-9: no outlier removed)
+WDCT = [10, 5, 2.5, 2.5, 2.5] #[8, 3, 3, 3] # Maximum event separation for ct data (-9: not activated)
+DAMP = [100, 100, 100, 100, 100] #[100, 100, 100, 100] # Damping (only for LSQR, ISOLV=2)
+# NITER = [10, 10, 10, 10]
+# WTCCP = [0.001, 0.001, 1, 1]
+# WTCCS = [0.001, 0.001, 0.8, 0.8]
+# WRCC = [10, 10, 10, 6]
+# WDCC = [4, 4, 4, 0.5]
+# WTCTP = [1, 1, 0.001, 0.001]
+# WTCTS = [0.8, 0.8, 0.001, 0.001]
+# WRCT = [12, 6, 6, 6]
+# WDCT = [8, 3, 3, 3]
+# DAMP = [100, 100, 100, 100]
 ###### 1D velocity model
 # Instead of parsing the velocity model via NLAY, RATIO, TOP and VEL, we process a txt file input accordingly (see vzmodel_file)
 ###### event selection
@@ -641,14 +641,14 @@ hypoDD_2
     print('Now writing catalog objects from hypodd outputs...')
     hypodd_loc = loc2cat(loc_file, event_id_mapper, catalog, type='loc', depth_correction=depth_correction)
     hypodd_reloc = loc2cat(reloc_file, event_id_mapper, catalog, type='reloc', depth_correction=depth_correction)
-    # writer(output_dir + 'hypodd_loc.xml', hypodd_loc)
-    # writer(output_dir + 'hypodd_reloc.xml', hypodd_reloc)
+    writer(output_dir + 'hypodd_loc.xml', hypodd_loc)
+    writer(output_dir + 'hypodd_reloc.xml', hypodd_reloc)
 
 if plot_results:
     # Read in hypodd input events and remove overlaps with hypodd output of unrelocated events
     hypodd_in = dat2cat(evlist_file, event_id_mapper, catalog, depth_correction=depth_correction)
     hypodd_loc_filtered = remove_catalog_repeats(hypodd_loc, hypodd_reloc)
-    # writer(output_dir + 'hypodd_loc_filtered.xml', hypodd_loc_filtered)
+    writer(output_dir + 'hypodd_loc_filtered.xml', hypodd_loc_filtered)
 
     # Extract lat, lon and depth
     hypodd_in_lats = [event.origins[0].latitude for event in hypodd_in]
@@ -675,8 +675,8 @@ if plot_results:
     # Augustine
     lat_min = 59.32
     lat_max = 59.40
-    lon_min = -153.55
-    lon_max = -153.3
+    lon_min = -153.5
+    lon_max = -153.35
     dep_min = -2
     dep_max = 1.5
 

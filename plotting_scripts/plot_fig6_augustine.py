@@ -123,7 +123,7 @@ volc_PARTY_times = list(np.sort(volc_PARTY_times))
 # prepare times
 
 # Initialize figure
-fig = plt.figure(figsize=(44, 25))
+fig = plt.figure(figsize=(44, 26.5))
 # Cumulative count plot
 ax0 = plt.subplot2grid((8, 3), (0, 0), colspan=3, rowspan=2)
 volc_tick_lims = [UTCDateTime(2005, 4, 1), UTCDateTime(2005, 5, 1),
@@ -149,12 +149,12 @@ cum_volc_PARTY_events = [0, *range(0,len(volc_PARTY_days)+1)]
 ax0.hist(volc_PARTY_days,bins=volc_bin_days,color='#505050',edgecolor='black',alpha=0.42,label='Augustine EQcorrscan')
 ax0.hist(volc_PEC_days,bins=volc_bin_days,color='darkred',edgecolor='black',alpha=0.42,label='Augustine Original Catalog')
 # ax0.legend(fontsize=32,loc='upper left')
-ax0.legend(fontsize=35,loc='upper left', bbox_to_anchor=(0.025,1))
-ax0.text(2.5,200,'a)',fontsize=58,weight='bold')
+ax0.legend(fontsize=35,loc='upper left') # , bbox_to_anchor=(0.025,1)
+# ax0.text(2.5,200,'a)',fontsize=58,weight='bold')
 ax0.set_xticks(volc_tick_days)
 ax0.set_xticklabels(volc_tick_labels,fontsize=35,rotation=30,ha='right')
 ax0.set_xlim((0,(UTCDateTime(2006,5,1)-volc_base_time)/86400))
-ax0.set_ylabel('Detections/Week',color='black',fontsize=38)
+ax0.set_ylabel('Detections\nper week',color='black',fontsize=38)
 ax0.tick_params(axis='y',labelsize=32)
 ax0.set_title('Augustine Detections (2005-04-01 to 2006-05-01)',fontsize=50,fontweight='bold')
 plt.yscale('log', nonpositive='clip')
@@ -206,7 +206,7 @@ ax1.text(8, -0.20, 'M0', fontsize=35, va='center', ha='center')
 ax1.text(17, -0.20, 'M1', fontsize=35, va='center', ha='center')
 ax1.text(26, -0.20, 'M2', fontsize=35, va='center', ha='center')
 ax1.text(35, -0.20, 'M3', fontsize=35, va='center', ha='center')
-ax1.text(3,0.70,'b)',fontsize=58,weight='bold')
+# ax1.text(3,0.70,'b)',fontsize=58,weight='bold')
 ax1.set_xlim([0,num_days])
 ax1.set_ylim([-1.299,1.25])
 ax1.set_xticks(np.array([(tt-base_time)/86400 for tt in tick_times], dtype=float))
@@ -239,7 +239,7 @@ tick_times = [base_time+86400*i for i in range(int(num_days+1))]
 ax2.scatter(days, FI_values, s=50, c='#505050', alpha=0.5)
 ax2.scatter(relocated_days,relocated_FI_values,s=relocated_sizes,c='indianred',alpha=0.5)
 ax2.scatter(original_days,original_FI_values,s=original_sizes,c='darkred',alpha=0.7)
-ax2.text(0.3,0.35,'c)',fontsize=58,weight='bold')
+# ax2.text(0.3,0.35,'c)',fontsize=58,weight='bold')
 ax2.set_xlim([0,num_days])
 ax2.set_ylim([-1.299,0.75])
 ax2.set_xticks(np.array([(tt-base_time)/86400 for tt in tick_times], dtype=float))
@@ -269,7 +269,7 @@ tick_times = [base_time+86400*i for i in range(int(num_days+1))]
 ax3.scatter(days, FI_values, s=50, c='#505050', alpha=0.5)
 ax3.scatter(relocated_days,relocated_FI_values,s=relocated_sizes,c='indianred',alpha=0.5)
 ax3.scatter(original_days,original_FI_values,s=original_sizes,c='darkred',alpha=0.7)
-ax3.text(0.2,0.35,'d)',fontsize=58,weight='bold')
+# ax3.text(0.2,0.35,'d)',fontsize=58,weight='bold')
 ax3.text(2,-0.85, '(Cannot distinguish\nindividual events)', fontsize=35)
 ax3.set_xlim([0,num_days])
 ax3.set_ylim([-1.299,0.75])
@@ -290,8 +290,8 @@ for k in range(len(color_code_days) - 1):
                color=color_codes[k], zorder=10)
 plt.tight_layout()
 plt.show()
-fig.savefig('/Users/darrentpk/Desktop/figures/paper/new/fig6_augustine_fi_time_series.pdf',bbox_inches='tight')
-fig.savefig('/Users/darrentpk/Desktop/figures/paper/new/fig6_augustine_fi_time_series.png',bbox_inches='tight')
+fig.savefig('/Users/darrentpk/Desktop/figures/paper/newest/fig6_augustine_fi_time_series.pdf',bbox_inches='tight')
+fig.savefig('/Users/darrentpk/Desktop/figures/paper/newest/fig6_augustine_fi_time_series.png',bbox_inches='tight')
 
 
 ####################################################################

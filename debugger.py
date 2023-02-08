@@ -1,3 +1,30 @@
+# [estimate_s_picks] function to go through a catalog to add estimated s picks
+def estimate_s_picks(catalog, vpvs_ratio=1.73, s_pick_component='N'):
+    # Loop over events in catalog
+    for event in catalog:
+        # Get list of picked stations
+        picked_stations = list(np.unique([p.waveform_id.station_code for p in event.picks]))
+        # Loop over picked stations
+        for picked_station in picked_stations:
+            # Get a sub-list of this station's picks
+            station_picks = [p for p in event.picks if p.waveform_id.station_code == picked_station]
+            # If there is only one P-pick, make an S-pick
+            if len(station_picks)==1 and station_picks[0].phase_hint == 'P':
+                # Copy P pick to work with
+                pick_copy = station_picks[0].copy()
+                # Calculate S pick traveltime
+                p_traveltime =  pick_copy.time - event.origins[0].time
+                s_traveltime = vpvs_ratio * p_traveltime
+                # Craft S pick and append
+                pick_copy.phase_hint = 'S'
+                pick_copy.waveform_id.channel_code = pick_copy.waveform_id.channel_code[:-1] + s_pick_component
+                pick_copy.time = event.origins[0].time + s_traveltime
+                event.picks.append(pick_copy)
+
+
+
+
+
 # [calculate_relative_magnitudes] function to calculate magnitudes using CC based on Schaff & Richards (2014)
 # Uses template events in PEC as reference magnitudes for relocatable catalog
 # This function rethresholds the detected catalog by min_cc while processing it
