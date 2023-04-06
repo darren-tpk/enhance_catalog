@@ -312,3 +312,31 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
 # #
 # # #########
 
+
+import csv
+newfilePath = '/Users/darrentpk/Desktop/aug_relocated_catalog.csv'
+count = 0
+all_utc = []
+all_fi = []
+all_mag = []
+all_lat = []
+all_lon = []
+all_dep = []
+for event in catalog2:
+    if event.comments[-1].text.split('=')[1] == 'None':
+        count += 1
+        continue
+    # all_utc.append(str(UTCDateTime(event.resource_id.id.split('_')[-1])))
+    all_utc.append(str(event.origins[0].time))
+    all_fi.append('%.5f' % float(event.comments[-1].text.split('=')[1]))
+    all_mag.append('%.5f' % event.magnitudes[0].mag)
+    all_lat.append('%.5f' % event.origins[0].latitude)
+    all_lon.append('%.5f' % event.origins[0].longitude)
+    all_dep.append('%.3f' % event.origins[0].depth)
+
+rows = zip(all_utc,all_fi)
+rows = zip(all_utc,all_fi,all_mag,all_lat,all_lon,all_dep)
+with open(newfilePath, "w") as f:
+    writer = csv.writer(f)
+    for row in rows:
+        writer.writerow(row)
