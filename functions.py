@@ -1,3 +1,28 @@
+def initialize_run(name):
+
+    # Import all dependencies
+    import os
+
+    # Create all data and output directories and subdirectories
+    data_main = './data/'
+    data_dir = data_main + name + '/'
+    output_main = './output/'
+    output_dir = output_main + name + '/'
+    print('Creating subdirectories for workflow outputs...')
+    output_subdirs = [data_main, data_dir,
+                      output_main, output_dir,
+                      output_dir + 'run_redpy',
+                      output_dir + 'convert_redpy/',
+                      output_dir + 'create_tribe/',
+                      output_dir + 'scan_data/',
+                      output_dir + 'relocate_catalog/']
+    for output_subdir in output_subdirs:
+        try:
+            os.mkdir(output_subdir)
+        except FileExistsError:
+            print('%s already exists.' % output_subdir)
+    print('All data and output subdirectories created.')
+
 def download_data(data_destination,starttime,endtime,client,network,station,channel,location):
 
     """
@@ -344,5 +369,8 @@ def run_redpy(run_title,
                                                                        starttime.strftime('%Y-%m-%d'),
                                                                        endtime.strftime('%Y-%m-%d'))
     subprocess.call(initialize_command, shell=True)
+
+
+def convert_redpy():
 
 
