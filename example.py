@@ -13,22 +13,16 @@
 # Import all dependencies
 import os
 from obspy import UTCDateTime
-from functions import download_data, run_redpy
+from functions import initialize_run, download_data, run_redpy
+from toolbox import reader, writer
 
 # (0) Prepare output directory and parse AVO catalog
-output_dir = '/Users/darrentpk/Desktop/GitHub/enhance_catalog/output/example/'
-print('Creating subdirectories for workflow outputs...')
-output_subdirs = [output_dir, output_dir + 'run_redpy', output_dir + 'convert_redpy/', output_dir + 'create_tribe/',
-                  output_dir + 'scan_data/', output_dir + 'relocate_catalog/']
-for output_subdir in output_subdirs:
-    try:
-        os.mkdir(output_subdir)
-    except FileExistsError:
-        print('%s already exists.' % output_subdir)
-print('All output subdirectories created.')
+subdir_name = 'example'
+catalog = reader('./redoubt_20080401_20090901.xml')  # Filtered AVO catalog for the 3 day example
+initialize_run(subdir_name)
 
 # (1) Download data
-data_destination = '/Users/darrentpk/Desktop/example_data/'
+data_destination = './data/'+ subdir_name + '/'
 starttime = UTCDateTime(2009,2,25,0,0,0)
 endtime = UTCDateTime(2009,2,28,0,0,0)
 client = 'IRIS'
@@ -37,18 +31,18 @@ station = 'REF,RDN,RSO'
 channel = 'EHZ,EHZ,EHZ'
 location = '--,--,--'
 
-# download_data(data_destination=data_destination,
-#               starttime=starttime,
-#               endtime=endtime,
-#               client=client,
-#               network=network,
-#               station=station,
-#               channel=channel,
-#               location=location)
+download_data(data_destination=data_destination,
+              starttime=starttime,
+              endtime=endtime,
+              client=client,
+              network=network,
+              station=station,
+              channel=channel,
+              location=location)
 
 # (2) Run REDPy
 run_title = 'Redoubt Example'
-output_destination = '/Users/darrentpk/Desktop/GitHub/enhance_catalog/output/example/run_redpy/'
+redpy_output_destination = './output/' + subdir_name + '/run_redpy/'
 data_path = data_destination
 stalats=60.5224,60.4888,60.4616  # for teleseism removal
 stalons=-152.7401,-152.694,-152.756  # for teleseism removal
@@ -67,7 +61,7 @@ minorph=0.05  # amount of days to keep orphans in the queue when it just trigger
 maxorph=7  # amount of days to keep orphans in the queue when it triggers way above threshold (> trigon+7)
 
 run_redpy(run_title=run_title,
-          output_destination=output_destination,
+          output_destination=redpy_output_destination,
           data_path=data_path,
           starttime=starttime,
           endtime=endtime,
@@ -90,3 +84,5 @@ run_redpy(run_title=run_title,
           ncor=ncor,
           minorph=minorph,
           maxorph=maxorph)
+
+
