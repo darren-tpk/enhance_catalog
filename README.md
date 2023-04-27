@@ -27,28 +27,24 @@ The general sequence to be followed is:
 Quickstart
 ----------
 
-1. Prepare environment 
-
-```
-conda create -n enhance_catalog -c conda-forge eqcorrscan bokeh cartopy pandas pytables geopy pygmt ipython
-conda activate enhance_catalog
-```
-
-2. Clone and enter directory
+1. Clone and enter directory
 
 ```
 git clone https://github.com/darren-uaf/enhance_catalog
 cd enhance_catalog
 ```
 
-3. Run
+2. Create condo environment
 
 ```
-python convert_redpy.py
-python create_tribe.py
-python scan_data.py
-python relocate_catalog.py
-python plot_hypo.py
+conda env create
+conda activate enhance_catalog
+```
+
+3. Run example (3 day period from the Redoubt 2009 eruption)
+
+```
+python example.py
 ```
 
 Dependencies
