@@ -4,12 +4,13 @@ enhance_catalog
 This repository stores the codes that can be used to enhance AVO earthquake catalogs using an amalgamation of open-source tools, which are REDPy (Hotovec-Ellis & Jeffries, 2016), EQcorrscan (Chamberlain et al., 2018) and GrowClust (Trugman & Shearer, 2017). The three tools are combined in a single workflow, in order to make the redetection and relocation process as seamless as possible. The workflow starts by tying the REDPy output catalog with the pre-existing AVO catalog, before consolidating REDPy cluster cores and unmatched AVO events as templates for EQcorrscan's matched-filtering. After that, each matched-filter detection is re-correlated with their parent template, in order to obtain CC coefficients and lag times for GrowClust's hiearchical clustering and relocation algorithm.
 
 The general sequence to be followed is:
-1. convert_redpy.py
-2. create_tribe.py
-3. scan_data.py
-4. sensitivity_test.py (optional)
-5. relocate_catalog.py
-6. plot_hypo.py
+1. Determine the time span of interest and download seismic data
+2. Run REDPy to determine families of repeaters
+3. Read in the analyst-derived catalog and compare it with REDPy's output to consolidate templates
+4. Create tribe of templates for EQcorrscan
+5. Run matched-filter using EQcorrscan to obtain the temporally enhanced event list
+6. Cross-correlate relocation candidates with one another to obtain the dt.cc file
+7. Relocate valid events to obtain the relocated, enhanced catalog
 
 **General References and Suggested Citations**
 
