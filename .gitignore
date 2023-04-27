@@ -2,7 +2,6 @@
 ######################
 .DS_Store
 .DS_Store?
-**.DS_Store
 ._*
 .idea
 .idea/
@@ -12,11 +11,13 @@ __pycache__/
 # Example outputs #
 ###################
 output/example/
+data/
 
 # Paper specific data and dt.cc files #
 #######################################
 cc_files/
 data/
+avo_1989-2018_hypoi.txt
 
 # Paper specific scripts #
 ##########################
