@@ -1,4 +1,39 @@
-#%% Toolbox of all functions
+#%% Toolbox of all supporting functions
+
+#%% [pull_cores] Pulls out catalog of cores from a mixed catalog
+def pull_cores(full_catalog):
+
+    # Import all dependencices
+    from time import time
+    from obspy import Catalog
+
+    print('\nExtracting core events...')
+    time_start = time.time()
+
+    # Initialize core catalog object
+    all_cores = Catalog()
+
+    # Loop through full catalog to check for cores
+    for detection in full_catalog:
+        if detection.origins[0].comments[0].text.split(' ')[2] == 'CORE':
+            all_cores.append(detection)
+
+    # Find repeats and save their indices
+    remove_index = []
+    for ii in range(1,len(all_cores)):
+        if all_cores[ii].origins[0].time == all_cores[ii - 1].origins[0].time:
+            remove_index.append(ii)
+
+    # Reappend detections to core catalog, avoiding repeat indices
+    core_catalog = Catalog()
+    for ii, core in enumerate(all_cores):
+        if ii not in remove_index:
+            core_catalog.append(core)
+
+    # Conclude process
+    time_stop = time.time()
+    print('Core extraction complete, processing time: %.2f s' % (time_stop - time_start))
+    return core_catalog
 
 #%% [read_hypoi] Reads in a hypoinverse.pha file as an obspy catalog with numerous catalog filtering options.
 def read_hypoi(hypoi_file,
