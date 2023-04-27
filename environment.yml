@@ -1,0 +1,17 @@
+name: enhance_catalog
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - ipython
+  - eqcorrscan
+  - bokeh=2.4.3
+  - cartopy
+  - pandas
+  - pytables
+  - geopy
+  - pygmt
+  - pip
+  - pip:
+      - git+https://github.com/uafgeotools/waveform_collection.git
