@@ -1,5 +1,0 @@
-Client,Station,Network,Channels,Location,Latitude,Longitude,Elevation
-IRIS,LSNW,AV,"BHE, BHN, BHZ",--,51.9693,178.5148,290
-IRIS,LSPA,AV,"BHE, BHN, BHZ",--,51.9557,178.5714,335
-IRIS,LSSA,AV,"BHE, BHN, BHZ",--,51.9484,178.5112,549
-IRIS,LSSE,AV,"BHE, BHN, BHZ",--,51.932,178.567,335

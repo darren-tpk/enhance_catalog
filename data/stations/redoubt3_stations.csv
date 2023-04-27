@@ -1,4 +1,0 @@
-Client,Station,Network,Channels,Location,Latitude,Longitude,Used by Dane in his paper,Used in REDPy,N(picks) in 13 month AVO catalog,Use in EQcorrscan
-IRIS,RDN,AV,EHZ,--,60.5224,-152.7401,Yes,Yes,81,yes
-IRIS,REF,AV,EHZ,--,60.4888,-152.694,Yes,Yes,236,yes
-IRIS,RSO,AV,EHZ,--,60.4616,-152.756,Yes,Yes,48,yes
