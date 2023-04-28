@@ -31,14 +31,14 @@ station = 'REF,RDN,RSO'
 channel = 'EHZ,EHZ,EHZ'
 location = '--,--,--'
 
-# download_data(data_destination=data_destination,
-#               starttime=starttime,
-#               endtime=endtime,
-#               client=client,
-#               network=network,
-#               station=station,
-#               channel=channel,
-#               location=location)
+download_data(data_destination=data_destination,
+              starttime=starttime,
+              endtime=endtime,
+              client=client,
+              network=network,
+              station=station,
+              channel=channel,
+              location=location)
 
 # (2) Run REDPy
 run_title = 'Redoubt Example'
@@ -64,30 +64,30 @@ ncor=2  # minimum number of stations where cmin must be met to determine a repea
 minorph=0.05  # amount of days to keep orphans in the queue when it just triggers above threshold (> trigon)
 maxorph=7  # amount of days to keep orphans in the queue when it triggers way above threshold (> trigon+7)
 
-# run_redpy(run_title=run_title,
-#           output_destination=redpy_output_destination,
-#           data_path=data_path,
-#           starttime=starttime,
-#           endtime=endtime,
-#           network=redpy_network,
-#           station=redpy_station,
-#           channel=redpy_channel,
-#           location=redpy_location,
-#           stalats=redpy_stalats,
-#           stalons=redpy_stalons,
-#           samprate=samprate,
-#           fmin=fmin,
-#           fmax=fmax,
-#           nstaC=nstaC,
-#           lwin=lwin,
-#           swin=swin,
-#           trigon=trigon,
-#           trigoff=trigoff,
-#           winlen=winlen,
-#           cmin=cmin,
-#           ncor=ncor,
-#           minorph=minorph,
-#           maxorph=maxorph)
+run_redpy(run_title=run_title,
+          output_destination=redpy_output_destination,
+          data_path=data_path,
+          starttime=starttime,
+          endtime=endtime,
+          network=redpy_network,
+          station=redpy_station,
+          channel=redpy_channel,
+          location=redpy_location,
+          stalats=redpy_stalats,
+          stalons=redpy_stalons,
+          samprate=samprate,
+          fmin=fmin,
+          fmax=fmax,
+          nstaC=nstaC,
+          lwin=lwin,
+          swin=swin,
+          trigon=trigon,
+          trigoff=trigoff,
+          winlen=winlen,
+          cmin=cmin,
+          ncor=ncor,
+          minorph=minorph,
+          maxorph=maxorph)
 
 # (3) Convert REDPy into separate catalog objects
 analyst_catalog = catalog
@@ -111,3 +111,5 @@ convert_redpy(analyst_catalog=analyst_catalog,
               trigoff=trigoff,
               add_redpy_pick_to_associated=add_redpy_pick_to_associated,
               add_campaign_pick_to_associated=add_campaign_pick_to_associated)
+
+# (4) Create tribe of templates
