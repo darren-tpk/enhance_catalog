@@ -123,7 +123,7 @@ def download_data(data_destination,starttime,endtime,client,network,station,chan
 
         # Print progression
         time_current = time.time()
-        print('Data collection for the day complete. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+        print('Data collection for the day complete. Elapsed time: %.2f hours\n' % ((time_current - time_start) / 3600))
 
     # Conclude process
     time_end = time.time()
@@ -789,7 +789,7 @@ def create_tribe(convert_redpy_output_dir,
     :param tolerance (float): factor to median tolerance for boxcar removal from data (as a factor to median)
     :param channel_convention (bool): if `True`, enforce strict compliance for P/S picks to be on vertical/horizontal components
     :param use_all_analyst_events (bool): if `True`, disregard REDPy clustering and create templates from all analyst-derived events
-    :return:
+    :return: tribe (:class:`~core.match_filter.tribe`): tribe of successfully crafted templates
     """
 
     # Import all dependencies
@@ -875,3 +875,185 @@ def create_tribe(convert_redpy_output_dir,
 
     print('%d out of %d events in the catalog were converted to templates.' % (len(tribe),len(template_catalog)))
     writer(create_tribe_output_dir + 'tribe.tgz', tribe)
+
+    return tribe
+
+def scan_data(tribe,
+              convert_redpy_output_dir,
+              scan_data_output_dir,
+              data_path,
+              min_stations,
+              min_picks,
+              starttime,
+              endtime,
+              samprate,
+              threshold_type,
+              threshold,
+              trig_int,
+              decluster=True,
+              max_zeros=100,
+              npts_threshold=100,
+              tolerance=4e4,
+              parallel_process=True):
+
+    """
+    Conduct a matched-filter scan on a user-specified duration of seismic data using the input Tribe of templates.
+    :param tribe (:class:`~core.match_filter.tribe`): tribe of templates for matched-filter scan
+    :param convert_redpy_output_dir (str): output directory for the convert_redpy step
+    :param scan_data_output_dir (str): output directory for the scan_data step
+    :param data_path (str): path to where relevant miniseed files can be found
+    :param min_stations (int): minimum number of stations where each template must be observed on before being used for matched-filter
+    :param min_picks (int): minimum number of picks that each template must possess before being used for matched-filter
+    :param starttime (:class:`~obspy.core.utcdatetime.UTCDateTime`): start time for EQcorrscan matched-filter scan
+    :param endtime (:class:`~obspy.core.utcdatetime.UTCDateTime`): end time for EQcorrscan matched-filter scan
+    :param samprate (float): standardized sampling rate used for seismic data matched-filter scan (make sure this is equal to template samprate)
+    :param threshold_type (str): EQcorrscan threshold type -- choose between 'MAD', 'absolute', 'av_chan_corr'
+    :param threshold (float): threshold value used for matched-filter detections
+    :param trig_int (float): minimum trigger interval for individual template (s)
+    :param decluster (bool): if `True`, decluster matched-filter output such that different templates are not allowed to trigger within trig_int
+    :param max_zeros (int): maximum number of zeros allowed in trace segment prior to merging (defaults to 100)
+    :param npts_threshold (int): minimum number of samples needed for each trace segment prior to merging (defaults to 100)
+    :param tolerance (float): factor to median tolerance for boxcar removal from data (as a factor to median)
+    :param parallel_process (bool): if `True`, use parallel processing for matched-filter scan
+    :return: party (:class:`~core.match_filter.party`): Party of all matched-filter detections grouped by parent template
+    :return: detected_catalog (:class:`~obspy.core.event.Catalog`): Catalog of all matched-filter detections a.k.a. the temporally enhanced event list
+    """
+
+    # Import all dependencies
+    import time
+    import glob
+    import numpy as np
+    from obspy import Stream, read
+    from eqcorrscan import Party
+    from toolbox import remove_boxcars, remove_bad_traces, calculate_catalog_FI, calculate_relative_magnitudes, reader, writer
+
+    # Clean tribe off templates using min_stations and min_picks
+    print('\nBefore cleaning:', tribe)
+
+    # First remove template traces that are all nans
+    for t in tribe:
+        for tr in t.st:
+            if np.isnan(tr.data).all():
+                t.st.traces.remove(tr)
+
+    # Remove based on min_stations
+    tribe.templates = [t for t in tribe if len({tr.stats.station for tr in t.st}) >= min_stations]
+    print('After removing templates with < %d stations:' % min_stations, tribe)
+
+    # Remove based on min_picks
+    tribe.templates = [t for t in tribe if len(t.event.picks) >= min_picks]
+    print('After removing templates with < %d valid picks:' % min_picks, tribe)
+
+    # Get a unique list of all template station-channel combinations for data fetching
+    data_fileheads = []
+
+    # Loop through trace information in every template's stream
+    for template in tribe:
+        for trace in template.st:
+            # Extract station and channel names from trace
+            sta = trace.stats.station
+            chan = trace.stats.channel
+
+            # Craft filehead and append
+            data_filehead = data_path + sta + '.' + chan + '.'
+            data_fileheads.append(data_filehead)
+
+    # Now compile unique and sort
+    data_fileheads = list(set(data_fileheads))
+    data_fileheads.sort()
+
+    # Prepare to loop over days for scan
+    party_all = Party()
+    num_days = int(np.floor((endtime - starttime) / 86400))
+    time_start = time.time()
+
+    # Commence loop over days
+    for i in range(num_days):
+
+        # Define temporal boundaries of our day's scan
+        t1 = starttime + (i * 86400)
+        t2 = starttime + ((i + 1) * 86400)
+        print('\nNow at %s...' % str(t1))
+
+        # Initialize stream object and fetch data from data_dir
+        stream = Stream()
+
+        # Loop over data fileheads, using glob.glob to match data files we want in data_dir
+        for data_filehead in data_fileheads:
+            data_filename = data_filehead + str(t1.year) + ':' + f'{t1.julday :03}' + ':*'
+            matching_filenames = (glob.glob(data_filename))
+
+            # Try to read the miniseed data file and add it to the stream (occasionally fails)
+            for matching_filename in matching_filenames:
+                try:
+                    stream_contribution = read(matching_filename)
+                    stream = stream + stream_contribution
+                except:
+                    continue
+
+        # Remove bad traces (too many zeros or too little samples)
+        stream = remove_bad_traces(stream, max_zeros=max_zeros, npts_threshold=npts_threshold)
+
+        # Process stream (remove spikes, downsample to match tribe, detrend, merge)
+        stream = remove_boxcars(stream, tolerance)
+        stream = stream.resample(sampling_rate=samprate)
+        stream = stream.detrend("simple")
+        stream = stream.merge()
+        stream = stream.trim(starttime=t1, endtime=t2, pad=True)
+
+        # Check if stream is already empty. If yes, declare failure and skip
+        if stream is None:
+            print('The stream is already empty.')
+            time_current = time.time()
+            print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+            continue
+
+        # Remove traces that are overly masked (i.e. more zeros than actual data points)
+        for tr in stream:
+            if len(np.nonzero(tr.data)[0]) < 0.5 * len(tr.data):
+                stream.remove(tr)
+
+        print('Stream despiked, resampled, merged and trimmed. Getting party of detections...')
+
+        # Attempt to scan the current day
+        try:
+            party = tribe.detect(
+                stream=stream, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int, daylong=True,
+                overlap=None, parallel_process=True)
+
+            # Append party to party_all
+            party_all = party_all + party
+            time_current = time.time()
+            print('Party created, appending. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+
+        # If the scan for the day fails, print a notification
+        except:
+            time_current = time.time()
+            print('Party failed, skipping. Elapsed time: %.2f hours' % ((time_current - time_start) / 3600))
+            continue
+
+    # Conclude process
+    time_end = time.time()
+    print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_start) / 3600))
+
+    # Remove detections that are anchored by too little stations
+    print('Filtering away detections anchored by too little stations...')
+    for family in party_all:
+        for detection_index in reversed(range(len(family.detections))):
+            detection = family[detection_index]
+            if detection.no_chans < min_stations:
+                family.detections.pop(detection_index)
+
+    # Clean the party off of repeats (different templates that detect the "same" event)
+    if decluster:
+        print('Declustering party with leftover detections...')
+        party_all = party_all.decluster(trig_int=trig_int)
+
+    # Extract catalog from declustered party
+    detected_catalog = party_all.get_catalog()
+
+    # Write out party and catalog with all detections
+    writer(scan_data_output_dir + 'party.tgz', party_all)
+    writer(scan_data_output_dir + 'detected_catalog.xml', detected_catalog)
+
+    return party, detected_catalog

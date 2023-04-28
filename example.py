@@ -1,27 +1,26 @@
 ## Example script that executes the following in sequence:
 # 1. Download data
 # 2. Run REDPy
-# 3. Convert REDPy to EQcorrscan-compatible outputs
+# 3. Convert REDPy into EQcorrscan-compatible ObsPy catalogs
 # 4. Create EQcorrscan templates
-# 5. Run EQcorrscan matched-filter
-# 6. Generate dt.cc file
-# 7. Use dt.ct relocation on HypoDD
-# 8a. Use dt.cc relocation on HypoDD
-# 8b. Use dt.cc relocation on GrowClust (commented out)
+# 5. Run EQcorrscan matched-filter scan
+# 6. Calculate frequency index and relative magnitudes
+# 7. Generate dt.cc file
+# 8. Relocate catalog candidates
 # 9. Plot resulting earthquakes in time and space
 
 # Import all dependencies
 import os
 from obspy import UTCDateTime
-from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe
+from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe, scan_data
 from toolbox import reader, writer
 
-# (0) Prepare output directory and parse AVO catalog
+## (0) Prepare output directory and parse AVO catalog
 subdir_name = 'example'
 catalog = reader('./redoubt_20080401_20090901.xml')  # Filtered AVO catalog for the 3 day example
 initialize_run(subdir_name)
 
-# (1) Download data
+## (1) Download data
 data_destination = './data/'+ subdir_name + '/'
 starttime = UTCDateTime(2009,2,25,0,0,0)
 endtime = UTCDateTime(2009,2,28,0,0,0)
@@ -40,7 +39,7 @@ download_data(data_destination=data_destination,
               channel=channel,
               location=location)
 
-# (2) Run REDPy
+## (2) Run REDPy
 run_title = 'Redoubt Example'
 redpy_output_destination = './output/' + subdir_name + '/run_redpy/'
 data_path = data_destination
@@ -89,7 +88,7 @@ run_redpy(run_title=run_title,
           minorph=minorph,
           maxorph=maxorph)
 
-# (3) Convert REDPy into separate catalog objects
+## (3) Convert REDPy into separate catalog objects
 analyst_catalog = catalog
 redpy_output_path = redpy_output_destination + "".join(run_title.split()) + '/'
 convert_redpy_output_dir = './output/' + subdir_name + '/convert_redpy/'
@@ -112,7 +111,7 @@ convert_redpy(analyst_catalog=analyst_catalog,
               add_redpy_pick_to_associated=add_redpy_pick_to_associated,
               add_campaign_pick_to_associated=add_campaign_pick_to_associated)
 
-# (4) Create tribe of templates
+## (4) Convert REDPy into EQcorrscan-compatible ObsPy catalogs
 convert_redpy_output_dir = convert_redpy_output_dir
 create_tribe_output_dir = './output/' + subdir_name + '/create_tribe/'
 samprate = 50  # desired sampling rate for templates
@@ -120,13 +119,36 @@ prepick = 1  # time before pick time to start template waveform trim (s)
 length = 8  # time from pre-pick to stop template waveform trim (s)
 min_snr = 1  # minimum signal-to-noise to accept waveform into template
 
-create_tribe(convert_redpy_output_dir=convert_redpy_output_dir,
-             create_tribe_output_dir=create_tribe_output_dir,
-             data_path=data_path,
-             template_stations=station,
-             samprate=samprate,
-             fmin=fmin,
-             fmax=fmax,
-             prepick=prepick,
-             length=length,
-             min_snr=min_snr)
+tribe = create_tribe(convert_redpy_output_dir=convert_redpy_output_dir,
+                     create_tribe_output_dir=create_tribe_output_dir,
+                     data_path=data_path,
+                     template_stations=station,
+                     samprate=samprate,
+                     fmin=fmin,
+                     fmax=fmax,
+                     prepick=prepick,
+                     length=length,
+                     min_snr=min_snr)
+
+## (5) Run EQcorrscan matched-filter scan
+# tribe = reader(create_tribe_output_dir + 'tribe.tgz')
+scan_data_output_dir = './output/' + subdir_name + '/scan_data/'
+min_stations = 3  # minimum number of stations where each template must be observed on before being used for matched-filter
+min_picks = 0  # minimum number of picks that each template must possess before being used for matched-filter
+samprate = 50  # standardized sampling rate used for seismic data matched-filter scan (make sure this is equal to template samprate)
+threshold_type = 'av_chan_corr'  # EQcorrscan threshold type -- choose between 'MAD', 'absolute', 'av_chan_corr'
+threshold = 0.7  # threshold value used for matched-filter detections
+trig_int = 8  # minimum trigger interval for individual template (s)
+
+party, detected_catalog = scan_data(tribe=tribe,
+                                    convert_redpy_output_dir=convert_redpy_output_dir,
+                                    scan_data_output_dir=scan_data_output_dir,
+                                    data_path=data_path,
+                                    min_stations=min_stations,
+                                    min_picks=min_picks,
+                                    starttime=starttime,
+                                    endtime=endtime,
+                                    samprate=samprate,
+                                    threshold_type=threshold_type,
+                                    threshold=threshold,
+                                    trig_int=trig_int)
