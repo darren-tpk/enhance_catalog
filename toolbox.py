@@ -1356,7 +1356,7 @@ def calculate_catalog_FI(catalog, data_path, reference_station, reference_channe
             continue
         # Otherwise check for other events occuring on the same day so that we load the local data at one go
         else:
-            event_daystart = UTCDateTime(event.resource_id.id.split('_')[-1]).date
+            event_daystart = UTCDateTime(UTCDateTime(event.resource_id.id.split('_')[-1]).date)
             event_dayend = event_daystart + 86400
             sub_catalog_bool = (np.array(detection_times) > event_daystart) & (np.array(detection_times) < event_dayend)
             sub_catalog_index = np.flatnonzero(sub_catalog_bool)
