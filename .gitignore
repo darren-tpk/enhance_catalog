@@ -10,27 +10,6 @@ __pycache__/
 
 # Example outputs #
 ###################
+data/
 output/example/
-data/
-
-# Paper specific data and dt.cc files #
-#######################################
-cc_files/
-data/
 avo_1989-2018_hypoi.txt
-
-# Paper specific scripts #
-##########################
-paper_specific_code/
-plotting_scripts/
-redpy_results/
-output/mammoth3/
-output/redoubt5/
-output/augustine5/
-
-# Paper specific directories #
-hypoDDver/darren_mammoth/
-hypoDDver/IN augustine5/
-hypoDDver/IN mammoth3/
-hypoDDver/IN redoubt5/
-
