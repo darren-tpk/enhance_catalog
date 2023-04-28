@@ -822,7 +822,6 @@ def create_tribe(convert_redpy_output_dir,
 
     # Initialize tribe and tracker for valid events
     tribe = Tribe()
-    valid_event = []
     time_start = time.time()
 
     # Create a boolean list to keep track of which events have been attempted
@@ -860,7 +859,7 @@ def create_tribe(convert_redpy_output_dir,
         # Construct sub tribe out of sub catalog
         try:
             sub_tribe = Tribe().construct(
-                method="from_meta_file", lowcut=fmin, highcut=fmax, samp_rate=samp_rate, length=length,
+                method="from_meta_file", lowcut=fmin, highcut=fmax, samp_rate=samprate, length=length,
                 filt_order=4, prepick=prepick, meta_file=sub_catalog, st=stream, process=True,
                 process_len=process_len, min_snr=min_snr, parallel=True)
             if sub_tribe is not None or len(sub_tribe) > 0:
@@ -868,7 +867,7 @@ def create_tribe(convert_redpy_output_dir,
 
         # If tribe fails then we add the current sub catalog to the client catalog to try the client method later
         except:
-            print('Tribe creation attempt on %s to %s failed.')
+            print('Tribe creation attempt on %s to %s failed.' % (event_daystart, event_dayend))
 
     # Conclude process
     time_end = time.time()

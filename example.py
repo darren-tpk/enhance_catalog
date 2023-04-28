@@ -118,7 +118,7 @@ create_tribe_output_dir = './output/' + subdir_name + '/create_tribe/'
 samprate = 50  # desired sampling rate for templates
 prepick = 1  # time before pick time to start template waveform trim (s)
 length = 8  # time from pre-pick to stop template waveform trim (s)
-min_snr = 3  # minimum signal-to-noise to accept waveform into template
+min_snr = 1  # minimum signal-to-noise to accept waveform into template
 
 create_tribe(convert_redpy_output_dir=convert_redpy_output_dir,
              create_tribe_output_dir=create_tribe_output_dir,
