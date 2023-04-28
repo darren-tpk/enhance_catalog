@@ -1,22 +1,20 @@
 enhance_catalog
 ============
 
-This repository stores the codes that can be used to enhance AVO earthquake catalogs using an amalgamation of open-source tools, which are REDPy (Hotovec-Ellis & Jeffries, 2016), EQcorrscan (Chamberlain et al., 2018) and GrowClust (Trugman & Shearer, 2017). The three tools are combined in a single workflow, in order to make the redetection and relocation process as seamless as possible. The workflow starts by tying the REDPy output catalog with the pre-existing AVO catalog, before consolidating REDPy cluster cores and unmatched AVO events as templates for EQcorrscan's matched-filtering. After that, each matched-filter detection is re-correlated with their parent template, in order to obtain CC coefficients and lag times for GrowClust's hiearchical clustering and relocation algorithm.
+This repository stores the codes that can be used to enhance AVO earthquake catalogs using a streamlined integration of open-source catalog-enhancing tools: REDPy, EQcorrscan, HypoDD, and GrowClust. The combination of these tools offers the capability of adding seismic event detections and relocating events in a single workflow. The workflow relies on a combination of standard triggering and cross-correlation clustering (REDPy) to consolidate representative templates used in matched-filtering (EQcorrscan). The templates and their detections are then relocated using the differential time methods provided by HypoDD and/or GrowClust. Additional utilities include the incorporation of campaign and backfilled data at appropriate junctures, relative magnitude calculations, and frequency index calculations for valid events.
 
 The general sequence to be followed is:
-1. Determine the time span of interest and download seismic data
-2. Run REDPy to determine families of repeaters
-3. Read in the analyst-derived catalog and compare it with REDPy's output to consolidate templates
-4. Create tribe of templates for EQcorrscan
-5. Run matched-filter using EQcorrscan to obtain the temporally enhanced event list
-6. Cross-correlate relocation candidates with one another to obtain the dt.cc file
-7. Relocate valid events to obtain the relocated, enhanced catalog
+1. Determine the timespan of interest and download seismic data
+2. Run REDPy to determine families of repeaters within the timespan
+3. Read in the analyst-derived catalog and compare it with REDPy's output to consolidate representative templates
+4. Create the tribe of representative templates for EQcorrscan
+5. Run the matched-filter scan using EQcorrscan to obtain the temporally enhanced event list
+6. Calculate frequency indices and relative magnitudes for all valid events
+7. Cross-correlate relocation candidates with one another to obtain cross-correlation differential times
+8. Relocate valid events to obtain the relocated, enhanced catalog
+9. Plot resulting data products in time and in space
 
 **General References and Suggested Citations**
-
-*Klein, F. W. (2002). User's guide to HYPOINVERSE-2000, a Fortran program to solve for earthquake locations and magnitudes (No. 2002-171). US Geological Survey.*
-
-*Waldhauser, F. (2001). hypoDD--A program to compute double-difference hypocenter locations.*
 
 *Hotovec-Ellis, A. J., & Jeffries, C. (2016). Near real‐time detection, clustering, and analysis of repeating earthquakes: Application to Mount St. Helens and Redoubt volcanoes.*
 
@@ -24,6 +22,9 @@ The general sequence to be followed is:
 
 *Trugman, D. T., & Shearer, P. M. (2017). GrowClust: A hierarchical clustering algorithm for relative earthquake relocation, with application to the Spanish Springs and Sheldon, Nevada, earthquake sequences.*
 
+*Klein, F. W. (2002). User's guide to HYPOINVERSE-2000, a Fortran program to solve for earthquake locations and magnitudes (No. 2002-171). US Geological Survey.*
+
+*Waldhauser, F. (2001). hypoDD--A program to compute double-difference hypocenter locations.*
 
 Quickstart
 ----------
@@ -35,7 +36,7 @@ git clone https://github.com/darren-uaf/enhance_catalog
 cd enhance_catalog
 ```
 
-2. Create condo environment
+2. Create conda environment
 
 ```
 conda env create
@@ -55,14 +56,7 @@ Other repositories:
 * [REDPy](https://github.com/ahotovec/REDPy)
 * [EQcorrscan](https://github.com/eqcorrscan/EQcorrscan)
 * [GrowClust](https://github.com/dttrugman/GrowClust)
-* [phase_processing](https://github.com/darren-uaf/phase_processing)
 * [waveform_collection](https://github.com/uafgeotools/waveform_collection)
-
-
-Examples
---------
-
-**coming soon**
 
 
 <!--stackedit_data:
