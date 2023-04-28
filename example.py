@@ -11,8 +11,8 @@
 
 # Import all dependencies
 from obspy import UTCDateTime
-from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe, scan_data
-from toolbox import reader
+from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe, scan_data, rethreshold_results
+from toolbox import reader, writer, calculate_catalog_FI, calculate_relative_magnitudes
 
 ## (0) Prepare output directory and parse AVO catalog
 subdir_name = 'example'
@@ -48,19 +48,19 @@ redpy_channel = 'EHZ,EHZ,EHZ'
 redpy_location = '--,--,--'
 redpy_stalats = 60.5224,60.4888,60.4616  # for teleseism removal
 redpy_stalons = -152.7401,-152.694,-152.756  # for teleseism removal
-samprate=100  # sampling rate for stations -- non-matching traces will be resampled
-fmin=1.  # bandpass filter low bound
-fmax=10.  # bandpass filter high bound
-nstaC=2  # number of stations needed to coincidentally trigger
-lwin=8  # STA/LTA long window
-swin=0.7  # STA/LTA short window
-trigon=3  # STA/LTA trigger on ratio
-trigoff=2  # STA/LTA trigger off ratio
-winlen=1024  # cross-correlation window length in samples
-cmin=0.85  # minimum cross-correlation coefficient value to consider a repeater
-ncor=2  # minimum number of stations where cmin must be met to determine a repeater
-minorph=0.05  # amount of days to keep orphans in the queue when it just triggers above threshold (> trigon)
-maxorph=7  # amount of days to keep orphans in the queue when it triggers way above threshold (> trigon+7)
+samprate = 100  # sampling rate for stations -- non-matching traces will be resampled
+fmin = 1.  # bandpass filter low bound
+fmax = 10.  # bandpass filter high bound
+nstaC = 2  # number of stations needed to coincidentally trigger
+lwin = 8  # STA/LTA long window
+swin = 0.7  # STA/LTA short window
+trigon = 3  # STA/LTA trigger on ratio
+trigoff = 2  # STA/LTA trigger off ratio
+winlen = 1024  # cross-correlation window length in samples
+cmin = 0.85  # minimum cross-correlation coefficient value to consider a repeater
+ncor = 2  # minimum number of stations where cmin must be met to determine a repeater
+minorph = 0.05  # amount of days to keep orphans in the queue when it just triggers above threshold (> trigon)
+maxorph = 7  # amount of days to keep orphans in the queue when it triggers way above threshold (> trigon+7)
 
 run_redpy(run_title=run_title,
           output_destination=redpy_output_destination,
@@ -122,9 +122,9 @@ tribe = create_tribe(convert_redpy_output_dir=convert_redpy_output_dir,
                      create_tribe_output_dir=create_tribe_output_dir,
                      data_path=data_path,
                      template_stations=station,
-                     samprate=samprate,
-                     fmin=fmin,
-                     fmax=fmax,
+                     resampling_frequency=samprate,
+                     lowcut=fmin,
+                     highcut=fmax,
                      prepick=prepick,
                      length=length,
                      min_snr=min_snr)
@@ -138,16 +138,85 @@ samprate = 50  # standardized sampling rate used for seismic data matched-filter
 threshold_type = 'av_chan_corr'  # EQcorrscan threshold type -- choose between 'MAD', 'absolute', 'av_chan_corr'
 threshold = 0.7  # threshold value used for matched-filter detections
 trig_int = 8  # minimum trigger interval for individual template (s)
+decluster = True  # remove overlapping detections from different templates
 
-party, detected_catalog = scan_data(tribe=tribe,
-                                    convert_redpy_output_dir=convert_redpy_output_dir,
-                                    scan_data_output_dir=scan_data_output_dir,
-                                    data_path=data_path,
-                                    min_stations=min_stations,
-                                    min_picks=min_picks,
-                                    starttime=starttime,
-                                    endtime=endtime,
-                                    samprate=samprate,
-                                    threshold_type=threshold_type,
-                                    threshold=threshold,
-                                    trig_int=trig_int)
+party, detected_catalog, relocatable_catalog = scan_data(tribe=tribe,
+                                                         scan_data_output_dir=scan_data_output_dir,
+                                                         data_path=data_path,
+                                                         min_stations=min_stations,
+                                                         min_picks=min_picks,
+                                                         starttime=starttime,
+                                                         endtime=endtime,
+                                                         resampling_frequency=samprate,
+                                                         threshold_type=threshold_type,
+                                                         threshold=threshold,
+                                                         trig_int=trig_int,
+                                                         decluster=decluster)
+
+# # Optional rethresholding option after conducting a manual sensitivity test
+# # Note that it is strongly recommended to run scan_data with decluster=False if rethresholding is desired
+# new_threshold = 0.75
+# decluster = True
+# party, detected_catalog, relocatable_catalog = rethreshold_results(tribe=tribe,
+#                                                                    party=party,
+#                                                                    threshold_type=threshold_type,
+#                                                                    new_threshold=new_threshold,
+#                                                                    decluster=decluster,
+#                                                                    trig_int=trig_int)
+# writer(scan_data_output_dir + 'party.tgz', party)
+# writer(scan_data_output_dir + 'detected_catalog.xml', detected_catalog)
+# writer(scan_data_output_dir + 'relocatable_catalog.xml', relocatable_catalog)
+
+## (6) Calculate frequency index and relative magnitudes
+# party = reader(scan_data_output_dir + 'party.tgz')
+# detected_catalog = reader(scan_data_output_dir + 'detected_catalog.xml')
+
+# Settings for FI calculation
+reference_station = redpy_station  # stations used to compute the average spectra
+reference_channel = redpy_channel  # corresponding channels used to compute the average spectra
+min_match = 2  # minimum number of matches with reference channels before FI calculation
+
+detected_catalog_FI = calculate_catalog_FI(catalog=detected_catalog,
+                                           data_path=data_path,
+                                           reference_station=reference_station,
+                                           reference_channel=reference_channel,
+                                           min_match=min_match,
+                                           resampling_frequency=samprate,
+                                           prepick=prepick,
+                                           length=length,
+                                           lowcut=fmin,
+                                           highcut=fmax)
+
+relocatable_catalog_FI = calculate_catalog_FI(catalog=relocatable_catalog,
+                                              data_path=data_path,
+                                              reference_station=reference_station,
+                                              reference_channel=reference_channel,
+                                              min_match=min_match,
+                                              resampling_frequency=samprate,
+                                              prepick=prepick,
+                                              length=length,
+                                              lowcut=fmin,
+                                              highcut=fmax)
+
+# # Settings for magnitude calculation
+noise_window = (-20.0, -prepick)  # time window to calculate noise amplitude (s, s)
+signal_window = (-prepick, -prepick+length)  # time window to calculate signal amplitude (s, s)
+shift_len = 1.5  # length of time shift to find max cc between each event pair (s)
+min_cc = 0.7  # minimum cross-correlation coefficient to calculate relative magnitude
+min_snr = 1  # minimum signal-to-noise to calculate relative magnitude
+
+relocatable_catalog_FImag = calculate_relative_magnitudes(catalog=relocatable_catalog_FI,
+                                                          tribe=tribe,
+                                                          data_path=data_path,
+                                                          noise_window=noise_window,
+                                                          signal_window=signal_window,
+                                                          min_cc=min_cc,
+                                                          min_snr=min_snr,
+                                                          shift_len=shift_len,
+                                                          resampling_frequency=samprate,
+                                                          lowcut=fmin,
+                                                          highcut=fmax)
+
+# Write out new catalogs
+writer(scan_data_output_dir + 'detected_catalog_FI.xml', detected_catalog_FI)
+writer(scan_data_output_dir + 'relocatable_catalog_FImag.xml', relocatable_catalog_FImag)

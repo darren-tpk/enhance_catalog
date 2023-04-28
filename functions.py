@@ -14,7 +14,7 @@ def initialize_run(name):
     data_dir = data_main + name + '/'
     output_main = './output/'
     output_dir = output_main + name + '/'
-    print('Creating subdirectories for workflow outputs...')
+    print('\nCreating subdirectories for workflow outputs...')
     output_subdirs = [data_main, data_dir,
                       output_main, output_dir,
                       output_dir + 'run_redpy',
@@ -429,7 +429,7 @@ def convert_redpy(analyst_catalog,
     from obspy import UTCDateTime, Catalog, Stream
     from obspy.core.event import Event, Origin, Comment, WaveformStreamID, Pick
     from obspy.signal.trigger import coincidence_trigger, classic_sta_lta, trigger_onset
-    from toolbox import reader, writer, pull_cores, read_trace
+    from toolbox import writer, pull_cores, read_trace
 
     # If input for net/sta/chan/loc are str, reformat them into lists
     if type(redpy_station) == type(redpy_channel) == str:
@@ -476,8 +476,8 @@ def convert_redpy(analyst_catalog,
         if min(abs(analyst_event_times - detection_time)) < max_dt:
 
             # Find the closest event in time from the pre-existing catalog
-            PEC_index = np.argmin(abs(analyst_event_times - detection_time))
-            analyst_event = analyst_catalog[PEC_index]
+            analyst_index = np.argmin(abs(analyst_event_times - detection_time))
+            analyst_event = analyst_catalog[analyst_index]
 
             # Use the closest event's information to fill up event object
             redpy_event = analyst_event.copy()
@@ -488,12 +488,12 @@ def convert_redpy(analyst_catalog,
             associated_cluster_list.append(cluster)
 
             # Remove avo index from unmatched list if it still exists
-            if PEC_index in unmatched_indices_redpy:
-                unmatched_indices_redpy.remove(PEC_index)
-            if PEC_index in unmatched_indices_core and event_tag.split(' ')[2] == 'core':
-                unmatched_indices_core.remove(PEC_index)
+            if analyst_index in unmatched_indices_redpy:
+                unmatched_indices_redpy.remove(analyst_index)
+            if analyst_index in unmatched_indices_core and event_tag.split(' ')[2] == 'core':
+                unmatched_indices_core.remove(analyst_index)
 
-        # If event is not part of the PEC, we tag it as so
+        # If event is not part of the analyst, we tag it as so
         else:
             redpy_event.origins[0].comments[0].text += ' not in analyst catalog'
 
@@ -510,20 +510,20 @@ def convert_redpy(analyst_catalog,
 
     # Write them as npy files
     np.save(convert_redpy_output_dir + 'unassociated_clusters.npy', unassociated_clusters)
-    np.save(convert_redpy_output_dir + 'associated_clusters.npy', unassociated_clusters)
-    np.save(convert_redpy_output_dir + 'unmatched_indices_redpy.npy', unassociated_clusters)
-    np.save(convert_redpy_output_dir + 'unmatched_indices_core.npy', unassociated_clusters)
+    np.save(convert_redpy_output_dir + 'associated_clusters.npy', associated_clusters)
+    np.save(convert_redpy_output_dir + 'unmatched_indices_redpy.npy', unmatched_indices_redpy)
+    np.save(convert_redpy_output_dir + 'unmatched_indices_core.npy', unmatched_indices_core)
 
     # Also generate unmatched analyst catalogs (that can be used as templates later)
-    unmatched_analyst_events_redpy = Catalog() # PEC events that don't match redpy catalog
-    unmatched_analyst_events_core = Catalog() # PEC events that don't match redpy cores
+    unmatched_analyst_events_redpy = Catalog() # analyst events that don't match redpy catalog
+    unmatched_analyst_events_core = Catalog() # analyst events that don't match redpy cores
     for j, analyst_event in enumerate(analyst_catalog):
         if j in unmatched_indices_redpy:
             unmatched_analyst_events_redpy += analyst_event
         if j in unmatched_indices_core:
             unmatched_analyst_events_core += analyst_event
 
-    # Write out unmatched PEC catalog to .xml file
+    # Write out unmatched analyst catalog to .xml file
     writer(convert_redpy_output_dir + 'unmatched_analyst_events_redpy.xml', unmatched_analyst_events_redpy)
     writer(convert_redpy_output_dir + 'unmatched_analyst_events_core.xml', unmatched_analyst_events_core)
 
@@ -762,9 +762,9 @@ def create_tribe(convert_redpy_output_dir,
                  create_tribe_output_dir,
                  data_path,
                  template_stations,
-                 samprate,
-                 fmin,
-                 fmax,
+                 resampling_frequency,
+                 lowcut,
+                 highcut,
                  prepick,
                  length,
                  min_snr,
@@ -779,9 +779,9 @@ def create_tribe(convert_redpy_output_dir,
     :param create_tribe_output_dir (str): output directory for the create_tribe step
     :param data_path (str): path to where relevant miniseed files can be found
     :param template_stations (str or list): SEED station code(s) accepted for template creation
-    :param samprate (float): desired sampling rate for templates
-    :param fmin (float): bandpass filter lower bound (Hz)
-    :param fmax (float): bandpass filter upper bound (Hz)
+    :param resampling_frequency (float): desired sampling rate for templates
+    :param lowcut (float): bandpass filter lower bound (Hz)
+    :param highcut (float): bandpass filter upper bound (Hz)
     :param prepick (float): time before pick time to start template waveform trim (s)
     :param length (float): time from pre-pick to stop template waveform trim (s)
     :param min_snr (float): minimum signal-to-noise to accept waveform into template
@@ -800,25 +800,42 @@ def create_tribe(convert_redpy_output_dir,
     from eqcorrscan.core.match_filter.tribe import Tribe
     from toolbox import prepare_catalog_stream, reader, writer
 
+    # Commence tribe creation
+    print('Commencing tribe creation...')
+
     # If template_stations is a comma separated string, convert to list
     if type(template_stations) == list:
         template_stations = template_stations.split(',')
 
-    # Read in, and combine, the picked core catalog and unmatched PEC catalog
+    # Read in, and combine, the picked core catalog and unmatched analyst catalog
     core_catalog_picked = reader(convert_redpy_output_dir + 'core_catalog_picked.xml')
     if use_all_analyst_events:
-        unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events_core.xml')
+        unmatched_analyst_events = reader(convert_redpy_output_dir + 'unmatched_analyst_events_core.xml')
     else:
-        unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events_redpy.xml')
-    template_catalog = core_catalog_picked + unmatched_PEC_events
+        unmatched_analyst_events = reader(convert_redpy_output_dir + 'unmatched_analyst_events_redpy.xml')
+    template_catalog = core_catalog_picked + unmatched_analyst_events
 
     # Clean catalog to only include picks from our station list
-    print('Removing picks on stations not in input station list:')
+    print('\nRemoving picks on stations not in input station list...')
     for i, event in enumerate(template_catalog):
         for pick in reversed(event.picks):
             if pick.waveform_id.station_code not in template_stations:
                 print('Removed ' + pick.waveform_id.station_code + ' pick from template catalog index ' + str(i))
                 event.picks.remove(pick)
+    print('Done')
+
+    # If channel convention needs to be enforced, remove off-direction picks
+    if channel_convention:
+        print('\nRemoving picks that do not conform to channel convention...')
+        for i, event in enumerate(template_catalog):
+            for pick in reversed(event.picks):
+                if pick.phase_hint == 'P' and pick.waveform_id.channel_code[-1] != 'Z':
+                    print('Removed ' + pick.waveform_id.station_code + 'P pick from template catalog index ' + str(i))
+                    event.picks.remove(pick)
+                elif pick.phase_hint == 'S' and pick.waveform_id.channel_code[-1] == 'Z':
+                    print('Removed ' + pick.waveform_id.station_code + 'S pick from template catalog index ' + str(i))
+                    event.picks.remove(pick)
+        print('Done')
 
     # Initialize tribe and tracker for valid events
     tribe = Tribe()
@@ -846,7 +863,7 @@ def create_tribe(convert_redpy_output_dir,
             tracker[np.where(sub_catalog_index==True)] = True
 
         # Prepare catalog stream, trim to the start and end of the day to enforce daylong processing
-        stream = prepare_catalog_stream(data_path, sub_catalog, samprate, tolerance)
+        stream = prepare_catalog_stream(data_path, sub_catalog, resampling_frequency, tolerance)
         stream = stream.trim(starttime=event_daystart, endtime=event_dayend, pad=True)
 
         # Do stream checks
@@ -856,10 +873,10 @@ def create_tribe(convert_redpy_output_dir,
                 print('%s.%s got removed due to overly large data gaps.' % (trace.stats.station, trace.stats.channel))
                 stream.remove(trace)
 
-        # Construct sub tribe out of sub catalog
+        # Construct mini tribe out of sub catalog
         try:
             sub_tribe = Tribe().construct(
-                method="from_meta_file", lowcut=fmin, highcut=fmax, samp_rate=samprate, length=length,
+                method="from_meta_file", lowcut=lowcut, highcut=highcut, samp_rate=resampling_frequency, length=length,
                 filt_order=4, prepick=prepick, meta_file=sub_catalog, st=stream, process=True,
                 process_len=process_len, min_snr=min_snr, parallel=True)
             if sub_tribe is not None or len(sub_tribe) > 0:
@@ -879,14 +896,13 @@ def create_tribe(convert_redpy_output_dir,
     return tribe
 
 def scan_data(tribe,
-              convert_redpy_output_dir,
               scan_data_output_dir,
               data_path,
               min_stations,
               min_picks,
               starttime,
               endtime,
-              samprate,
+              resampling_frequency,
               threshold_type,
               threshold,
               trig_int,
@@ -906,7 +922,7 @@ def scan_data(tribe,
     :param min_picks (int): minimum number of picks that each template must possess before being used for matched-filter
     :param starttime (:class:`~obspy.core.utcdatetime.UTCDateTime`): start time for EQcorrscan matched-filter scan
     :param endtime (:class:`~obspy.core.utcdatetime.UTCDateTime`): end time for EQcorrscan matched-filter scan
-    :param samprate (float): standardized sampling rate used for seismic data matched-filter scan (make sure this is equal to template samprate)
+    :param resampling_frequency (float): standardized sampling rate used for seismic data matched-filter scan (make sure this is equal to template resampling_frequency)
     :param threshold_type (str): EQcorrscan threshold type -- choose between 'MAD', 'absolute', 'av_chan_corr'
     :param threshold (float): threshold value used for matched-filter detections
     :param trig_int (float): minimum trigger interval for individual template (s)
@@ -917,15 +933,17 @@ def scan_data(tribe,
     :param parallel_process (bool): if `True`, use parallel processing for matched-filter scan
     :return: party (:class:`~core.match_filter.party`): Party of all matched-filter detections grouped by parent template
     :return: detected_catalog (:class:`~obspy.core.event.Catalog`): Catalog of all matched-filter detections a.k.a. the temporally enhanced event list
+    :return: relocatable_catalog (:class:`~obspy.core.event.Catalog`): Catalog of all matched-filter detections with adopted locations
     """
 
     # Import all dependencies
     import time
     import glob
     import numpy as np
-    from obspy import Stream, read
+    from obspy import read, Stream, Catalog, UTCDateTime
+    from obspy.core.event import Origin
     from eqcorrscan import Party
-    from toolbox import remove_boxcars, remove_bad_traces, calculate_catalog_FI, calculate_relative_magnitudes, reader, writer
+    from toolbox import remove_boxcars, remove_bad_traces, writer
 
     # Clean tribe off templates using min_stations and min_picks
     print('\nBefore cleaning:', tribe)
@@ -996,7 +1014,7 @@ def scan_data(tribe,
 
         # Process stream (remove spikes, downsample to match tribe, detrend, merge)
         stream = remove_boxcars(stream, tolerance)
-        stream = stream.resample(sampling_rate=samprate)
+        stream = stream.resample(sampling_rate=resampling_frequency)
         stream = stream.detrend("simple")
         stream = stream.merge()
         stream = stream.trim(starttime=t1, endtime=t2, pad=True)
@@ -1019,7 +1037,7 @@ def scan_data(tribe,
         try:
             party = tribe.detect(
                 stream=stream, threshold=threshold, threshold_type=threshold_type, trig_int=trig_int, daylong=True,
-                overlap=None, parallel_process=True)
+                overlap=None, parallel_process=parallel_process)
 
             # Append party to party_all
             party_all = party_all + party
@@ -1037,7 +1055,7 @@ def scan_data(tribe,
     print('\nParty creation complete. Time taken: %.2f hours' % ((time_end - time_start) / 3600))
 
     # Remove detections that are anchored by too little stations
-    print('Filtering away detections anchored by too little stations...')
+    print('\nFiltering away detections anchored by too little stations...')
     for family in party_all:
         for detection_index in reversed(range(len(family.detections))):
             detection = family[detection_index]
@@ -1049,12 +1067,155 @@ def scan_data(tribe,
         print('Declustering party with leftover detections...')
         party_all = party_all.decluster(trig_int=trig_int)
 
-    # Extract catalog from party
+    # Convert party into an ObsPy catalog
     detected_catalog = party_all.get_catalog()
     print('The matched-filter scan detected a total of %d events.' % len(detected_catalog))
 
-    # Write out party and catalog with all detections
+    # Extract relocated catalog from full detected catalog
+    relocatable_catalog = Catalog()
+
+    # Extract all template names from tribe
+    template_names = [template.name for template in tribe]
+
+    # Loop over the detected catalog, copying over events if their templates have locations
+    # Also give each event pick phase information based on channel convention
+    for event in detected_catalog:
+
+        # Get source event
+        source_template_name = event.comments[0].text.split(' ')[1]
+        source_template_index = template_names.index(source_template_name)
+        source_template = tribe[source_template_index]
+        source_event = source_template.event
+
+        # Check if the source event has a location. Only continue if it does
+        if source_event.origins[0].latitude is not None:
+
+            # We extract the source event's location (lat, lon, dep)
+            lat = source_event.origins[0].latitude
+            lon = source_event.origins[0].longitude
+            dep = source_event.origins[0].depth
+
+            # Reformat the event's detection time to UTC
+            time_text = event.resource_id.id.split('_')[-1]
+            UTCdt = UTCDateTime(time_text)
+
+            # Create an ObsPy Origin object and store it in the event
+            event.origins = [Origin(time=UTCdt, latitude=lat, longitude=lon, depth=dep)]
+
+            # Loop over picks in event
+            for pick in event.picks:
+
+                # Check for non-vertical channel, and give an 'S' hint
+                if pick.waveform_id.channel_code[-1] == 'N' or pick.waveform_id.channel_code[-1] == 'E':
+                    pick.phase_hint = 'S'
+
+                # Also check for a vertical channel, and give an 'P' hint
+                elif pick.waveform_id.channel_code[-1] == 'Z':
+                    pick.phase_hint = 'P'
+
+                # Throw out a ValueError if the channel code is not recognized
+                else:
+                    raise ValueError
+
+            # Append to new catalog
+            relocatable_catalog += event
+
+    print('The relocatable catalog consists of %d events.' % len(relocatable_catalog))
+
+    # Write out party and catalogs
     writer(scan_data_output_dir + 'party.tgz', party_all)
     writer(scan_data_output_dir + 'detected_catalog.xml', detected_catalog)
+    writer(scan_data_output_dir + 'relocatable_catalog.xml', relocatable_catalog)
 
-    return party, detected_catalog
+    return party, detected_catalog, relocatable_catalog
+
+def rethreshold_results(tribe,
+                        party,
+                        threshold_type,
+                        new_threshold,
+                        decluster,
+                        trig_int):
+
+    """
+    Rethreshold party of detections using inbuilt function and re-extract detected and relocated catalogs
+    :param tribe (:class:`~core.match_filter.tribe`): tribe of templates for matched-filter scan:
+    :param party (:class:`~core.match_filter.party`): Party of all matched-filter detections grouped by parent template
+    :param threshold_type (str): EQcorrscan threshold type -- choose between 'MAD', 'absolute', 'av_chan_corr'
+    :param new_threshold (float): new threshold used to discard unwanted detections
+    :param decluster (bool): if `True`, decluster matched-filter output such that different templates are not allowed to trigger within trig_int
+    :param trig_int (float): minimum trigger interval for individual template (s)
+    :return: party (:class:`~core.match_filter.party`): Party of all matched-filter detections after rethresholding, grouped by parent template
+    :return: detected_catalog (:class:`~obspy.core.event.Catalog`): Catalog of all matched-filter detections a.k.a. the temporally enhanced event list
+    :return: relocatable_catalog (:class:`~obspy.core.event.Catalog`): Catalog of all matched-filter detections with adopted locations
+    """
+
+    # Import all dependencies
+    from obspy import Catalog, UTCDateTime
+    from obspy.core.event import Origin
+
+    # Use EQcorrscan's rethreshold function
+    print('\nRethresholding outputs using %s = %.2f...' % (threshold_type, new_threshold))
+    party = party.rethreshold(new_threshold=new_threshold,
+                              new_threshold_type=threshold_type)
+
+    # Clean the party off of repeats (different templates that detect the "same" event)
+    if decluster:
+        print('Declustering party with leftover detections...')
+        party = party.decluster(trig_int=trig_int)
+
+    # Convert party into an ObsPy catalog
+    detected_catalog = party.get_catalog()
+    print('The rethresholded catalog has a total of %d events.' % len(detected_catalog))
+
+    # Extract relocated catalog from full detected catalog
+    relocatable_catalog = Catalog()
+
+    # Extract all template names from tribe
+    template_names = [template.name for template in tribe]
+
+    # Loop over the detected catalog, copying over events if their templates have locations
+    # Also give each event pick phase information based on channel convention
+    for event in detected_catalog:
+
+        # Get source event
+        source_template_name = event.comments[0].text.split(' ')[1]
+        source_template_index = template_names.index(source_template_name)
+        source_template = tribe[source_template_index]
+        source_event = source_template.event
+
+        # Check if the source event has a location. Only continue if it does
+        if source_event.origins[0].latitude is not None:
+
+            # We extract the source event's location (lat, lon, dep)
+            lat = source_event.origins[0].latitude
+            lon = source_event.origins[0].longitude
+            dep = source_event.origins[0].depth
+
+            # Reformat the event's detection time to UTC
+            time_text = event.resource_id.id.split('_')[-1]
+            UTCdt = UTCDateTime(time_text)
+
+            # Create an ObsPy Origin object and store it in the event
+            event.origins = [Origin(time=UTCdt, latitude=lat, longitude=lon, depth=dep)]
+
+            # Loop over picks in event
+            for pick in event.picks:
+
+                # Check for non-vertical channel, and give an 'S' hint
+                if pick.waveform_id.channel_code[-1] == 'N' or pick.waveform_id.channel_code[-1] == 'E':
+                    pick.phase_hint = 'S'
+
+                # Also check for a vertical channel, and give an 'P' hint
+                elif pick.waveform_id.channel_code[-1] == 'Z':
+                    pick.phase_hint = 'P'
+
+                # Throw out a ValueError if the channel code is not recognized
+                else:
+                    raise ValueError
+
+            # Append to new catalog
+            relocatable_catalog += event
+
+    print('The relocatable catalog consists of %d events.' % len(relocatable_catalog))
+
+    return party, detected_catalog, relocatable_catalog

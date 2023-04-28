@@ -1315,8 +1315,8 @@ def raster2array(geotif_file):
     return array, metadata
 
 # [calculate_catalog_FI] Calculate the FIs of events in a catalog using a reference sta-chan.
-def calculate_catalog_FI(catalog, data_dir, reference_stations, reference_channels, min_match, resampling_frequency,
-                         tolerance, prepick, length, lowcut, highcut, filt_order, filomin, filomax, fiupmin, fiupmax,
+def calculate_catalog_FI(catalog, data_path, reference_station, reference_channel, min_match, resampling_frequency,
+                         prepick, length, lowcut, highcut, filomin=1, filomax=2.5, fiupmin=5, fiupmax=10, tolerance=4e4,
                          verbose=False, histogram=False):
 
     # Import all dependencies
@@ -1329,8 +1329,13 @@ def calculate_catalog_FI(catalog, data_dir, reference_stations, reference_channe
     from toolbox import prepare_catalog_stream
     import matplotlib.pyplot as plt
 
+    # If reference_station and reference_channel are comma separated strings, convert to lists
+    if type(reference_station) == type(reference_channel) == str:
+        reference_station = reference_station.split(',')
+        reference_channel = reference_channel.split(',')
+
     # Zip reference station and channels
-    reference_stachans = tuple(zip(reference_stations, reference_channels))
+    reference_stachans = tuple(zip(reference_station, reference_channel))
 
     # Create a boolean list to keep track of which events have been attempted
     tracker = np.array([False for i in range(len(catalog))])
@@ -1341,7 +1346,7 @@ def calculate_catalog_FI(catalog, data_dir, reference_stations, reference_channe
         count = 0
 
     # Initialize array of all event times
-    catalog_times = np.array([event.origins[0].time for event in catalog])
+    detection_times = np.array([UTCDateTime(event.resource_id.id.split('_')[-1]) for event in catalog])
 
     # Loop over events in catalog
     for i, event in enumerate(catalog):
@@ -1351,9 +1356,9 @@ def calculate_catalog_FI(catalog, data_dir, reference_stations, reference_channe
             continue
         # Otherwise check for other events occuring on the same day so that we load the local data at one go
         else:
-            event_daystart = UTCDateTime(event.origins[0].time.date)
+            event_daystart = UTCDateTime(event.resource_id.id.split('_')[-1]).date
             event_dayend = event_daystart + 86400
-            sub_catalog_bool = (np.array(catalog_times) > event_daystart) & (np.array(catalog_times) < event_dayend)
+            sub_catalog_bool = (np.array(detection_times) > event_daystart) & (np.array(detection_times) < event_dayend)
             sub_catalog_index = np.flatnonzero(sub_catalog_bool)
             sub_catalog = Catalog(list(compress(catalog, sub_catalog_bool)))
             tracker[sub_catalog_index] = True
@@ -1365,7 +1370,7 @@ def calculate_catalog_FI(catalog, data_dir, reference_stations, reference_channe
                     event.picks.remove(pick)
 
         # Load the appropriate data for sub_catalog
-        master_stream = prepare_catalog_stream(data_dir, sub_catalog, resampling_frequency, tolerance)
+        master_stream = prepare_catalog_stream(data_path, sub_catalog, resampling_frequency, tolerance)
         master_stream = master_stream.trim(starttime=event_daystart, endtime=event_dayend, pad=True)
 
         # Now loop through sub_catalog to compute FI
@@ -1391,7 +1396,7 @@ def calculate_catalog_FI(catalog, data_dir, reference_stations, reference_channe
                         length * trace.stats.sampling_rate):
                     trace.detrend('simple')
                     trace.taper(max_percentage=None, max_length=0.05 * length)
-                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=filt_order, zerophase=True)
+                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=4, zerophase=True)
                     trace.trim(reference_pick.time - prepick, reference_pick.time - prepick + length)
                 else:
                     sub_stream.remove(trace)
@@ -1451,9 +1456,9 @@ def calculate_catalog_FI(catalog, data_dir, reference_stations, reference_channe
 # [calculate_relative_magnitudes] function to calculate magnitudes using CC based on Schaff & Richards (2014)
 # Uses template events in PEC as reference magnitudes for relocatable catalog
 # This function rethresholds the detected catalog by min_cc while processing it
-def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal_window, min_cc, min_snr,
-                                  shift_len, tolerance, resampling_frequency, lowcut, highcut, filt_order,
-                                  use_s_picks=False, verbose=False):
+def calculate_relative_magnitudes(catalog, tribe, data_path, noise_window, signal_window, min_cc, min_snr,
+                                  shift_len, resampling_frequency, lowcut, highcut, tolerance=4e4, use_s_picks=False,
+                                  verbose=False):
 
     # Import dependencies
     import numpy as np
@@ -1503,7 +1508,7 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
 
         # Obtain day-long streams for the sub-catalog
         sub_catalog = Catalog(list(compress(catalog, sub_catalog_bool)))
-        master_catalog_stream = prepare_catalog_stream(data_dir, sub_catalog, resampling_frequency, tolerance)
+        master_catalog_stream = prepare_catalog_stream(data_path, sub_catalog, resampling_frequency, tolerance)
         master_catalog_stream = master_catalog_stream.trim(starttime=UTCDateTime(date_pair[0]),
                                                            endtime=UTCDateTime(date_pair[0]) + 86400, pad=True)
 
@@ -1513,7 +1518,7 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
             template_index = template_names.index(event.comments[0].text.split(' ')[1])
             sub_templates_list.append(tribe[template_index].event)
         sub_templates = Catalog(sub_templates_list)
-        master_template_stream = prepare_catalog_stream(data_dir, sub_templates, resampling_frequency, tolerance)
+        master_template_stream = prepare_catalog_stream(data_path, sub_templates, resampling_frequency, tolerance)
         master_template_stream = master_template_stream.trim(starttime=UTCDateTime(date_pair[1]),
                                                              endtime=UTCDateTime(date_pair[1]) + 86400, pad=True)
 
@@ -1567,7 +1572,7 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
                         length * trace.stats.sampling_rate):
                     trace.detrend('simple')
                     trace.taper(max_percentage=None, max_length=0.05 * length)
-                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=filt_order, zerophase=True)
+                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=4, zerophase=True)
                     trace.trim(reference_pick.time + noise_window[0], reference_pick.time + signal_window[1])
                 else:
                     sub_catalog_stream.remove(trace)
@@ -1592,7 +1597,7 @@ def calculate_relative_magnitudes(catalog, tribe, data_dir, noise_window, signal
                         length * trace.stats.sampling_rate):
                     trace.detrend('simple')
                     trace.taper(max_percentage=None, max_length=0.05 * length)
-                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=filt_order, zerophase=True)
+                    trace.filter(type='bandpass', freqmin=lowcut, freqmax=highcut, corners=4, zerophase=True)
                     trace.trim(reference_pick.time + noise_window[0], reference_pick.time + signal_window[1])
                 else:
                     sub_template_stream.remove(trace)
