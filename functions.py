@@ -1049,8 +1049,9 @@ def scan_data(tribe,
         print('Declustering party with leftover detections...')
         party_all = party_all.decluster(trig_int=trig_int)
 
-    # Extract catalog from declustered party
+    # Extract catalog from party
     detected_catalog = party_all.get_catalog()
+    print('The matched-filter scan detected a total of %d events.' % len(detected_catalog))
 
     # Write out party and catalog with all detections
     writer(scan_data_output_dir + 'party.tgz', party_all)
