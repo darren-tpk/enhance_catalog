@@ -13,7 +13,7 @@
 # Import all dependencies
 import os
 from obspy import UTCDateTime
-from functions import initialize_run, download_data, run_redpy, convert_redpy
+from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe
 from toolbox import reader, writer
 
 # (0) Prepare output directory and parse AVO catalog
@@ -26,10 +26,10 @@ data_destination = './data/'+ subdir_name + '/'
 starttime = UTCDateTime(2009,2,25,0,0,0)
 endtime = UTCDateTime(2009,2,28,0,0,0)
 client = 'IRIS'
-network = 'AV,AV,AV'
-station = 'REF,RDN,RSO'
-channel = 'EHZ,EHZ,EHZ'
-location = '--,--,--'
+network = 'AV,AV,AV,AV,AV,AV,AV,AV'
+station = 'DFR,NCT,RDJH,RDN,RDT,RDWB,REF,RSO'
+channel = 'EHZ,EHZ,BHZ,EHZ,EHZ,BHZ,EHZ,EHZ'
+location = '--,--,--,--,--,--,--,--'
 
 download_data(data_destination=data_destination,
               starttime=starttime,
@@ -44,10 +44,10 @@ download_data(data_destination=data_destination,
 run_title = 'Redoubt Example'
 redpy_output_destination = './output/' + subdir_name + '/run_redpy/'
 data_path = data_destination
-redpy_network = network
-redpy_station = station
-redpy_channel = channel
-redpy_location = location
+redpy_network = 'AV,AV,AV'
+redpy_station = 'RDN,REF,RSO'
+redpy_channel = 'EHZ,EHZ,EHZ'
+redpy_location = '--,--,--'
 redpy_stalats = 60.5224,60.4888,60.4616  # for teleseism removal
 redpy_stalons = -152.7401,-152.694,-152.756  # for teleseism removal
 samprate=100  # sampling rate for stations -- non-matching traces will be resampled
@@ -113,3 +113,20 @@ convert_redpy(analyst_catalog=analyst_catalog,
               add_campaign_pick_to_associated=add_campaign_pick_to_associated)
 
 # (4) Create tribe of templates
+convert_redpy_output_dir = convert_redpy_output_dir
+create_tribe_output_dir = './output/' + subdir_name + '/create_tribe/'
+samprate = 50  # desired sampling rate for templates
+prepick = 1  # time before pick time to start template waveform trim (s)
+length = 8  # time from pre-pick to stop template waveform trim (s)
+min_snr = 3  # minimum signal-to-noise to accept waveform into template
+
+create_tribe(convert_redpy_output_dir=convert_redpy_output_dir,
+             create_tribe_output_dir=create_tribe_output_dir,
+             data_path=data_path,
+             template_stations=station,
+             samprate=samprate,
+             fmin=fmin,
+             fmax=fmax,
+             prepick=prepick,
+             length=length,
+             min_snr=min_snr)

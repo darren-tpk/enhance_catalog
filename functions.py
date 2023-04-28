@@ -1,7 +1,10 @@
-from obspy.signal.trigger import coincidence_trigger, classic_sta_lta, trigger_onset
-
-
 def initialize_run(name):
+
+    """
+    Initialize run by creating nested output and data repositories.
+    :param name: desired name of workflow run
+    :return: N/A
+    """
 
     # Import all dependencies
     import os
@@ -125,7 +128,6 @@ def download_data(data_destination,starttime,endtime,client,network,station,chan
     # Conclude process
     time_end = time.time()
     print('\nData collection complete. Time taken: %.2f hours' % ((time_end - time_start) / 3600))
-
 
 def run_redpy(run_title,
               output_destination,
@@ -563,7 +565,7 @@ def convert_redpy(analyst_catalog,
                                         starttime=starttime, endtime=endtime, tolerance=tolerance)
                 stream = stream + station_tr
             stream = stream.split()
-            stream = stream.filter('bandpass',freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+            stream = stream.filter('bandpass',freqmin=fmin, freqmax=fmax, corners=4, zerophase=True)
             stream = stream.taper(0.05, type='hann', max_length=(0.75*1024/100))  # [HARD CODED]
             stream = stream.merge(method=1, fill_value=0)
             stream = stream.trim(starttime=starttime, endtime=endtime)
@@ -686,7 +688,7 @@ def convert_redpy(analyst_catalog,
                                             starttime=starttime, endtime=endtime, tolerance=tolerance)
                     stream = stream + station_tr
                 stream = stream.split()
-                stream = stream.filter('bandpass', freqmin=fmin, freqmax=fmax, corners=2, zerophase=True)
+                stream = stream.filter('bandpass', freqmin=fmin, freqmax=fmax, corners=4, zerophase=True)
                 stream = stream.taper(0.05, type='hann', max_length=(0.75 * 1024 / 100))
                 stream = stream.merge(method=1, fill_value=0)
                 stream = stream.trim(starttime=starttime, endtime=endtime)
@@ -755,3 +757,122 @@ def convert_redpy(analyst_catalog,
 
     # Write picked core catalog to .xml file
     writer(convert_redpy_output_dir + 'core_catalog_picked.xml', core_catalog)
+
+def create_tribe(convert_redpy_output_dir,
+                 create_tribe_output_dir,
+                 data_path,
+                 template_stations,
+                 samprate,
+                 fmin,
+                 fmax,
+                 prepick,
+                 length,
+                 min_snr,
+                 process_len=86400,
+                 tolerance=4e4,
+                 channel_convention=True,
+                 use_all_analyst_events=False):
+
+    """
+    Creates a tribe of templates for EQcorrscan
+    :param convert_redpy_output_dir (str): output directory for the convert_redpy step
+    :param create_tribe_output_dir (str): output directory for the create_tribe step
+    :param data_path (str): path to where relevant miniseed files can be found
+    :param template_stations (str or list): SEED station code(s) accepted for template creation
+    :param samprate (float): desired sampling rate for templates
+    :param fmin (float): bandpass filter lower bound (Hz)
+    :param fmax (float): bandpass filter upper bound (Hz)
+    :param prepick (float): time before pick time to start template waveform trim (s)
+    :param length (float): time from pre-pick to stop template waveform trim (s)
+    :param min_snr (float): minimum signal-to-noise to accept waveform into template
+    :param process_len (float): maximum data length (in seconds) to process at once (defaults to 86400 s)
+    :param tolerance (float): factor to median tolerance for boxcar removal from data (as a factor to median)
+    :param channel_convention (bool): if `True`, enforce strict compliance for P/S picks to be on vertical/horizontal components
+    :param use_all_analyst_events (bool): if `True`, disregard REDPy clustering and create templates from all analyst-derived events
+    :return:
+    """
+
+    # Import all dependencies
+    import time
+    import numpy as np
+    from itertools import compress
+    from obspy import UTCDateTime, Catalog
+    from eqcorrscan.core.match_filter.tribe import Tribe
+    from toolbox import prepare_catalog_stream, reader, writer
+
+    # If template_stations is a comma separated string, convert to list
+    if type(template_stations) == list:
+        template_stations = template_stations.split(',')
+
+    # Read in, and combine, the picked core catalog and unmatched PEC catalog
+    core_catalog_picked = reader(convert_redpy_output_dir + 'core_catalog_picked.xml')
+    if use_all_analyst_events:
+        unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events_core.xml')
+    else:
+        unmatched_PEC_events = reader(convert_redpy_output_dir + 'unmatched_PEC_events_redpy.xml')
+    template_catalog = core_catalog_picked + unmatched_PEC_events
+
+    # Clean catalog to only include picks from our station list
+    print('Removing picks on stations not in input station list:')
+    for i, event in enumerate(template_catalog):
+        for pick in reversed(event.picks):
+            if pick.waveform_id.station_code not in template_stations:
+                print('Removed ' + pick.waveform_id.station_code + ' pick from template catalog index ' + str(i))
+                event.picks.remove(pick)
+
+    # Initialize tribe and tracker for valid events
+    tribe = Tribe()
+    valid_event = []
+    time_start = time.time()
+
+    # Create a boolean list to keep track of which events have been attempted
+    tracker = np.array([False for i in range(len(template_catalog))])
+
+    # Initialize array of all event times
+    catalog_times = np.array([event.origins[0].time for event in template_catalog])
+
+    # Loop through events in catalog
+    print('\nCommencing tribe creation...')
+    for k, event in enumerate(template_catalog):
+
+        # Check if event has had its template creation attempted. If True, skip to next
+        if tracker[k]:
+            continue
+        # Otherwise check for other events occuring on the same day so that data can be loaded at one go
+        else:
+            event_daystart = UTCDateTime(event.origins[0].time.date)
+            event_dayend = event_daystart + 86400
+            sub_catalog_index = (np.array(catalog_times) > event_daystart) & (np.array(catalog_times) < event_dayend)
+            sub_catalog = Catalog(list(compress(template_catalog, sub_catalog_index)))
+            tracker[np.where(sub_catalog_index==True)] = True
+
+        # Prepare catalog stream, trim to the start and end of the day to enforce daylong processing
+        stream = prepare_catalog_stream(data_path, sub_catalog, samprate, tolerance)
+        stream = stream.trim(starttime=event_daystart, endtime=event_dayend, pad=True)
+
+        # Do stream checks
+        for trace in stream:
+            # Check if trace is masked with too many zeros (more than half of samples are masked)
+            if hasattr(trace.data, 'mask') and (np.sum(trace.data.mask) / len(trace.data.mask)) > 0.5:
+                print('%s.%s got removed due to overly large data gaps.' % (trace.stats.station, trace.stats.channel))
+                stream.remove(trace)
+
+        # Construct sub tribe out of sub catalog
+        try:
+            sub_tribe = Tribe().construct(
+                method="from_meta_file", lowcut=fmin, highcut=fmax, samp_rate=samp_rate, length=length,
+                filt_order=4, prepick=prepick, meta_file=sub_catalog, st=stream, process=True,
+                process_len=process_len, min_snr=min_snr, parallel=True)
+            if sub_tribe is not None or len(sub_tribe) > 0:
+                tribe += sub_tribe
+
+        # If tribe fails then we add the current sub catalog to the client catalog to try the client method later
+        except:
+            print('Tribe creation attempt on %s to %s failed.')
+
+    # Conclude process
+    time_end = time.time()
+    print('\nTemplate creation attempts complete. Time elapsed: %.2f s' % (time_end-time_start))
+
+    print('%d out of %d events in the catalog were converted to templates.' % (len(tribe),len(template_catalog)))
+    writer(create_tribe_output_dir + 'tribe.tgz', tribe)
