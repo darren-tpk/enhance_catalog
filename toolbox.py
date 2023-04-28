@@ -4,7 +4,7 @@
 def pull_cores(full_catalog):
 
     # Import all dependencices
-    from time import time
+    import time
     from obspy import Catalog
 
     print('\nExtracting core events...')
@@ -15,7 +15,7 @@ def pull_cores(full_catalog):
 
     # Loop through full catalog to check for cores
     for detection in full_catalog:
-        if detection.origins[0].comments[0].text.split(' ')[2] == 'CORE':
+        if detection.origins[0].comments[0].text.split(' ')[2] == 'core':
             all_cores.append(detection)
 
     # Find repeats and save their indices
