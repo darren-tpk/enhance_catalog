@@ -10,10 +10,9 @@
 # 9. Plot resulting earthquakes in time and space
 
 # Import all dependencies
-import os
 from obspy import UTCDateTime
 from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe, scan_data
-from toolbox import reader, writer
+from toolbox import reader
 
 ## (0) Prepare output directory and parse AVO catalog
 subdir_name = 'example'
