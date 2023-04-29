@@ -561,7 +561,7 @@ def convert_redpy(analyst_catalog,
             # Gather data from local machine in a +/- 12s window, filter, and taper
             stream = Stream()
             for k in range(len(redpy_station)):
-                station_tr = read_trace(data_dir=data_path, station=redpy_station[k], channel=redpy_channel[k],
+                station_tr = read_trace(data_path=data_path, station=redpy_station[k], channel=redpy_channel[k],
                                         starttime=starttime, endtime=endtime, tolerance=tolerance)
                 stream = stream + station_tr
             stream = stream.split()
@@ -684,7 +684,7 @@ def convert_redpy(analyst_catalog,
                 # Gather data from local machine in a +/- 12s window, filter, and taper
                 stream = Stream()
                 for k in range(len(campaign_station)):
-                    station_tr = read_trace(data_dir=data_path, station=campaign_station[k], channel=campaign_channel[k],
+                    station_tr = read_trace(data_path=data_path, station=campaign_station[k], channel=campaign_channel[k],
                                             starttime=starttime, endtime=endtime, tolerance=tolerance)
                     stream = stream + station_tr
                 stream = stream.split()
@@ -993,10 +993,10 @@ def scan_data(tribe,
         t2 = starttime + ((i + 1) * 86400)
         print('\nNow at %s...' % str(t1))
 
-        # Initialize stream object and fetch data from data_dir
+        # Initialize stream object and fetch data from data_path
         stream = Stream()
 
-        # Loop over data fileheads, using glob.glob to match data files we want in data_dir
+        # Loop over data fileheads, using glob.glob to match data files we want in data_path
         for data_filehead in data_fileheads:
             data_filename = data_filehead + str(t1.year) + ':' + f'{t1.julday :03}' + ':*'
             matching_filenames = (glob.glob(data_filename))
@@ -1219,3 +1219,157 @@ def rethreshold_results(tribe,
     print('The relocatable catalog consists of %d events.' % len(relocatable_catalog))
 
     return party, detected_catalog, relocatable_catalog
+
+def generate_dtcc(catalog,
+                  relocate_catalog_output_dir,
+                  data_path,
+                  pre_pick_actual,
+                  pre_pick_excess,
+                  length_actual,
+                  length_excess,
+                  shift_len,
+                  lowcut,
+                  highcut,
+                  min_cc,
+                  min_link,
+                  max_sep=100,
+                  weight_func=None,
+                  by_cluster=False,
+                  make_s_picks=False,
+                  parallel_process=True):
+
+    """
+    Generate HypoDD/GrowClust cross-correlation differential times file (dt.cc)
+    :param catalog (:class:`~obspy.core.event.Catalog`): catalog of relocatable events
+    :param relocate_catalog_output_dir (str): output directory for the relocate_catalog step
+    :param data_path (str): path to where relevant miniseed files can be found
+    :param pre_pick_actual (float): length of pre-pick to include in phase segment (s)
+    :param pre_pick_excess (float): length in excess of pre-pick for waveform retrieval (s)
+    :param length_actual (float): length of phase segment from pre-pick (s)
+    :param length_excess (float): length in excess of phase segment from pre-pick for waveform retrieval (s)
+    :param shift_len (float): length of time shift to find the maximum cross-correlation coefficient between phase segments (s)
+    :param lowcut (float): bandpass filter lower bound (Hz)
+    :param highcut (float): bandpass filter upper bound (Hz)
+    :param min_cc (float): minimum cross-correlation coefficient for a differential time to be retained for an event pair
+    :param min_link (int): minimum number of differential time observations for an event pair to be included in the output
+    :param max_sep (float): maximum separation between event pairs allowed (km) (defaults to 100 to include all event pairs)
+    :param weight_func (function): function to be applied on raw cross-correlation coefficient squared value computed by write_correlations()
+    :param by_cluster (bool): if `True`, only permit pairings between events obtained from the same parent template
+    :param make_s_picks (bool): if `True`, make theoretical S picks from P picks using an vp/vs ratio of 1.73 before constructing dt.cc
+    :param parallel_process (bool): if `True`, use parallel processing to calculate cross-correlation differential times
+    :return:
+    """
+
+    # Import all dependencies
+    import os
+    import numpy as np
+    from eqcorrscan.utils.catalog_to_dd import write_correlations, _generate_event_id_mapper
+    from obspy import Catalog
+    from toolbox import prepare_stream_dict, adjust_weights, estimate_s_picks
+
+    # Make estimated S pick if user specifies
+    if make_s_picks:
+        catalog = estimate_s_picks(catalog)
+
+    # If we are writing correlations in bulk of the whole catalog, we process the entire catalog at one go
+    if not by_cluster:
+
+        print('Correlating all events in catalog with one another...')
+
+        # Generate stream dictionary (refer to toolbox.py)
+        # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
+        stream_dict = prepare_stream_dict(catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
+                                          data_path=data_path)
+
+        # Execute cross correlations and write out a .cc file using write_correlations (refer to EQcorrscan docs)
+        # Note this stores a file called "dt.cc" in your current working directory
+        _ = write_correlations(catalog=catalog, stream_dict=stream_dict, extract_len=length_actual,
+                               pre_pick=pre_pick_actual, shift_len=shift_len, lowcut=lowcut,
+                               highcut=highcut, max_sep=max_sep, min_link=min_link, min_cc=min_cc,
+                               interpolate=False, max_workers=None, parallel_process=parallel_process)
+
+        # Define source and target cc filepaths
+        original_dt_path = './dt.cc'
+        target_dt_path = relocate_catalog_output_dir + 'dt.cc'
+        adjust_weights(original_dt_path, target_dt_path, dt_cap=shift_len, min_link=min_link, append=False,
+                       weight_func=weight_func)
+        os.remove(original_dt_path)
+
+    # If we are correlating by cluster
+    else:
+
+        print('Correlating all events in catalog by cluster...')
+
+        # Start by generating event id mapper for full catalog
+        event_id_mapper = _generate_event_id_mapper(catalog, event_id_mapper=None)
+
+        # Obtain a unique list of source templates
+        templates = []
+        for event in catalog:
+            templates.append(event.comments[0].text.split()[1])
+        unique_templates = np.unique(templates)
+
+        # Initialize a list to store the catalog index of every template's self-detection
+        template_indices = []
+
+        # Define source and target cc filepaths
+        original_dt_path = './dt.cc'
+        target_dt_path = relocate_catalog_output_dir + 'dt.cc'
+
+        # Loop through each unique template
+        for i, unique_template in enumerate(unique_templates):
+
+            # Find index of catalog events that correspond to this template
+            template_detection_indices = [k for k, template in enumerate(templates) if unique_template in template]
+
+            # Craft sub-catalog
+            sub_catalog = Catalog()
+            detect_vals = []
+            for template_detection_index in template_detection_indices:
+                template_detection = catalog[template_detection_index]
+                detect_val = float(template_detection.comments[2].text.split('=')[1])
+                detect_vals.append(detect_val)
+                sub_catalog += template_detection
+
+            # Store the index of the template's self-detection, this will be used for our final inter-cluster step
+            template_indices.append(template_detection_indices[np.argmax(detect_vals)])
+
+            # Now craft stream dictionary
+            stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess,
+                                              local=True, data_path=data_path)
+
+            # Execute cross correlations
+            _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
+                                   extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
+                                   lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
+                                   min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=True)
+
+            # Write/append dt.cc to target cc file
+            if i == 0:
+                adjust_weights(original_dt_path, target_dt_path, dt_cap=shift_len, min_link=min_link, append=False,
+                               weight_func=weight_func)
+            else:
+                adjust_weights(original_dt_path, target_dt_path, dt_cap=shift_len, min_link=min_link, append=True,
+                               weight_func=weight_func)
+
+        # Now execute inter-template cross correlation by generating a sub-catalog containing template self-detections
+        sub_catalog = Catalog()
+        for template_index in template_indices:
+            sub_catalog += catalog[template_index]
+
+        # Now craft stream dictionary
+        stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
+                                          data_path=data_path)
+
+        # Execute cross correlations
+        _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
+                               extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
+                               lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
+                               min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
+
+        # Append dt.cc to master dt.cc
+        adjust_weights(original_dt_path, target_dt_path, dt_cap=shift_len, min_link=min_link, append=True,
+                       weight_func=None)
+        os.remove(original_dt_path)
+
+    print('Cross correlations done!')

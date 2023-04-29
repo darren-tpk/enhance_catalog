@@ -5,13 +5,14 @@
 # 4. Create EQcorrscan templates
 # 5. Run EQcorrscan matched-filter scan
 # 6. Calculate frequency index and relative magnitudes
-# 7. Generate dt.cc file
+# 7. Generate dt.cc file for relocatable catlaog
 # 8. Relocate catalog candidates
 # 9. Plot resulting earthquakes in time and space
 
 # Import all dependencies
 from obspy import UTCDateTime
-from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe, scan_data, rethreshold_results
+from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe, scan_data
+from functions import rethreshold_results, generate_dtcc
 from toolbox import reader, writer, calculate_catalog_FI, calculate_relative_magnitudes
 
 ## (0) Prepare output directory and parse AVO catalog
@@ -220,3 +221,29 @@ relocatable_catalog_FImag = calculate_relative_magnitudes(catalog=relocatable_ca
 # Write out new catalogs
 writer(scan_data_output_dir + 'detected_catalog_FI.xml', detected_catalog_FI)
 writer(scan_data_output_dir + 'relocatable_catalog_FImag.xml', relocatable_catalog_FImag)
+
+## (7) Generate dt.cc file for relocatable catalog
+relocate_catalog_output_dir = './output/' + subdir_name + '/relocate_catalog/'
+pre_pick_actual = 0.15
+pre_pick_excess = 1
+length_actual = 2.66
+length_excess = 4
+shift_len = 0.4
+min_link = 3
+min_cc = 0.7
+
+generate_dtcc(catalog=relocatable_catalog_FImag,
+              relocate_catalog_output_dir=relocate_catalog_output_dir,
+              data_path=data_path,
+              pre_pick_actual=pre_pick_actual,
+              pre_pick_excess=pre_pick_excess,
+              length_actual=length_actual,
+              length_excess=length_excess,
+              shift_len=shift_len,
+              lowcut=fmin,
+              highcut=fmax,
+              min_cc=min_cc,
+              min_link=min_link)
+
+## (8) Relocate catalog candidates
+

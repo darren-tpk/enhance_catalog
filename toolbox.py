@@ -608,6 +608,7 @@ def read_hypoi(hypoi_file,
 
     return catalog
 
+
 #%% [download_catalog] function to download catalog along with its phase data using libcomcat
 def download_catalog(start_time,end_time,contributor,latitude,longitude,max_radius,max_depth,review_status='reviewed',verbose=False):
 
@@ -645,6 +646,7 @@ def download_catalog(start_time,end_time,contributor,latitude,longitude,max_radi
         catalog += unpickler.loads(data)
 
     return catalog
+
 
 #%% [remove_boxcars] function to remove artificial boxcar-like signals from stream
 def remove_boxcars(st,tolerance):
@@ -761,38 +763,6 @@ def remove_bad_traces(st,max_zeros=100,npts_threshold=100):
     # Return filtered stream object
     return st
 
-# [get_local_stations] function to get all stations within a radius of a volcano
-def get_local_stations(list_dir,volcano_name,radius):
-
-    # Import dependencies
-    import numpy as np
-    import pandas as pd
-    import geopy.distance
-
-    # Read in volcano lat and lon
-    volcano_list = pd.read_csv(list_dir + 'volcano_list.csv')
-    station_list = pd.read_csv(list_dir + 'station_list.csv')
-    volcano_names = [name.lower() for name in volcano_list.volcano]
-    volcano_index = volcano_names.index(volcano_name.lower())
-    volcano_lat = volcano_list.latitude[volcano_index]
-    volcano_lon = volcano_list.longitude[volcano_index]
-    volcano_coord = (volcano_lat,volcano_lon)
-
-    # Get distances from all stations
-    station_distances = []
-    for i in range(len(station_list)):
-        station_lat = station_list.latitude[i]
-        station_lon = station_list.longitude[i]
-        station_coord = (station_lat,station_lon)
-        station_distance = geopy.distance.GeodesicDistance(volcano_coord,station_coord).km
-        station_distances.append(station_distance)
-
-    # Use radius condition to derive list
-    local_stations = list(station_list.station[(np.array(station_distances) < radius)])
-
-    # Return list of local stations
-    return local_stations
-
 # [gen_detect_hist] function to create detection-threshold histogram
 def gen_detect_hist(party):
 
@@ -812,10 +782,11 @@ def gen_detect_hist(party):
         for j in range(len(family)):
 
             # Append detection & threshold values for every detection
+            nsta = len(family[j].chans)
             detection_value = abs(family[j].detect_val)
-            detection_list.append(detection_value)
+            detection_list.append(abs(detection_value)/nsta)
             threshold_value = family[j].threshold
-            threshold_list.append(threshold_value)
+            threshold_list.append(abs(threshold_value)/nsta)
 
     # Plot distribution of detections as histogram and save
     detection_array = np.array(detection_list) - np.array(threshold_list)
@@ -823,7 +794,7 @@ def gen_detect_hist(party):
     detection_ceil = np.ceil(max(detection_array))
     fig, ax = plt.subplots()
     ax.grid(True)
-    ax.hist(detection_array, bins=np.arange(detection_floor, detection_ceil, 0.1), color='teal', edgecolor='black')
+    ax.hist(detection_array, bins=np.arange(detection_floor, detection_ceil, 0.01), color='teal', edgecolor='black')
     ax.set_xlim([detection_floor, max(detection_array)])
     ax.set_xlabel('Detection-Threshold Gap')
     ax.set_ylabel('Frequency')
@@ -888,7 +859,7 @@ def reader(inpath):
     return object
 
 # [read_trace] read trace from local data files (limited to less than 24h in duration)
-def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
+def read_trace(data_path,station,channel,starttime,endtime,tolerance=4e4):
 
     # Import dependencies
     import glob
@@ -906,12 +877,12 @@ def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
     end_julday = endtime.julday
 
     # Craft file string and append
-    data_filename = data_dir + station + '.' + channel + '.' + str(start_year) + ':' + f'{start_julday:03}' + ':*'
+    data_filename = data_path + station + '.' + channel + '.' + str(start_year) + ':' + f'{start_julday:03}' + ':*'
     data_filenames.append(data_filename)
 
     # Add another day if starttime and endtime are on different data files
     if start_year != end_year or start_julday != end_julday:
-        data_filename = data_dir + station + '.' + channel + '.' + str(end_year) + ':' + f'{end_julday:03}' + ':*'
+        data_filename = data_path + station + '.' + channel + '.' + str(end_year) + ':' + f'{end_julday:03}' + ':*'
         data_filenames.append(data_filename)
 
     # Read in all traces we need
@@ -946,7 +917,7 @@ def read_trace(data_dir,station,channel,starttime,endtime,tolerance=4e4):
     return output
 
 # [prepare_catalog_stream] function to read streams pertaining to an input catalog
-def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance,max_zeros=100,npts_threshold=100):
+def prepare_catalog_stream(data_path,catalog,resampling_frequency,tolerance,max_zeros=100,npts_threshold=100):
 
     # Import dependencies
     import glob
@@ -969,26 +940,26 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance,max_z
             pick_julday = pick.time.julday
 
             # Craft file string and append
-            data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year) + ':' + f'{pick_julday:03}' + ':*'
+            data_filename = data_path + sta + '.' + chan + '.' + str(pick_year) + ':' + f'{pick_julday:03}' + ':*'
             data_filenames.append(data_filename)
 
             # Add next day if pick occurs in the first minute of the day
             if pick.time.hour == 0 and pick.time.minute <= 1:
                 if pick.time.julday == 1:  # special case for first day of the year
-                    data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year - 1) + ':365:*'
+                    data_filename = data_path + sta + '.' + chan + '.' + str(pick_year - 1) + ':365:*'
                     data_filenames.append(data_filename)
                 else:
-                    data_filename = data_dir + sta + '.' + chan + '.' + str(
+                    data_filename = data_path + sta + '.' + chan + '.' + str(
                         pick_year) + ':' + f'{(pick_julday - 1):03}' + ':*'
                     data_filenames.append(data_filename)
 
             # Add previous day if pick occurs in the last minute of the day
             if pick.time.hour == 23 and pick.time.minute >= 59:
                 if pick.time.julday == 365:  # special case for last day of the year
-                    data_filename = data_dir + sta + '.' + chan + '.' + str(pick_year + 1) + ':001:*'
+                    data_filename = data_path + sta + '.' + chan + '.' + str(pick_year + 1) + ':001:*'
                     data_filenames.append(data_filename)
                 else:
-                    data_filename = data_dir + sta + '.' + chan + '.' + str(
+                    data_filename = data_path + sta + '.' + chan + '.' + str(
                         pick_year) + ':' + f'{(pick_julday + 1):03}' + ':*'
                     data_filenames.append(data_filename)
 
@@ -1019,118 +990,8 @@ def prepare_catalog_stream(data_dir,catalog,resampling_frequency,tolerance,max_z
     # Return stream object
     return stream
 
-# [client_download] function to use IRIS to download the same input streams
-def client_download(stream_in,source='IRIS'):
-
-    # Import dependencies
-    from obspy import Stream
-    from waveform_collection import gather_waveforms
-
-    # Initialize output stream
-    stream_out = Stream()
-
-    # Loop through input stream's traces
-    for trace_in in stream_in:
-
-        # Gather net-sta-chan and time limits to use gather_waveforms
-        network = trace_in.stats.network
-        station = trace_in.stats.station
-        location = trace_in.stats.location
-        channel = trace_in.stats.channel
-        starttime = trace_in.stats.starttime
-        endtime = trace_in.stats.endtime
-
-        # Use gather_waveforms to pull data from IRIS
-        trace_out = gather_waveforms(source=source, network=network, station=station,
-                      location=location, channel=channel, starttime=starttime,
-                      endtime=endtime)
-
-        # Add trace contribution to output stream
-        stream_out = stream_out + trace_out
-
-    # Return stream object
-    return(stream_out)
-
-# [get_detection] get stream related to detection by downloading necessary streams
-def get_detection(detection,data_dir='/home/data/redoubt/',client_name='IRIS',length=8,resampling_frequency=50,tolerance=4e4,lowcut=1,highcut=10,plot=False):
-
-    # Import dependencies
-    import glob
-    from obspy import Stream, read
-    from obspy.clients.fdsn import Client
-    from toolbox import remove_boxcars
-
-    # Extract detection time and sta-chan combinations
-    detect_time = detection.detect_time
-    year = detect_time.year
-    julday = detect_time.julday
-    stachans = detection.chans
-
-    # If a data directory is provided,
-    if data_dir is not None:
-
-        # Initialize data filename list
-        data_filenames = []
-
-        # Loop through sta-chan combinations
-        for sta, chan in stachans:
-
-            # Stitch data filename and append
-            data_filename = data_dir + sta + '.' + chan + '.' + str(year) + ':' + f'{julday:03}' + ':*'
-            data_filenames.append(data_filename)
-
-        # Read in all required streams
-        stream = Stream()
-        for data_filename in data_filenames:
-            matching_filenames = (glob.glob(data_filename))
-            for matching_filename in matching_filenames:
-                try:
-                    stream_contribution = read(matching_filename)
-                    stream = stream + stream_contribution
-                except:
-                    continue
-
-    # Otherwise, download data from IRIS
-    else:
-
-        # Define client and target network
-        client = Client(client_name)
-        net = detection.event.picks[0].waveform_id.network_code
-
-        # Get waveforms
-        stream = Stream()
-
-        # Download all waveforms needed
-        for sta, chan in stachans:
-            stream_contribution = client.get_waveforms(net, sta, "*", chan, detect_time, detect_time+length)
-            stream = stream + stream_contribution
-
-
-    # Enforce desired length
-    stream.trim(starttime=detect_time,endtime=detect_time+length)
-
-    # Resample all traces to prevent inconsistencies
-    stream.resample(resampling_frequency)
-
-    # Remove boxcar and spikes, detrend and merge
-    if data_dir is None:
-        stream = remove_boxcars(stream, tolerance)
-        stream = stream.detrend("simple")
-
-    # Filter and taper
-    stream = stream.filter('bandpass',freqmax=highcut,freqmin=lowcut)
-    stream = stream.taper(0.05, type='hann') # max_length=(0.75 * 1024 / 50)
-    stream = stream.merge()
-
-    # Plot if desired
-    if plot:
-        stream.plot(color='b',equal_scale=False, size=(800, 600))
-
-    # Return stream object
-    return stream
-
 # [prepare_stream_dict] prepare stream dictionary pertaining to input catalog
-def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",data_dir=None):
+def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",data_path=None):
 
     # Import dependencies
     from toolbox import read_trace
@@ -1163,7 +1024,7 @@ def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",d
 
             # Read trace from local data directory if local, use IRIS if not local
             if local:
-                tr = read_trace(data_dir, station, channel, starttime, endtime, tolerance=4e4)
+                tr = read_trace(data_path, station, channel, starttime, endtime, tolerance=4e4)
             else:
                 tr = client.get_waveforms(network, station, '*', channel, starttime, endtime)
 
@@ -1266,53 +1127,6 @@ def adjust_weights(dtcc_filepath,target_filepath,dt_cap=None,min_link=0,append=F
             os.remove(target_filepath)
             target_textfile = open(target_filepath, 'w')
             target_textfile.writelines(target_lines)
-
-# raster2array from https://www.neonscience.org/resources/learning-hub/tutorials/merge-lidar-geotiff-py
-def raster2array(geotif_file):
-    metadata = {}
-    dataset = gdal.Open(geotif_file)
-    metadata['array_rows'] = dataset.RasterYSize
-    metadata['array_cols'] = dataset.RasterXSize
-    metadata['bands'] = dataset.RasterCount
-    metadata['driver'] = dataset.GetDriver().LongName
-    metadata['projection'] = dataset.GetProjection()
-    metadata['geotransform'] = dataset.GetGeoTransform()
-
-    mapinfo = dataset.GetGeoTransform()
-    metadata['pixelWidth'] = mapinfo[1]
-    metadata['pixelHeight'] = mapinfo[5]
-
-    xMin = mapinfo[0]
-    xMax = mapinfo[0] + dataset.RasterXSize/mapinfo[1]
-    yMin = mapinfo[3] + dataset.RasterYSize/mapinfo[5]
-    yMax = mapinfo[3]
-
-    metadata['extent'] = (xMin,xMax,yMin,yMax)
-
-    raster = dataset.GetRasterBand(1)
-    array_shape = raster.ReadAsArray(0,0,metadata['array_cols'],metadata['array_rows']).astype(np.float).shape
-    metadata['noDataValue'] = raster.GetNoDataValue()
-    metadata['scaleFactor'] = raster.GetScale() or 1
-
-    array = np.zeros((array_shape[0],array_shape[1],dataset.RasterCount),'uint8') #pre-allocate stackedArray matrix
-
-    if metadata['bands'] == 1:
-        raster = dataset.GetRasterBand(1)
-        metadata['noDataValue'] = raster.GetNoDataValue()
-        metadata['scaleFactor'] = raster.GetScale() or 1
-
-        array = dataset.GetRasterBand(1).ReadAsArray(0,0,metadata['array_cols'],metadata['array_rows']).astype(np.float)
-        #array[np.where(array==metadata['noDataValue'])]=np.nan
-        array = array/metadata['scaleFactor']
-
-    elif metadata['bands'] > 1:
-        for i in range(1, dataset.RasterCount+1):
-            band = dataset.GetRasterBand(i).ReadAsArray(0,0,metadata['array_cols'],metadata['array_rows']).astype(np.float)
-            #band[np.where(band==metadata['noDataValue'])]=np.nan
-            band = band/metadata['scaleFactor']
-            array[...,i-1] = band
-
-    return array, metadata
 
 # [calculate_catalog_FI] Calculate the FIs of events in a catalog using a reference sta-chan.
 def calculate_catalog_FI(catalog, data_path, reference_station, reference_channel, min_match, resampling_frequency,
@@ -1700,67 +1514,3 @@ def clean_cc_file(dtcc_filepath):
     # Overwrite input dt.cc file
     with open(dtcc_filepath, 'w') as dtcc_file:
         dtcc_file.write(new_all_lines)
-
-def get_color_codes(volcano,as_lists=True):
-    # Import dependencies
-    import pymysql
-    import pandas
-    from obspy import UTCDateTime
-    """
-        Retrieve a dataframe of color code changes for a specified volcano
-        PARAMETERS
-        __________
-        volcano: str
-            The volcano for which to retrieve color code changes. Must match the
-            volcano_name column in the database
-        RETURNS
-        -------
-        change_dates:DataFrame
-            A data frame with a datetime index and one column which is the
-            color code to which the volcano was changed at that time.
-    """
-    SQL = """
-    SELECT
-        sent_utc,
-        color_code
-    FROM code_change_date
-    INNER JOIN volcano ON volcano.volcano_id=code_change_date.volcano_id
-    WHERE volcano_name=%s
-    ORDER BY sent_utc
-    """
-    # Create class to be used as a context manager for MySQL database
-    class MYSQlCursor():
-        """
-            MySQL cursor class to be used as a context manager for connecting to a MySQL database
-        """
-        def __init__(self, DB, user, password):
-            self._conn = None
-            self._db = DB
-            self._user = user
-            self._pass = password
-            self._server = 'augustine.snap.uaf.edu'
-        def __enter__(self):
-            self._conn = pymysql.connect(user=self._user, password=self._pass,
-                                         database=self._db, host=self._server)
-            return self._conn.cursor()
-        def __exit__(self, *args, **kwargs):
-            self._conn.rollback()
-            self._conn.close()
-    ###################
-    # NOTE: you will need to replace my_user and  my_pass with valid DB credentials that have
-    # at least SELECT privileges on the hans2 schema
-    ###################
-    with MYSQlCursor('hans2', 'preevent', '716467D85036A8893191A870F5152F63') as cursor:
-        cursor.execute(SQL, (volcano,))
-        change_dates = cursor.fetchall()
-    if as_lists:
-        # return as separate lists
-        color_codes = [change_dates[i][1] for i in range(len(change_dates))]
-        color_code_times = [UTCDateTime(change_dates[i][0]) for i in range(len(change_dates))]
-        return color_codes, color_code_times
-    else:
-        # return as pandas data frame
-        change_dates = pandas.DataFrame(change_dates, columns=["date", "Code"])
-        change_dates["date"] = pandas.to_datetime(change_dates["date"])
-        change_dates.set_index('date', inplace=True)
-        return change_dates
