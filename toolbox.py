@@ -1514,3 +1514,117 @@ def clean_cc_file(dtcc_filepath):
     # Overwrite input dt.cc file
     with open(dtcc_filepath, 'w') as dtcc_file:
         dtcc_file.write(new_all_lines)
+
+# Converts .loc and .reloc into Catalog objects
+
+def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', depth_correction=0):
+    # Get list of input event resource ids
+    if event_id_mapper is not None and input_catalog is not None:
+        all_ids = [event.resource_id.id for event in input_catalog]
+    # Initialize output catalog
+    outcat = Catalog()
+    # Open loc file and read lines
+    with open(loc_filepath, "r") as loc:
+        lines = loc.read()
+        lines = lines.split('\n')
+        # Loop over lines
+        for line in lines[:-1]:
+            # Extract information and craft event
+            if type == 'loc':
+                (evid, lat, lon, dep, _, _, _, _, _, _, yr, mo, dy, hr, mm, ss, mag, cid) = line.split()
+            elif type == 'reloc':
+                (evid, lat, lon, dep, _, _, _, _, _, _, yr, mo, dy, hr, mm, ss, mag, _, _, _, _, _, _,
+                 cid) = line.split()
+                if lat == 'NaN':
+                    continue
+            else:
+                raise ValueError('type argument is not loc/reloc!')
+            yr = int(yr)
+            mo = int(mo)
+            dy = int(dy)
+            hr = int(hr)
+            mm = int(hr)
+            ss = float(ss)
+            if ss < 60:
+                time = UTCDateTime(yr, mo, dy, hr, mm, ss)
+            else:
+                ss -= 60
+                mm += 1
+                time = UTCDateTime(yr, mo, dy, hr, mm, ss)
+            lon = float(lon)
+            lat = float(lat)
+            dep = (float(dep) - depth_correction)
+            mag = float(mag)
+            ev = Event(origins=[Origin(time=time, longitude=lon, latitude=lat, depth=dep)],
+                       magnitudes=[Magnitude(mag=mag)])
+            # Find base event and copy over comments
+            old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
+            if len(old_event_id) != 1:
+                raise ValueError('Multiple matched on event id mapper. Check event ids!')
+            else:
+                old_event_id = old_event_id[0]
+                old_event = input_catalog[all_ids.index(old_event_id)]
+                ev.comments = old_event.comments
+                evid_origin_comment = 'Event ID: %s' % evid
+                ev.origins[0].comments.append(Comment(text=evid_origin_comment))
+            # Append event to catalog
+            outcat.append(ev)
+    # Return catalog
+    return outcat
+
+# Converts .dat and .sel to Catalog objects
+def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correction=0):
+    # Get list of input event resource ids
+    if event_id_mapper is not None and input_catalog is not None:
+        all_ids = [event.resource_id.id for event in input_catalog]
+    # Initialize output catalog
+    outcat = Catalog()
+    # Open loc file and read lines
+    with open(dat_filepath, "r") as dat:
+        lines = dat.read()
+        lines = lines.split('\n')
+        # Loop over lines
+        for line in lines[:-1]:
+            # Extract information and craft event
+            (yrmody, hrmmsscs, lat, lon, dep, mag, _, _, _, evid) = line.split()
+            yr = int(yrmody[0:4])
+            mo = int(yrmody[4:6])
+            dy = int(yrmody[6:8])
+            hrmmsscs = '%08d' % int(hrmmsscs)
+            hr = int(hrmmsscs[:-6])
+            mm = int(hrmmsscs[-6:-4])
+            ss = float(hrmmsscs[-4:-2]) + float(hrmmsscs[-2:]) / 100
+            if ss < 60:
+                time = UTCDateTime(yr, mo, dy, hr, mm, ss)
+            else:
+                ss -= 60
+                mm += 1
+                time = UTCDateTime(yr, mo, dy, hr, mm, ss)
+            ev = Event(origins=[Origin(time=time, longitude=float(lon), latitude=float(lat),
+                                       depth=(float(dep) - depth_correction))],
+                       magnitudes=[Magnitude(mag=float(mag))])
+            # Find base event and copy over resource id and comments
+            old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
+            if len(old_event_id) != 1:
+                raise ValueError('Multiple matched on event id mapper. Check event ids!')
+            else:
+                old_event_id = old_event_id[0]
+                old_event = input_catalog[all_ids.index(old_event_id)]
+                ev.comments = old_event.comments
+                evid_origin_comment = 'Event ID: %s' % evid
+                ev.origins[0].comments.append(Comment(text=evid_origin_comment))
+            # Append event to catalog
+            outcat.append(ev)
+    # Return catalog
+    return outcat
+
+
+# Returns a copied catalogA, but repeat events in catalogB are removed
+def remove_catalog_repeats(catalogA, catalogB):
+    catalogA_evids = [int(event.origins[0].comments[0].text.split()[-1]) for event in catalogA]
+    catalogB_evids = [int(event.origins[0].comments[0].text.split()[-1]) for event in catalogB]
+    catalogC = catalogA.copy()
+    for i, catalogA_evid in reversed(list(enumerate(catalogA_evids))):
+        if catalogA_evid in catalogB_evids:
+            catalogC.events.pop(i)
+    return catalogC
