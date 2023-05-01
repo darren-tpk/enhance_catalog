@@ -13,3 +13,5 @@ __pycache__/
 data/
 output/example/
 avo_1989-2018_hypoi.txt
+hypoDD/
+!hypoDD/HYPODD_2.1b.tar.gz
