@@ -1583,7 +1583,7 @@ def run_hypoDD(catalog,
                        '     &          MAXDATA0 = %d,' % hypoDD_inc_dict['MAXDATA0'],
                        '     &          MAXLAY   = %d,' % hypoDD_inc_dict['MAXLAY'],
                        '     &          MAXSTA   = %d,' % hypoDD_inc_dict['MAXSTA'],
-                       '     &          MAXCL    = %d' % hypoDD_inc_dict['MAXCL']]
+                       '     &          MAXCL    = %d)' % hypoDD_inc_dict['MAXCL']]
     with open(hypoDD_dir + '/HYPODD/include/hypoDD.inc', "w") as open_file:
         open_file.write('\n'.join(hypoDD_inc_text))
     open_file.close()
