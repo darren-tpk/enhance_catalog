@@ -1625,12 +1625,13 @@ def run_hypoDD(catalog,
     ph2dt_command = hypoDD_dir + 'HYPODD/src/ph2dt/ph2dt' + ' ' + hypoDD_dir + '/INP/ph2dt.inp'
     subprocess.call(ph2dt_command, shell=True)
 
-    # Move ph2dt outputs to "hypoDDver/OUT_ph2dt/"
-    to_move = ['ph2dt.log', 'station.sel', 'event.sel', 'event.dat', 'dt.ct']
+    # Move ph2dt outputs to "hypoDDver/OUT_ph2dt/" and move log to relocate_catalog_output_dir
+    to_move = ['station.sel', 'event.sel', 'event.dat', 'dt.ct']
     for filename in to_move:
         move_command = 'mv ./%s %sOUT_ph2dt/%s' % (filename, hypoDD_dir, filename)
-        remove_command = 'rm ./%s' % (filename)
         subprocess.call(move_command, shell=True)
+    move_command = 'mv ./ph2dt.log %sph2dt.log' % relocate_catalog_output_dir
+    subprocess.call(move_command, shell=True)
 
     # Stitch event.dat and detection.dat to create event_hypoDD.dat
     with open(hypoDD_dir + 'OUT_ph2dt/event.dat') as open_file:
@@ -1757,6 +1758,10 @@ def run_hypoDD(catalog,
     # Run hypoDD
     hypoDD_command = hypoDD_dir + 'HYPODD/src/hypoDD/hypoDD' + ' ' + hypoDD_dir + '/INP/hypoDD.inp'
     subprocess.call(hypoDD_command, shell=True)
+
+    # Move hypoDD log to relocate catalog output dir
+    move_command = 'mv ./hypoDD.log %shypoDD.log' % relocate_catalog_output_dir
+    subprocess.call(move_command, shell=True)
 
     # Write out catalog objects from event.sel, hypoDD.loc and hypoDD.reloc
     print('Now writing catalog objects from hypoDD outputs...')
