@@ -13,6 +13,8 @@ dependencies:
   - geopy
   - pygmt
   - gfortran
+  - fortran-compiler
+  - cxx-compiler
   - pip
   - pip:
       - git+https://github.com/uafgeotools/waveform_collection.git
