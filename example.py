@@ -286,6 +286,7 @@ hypoDD_inp_dict = {'IDAT': 3,
                    'WDCT': [10, 5, 2.5, 2.5, 2.5],
                    'DAMP': [100, 100, 100, 100, 100]}
 
+relocatable_catalog_FImag = reader(scan_data_output_dir + 'relocatable_catalog_FImag.xml')
 stalats = '60.5913,60.5621,60.5905,60.5224,60.5726,60.4875,60.4888,60.4616'
 stalons = '-152.6882,-152.9293,-152.8058,-152.7401,-152.4075,-152.8425,-152.6940,-152.7560'
 staelevs = '1090,1136,1414,1400,930,1546,1641,1921'
