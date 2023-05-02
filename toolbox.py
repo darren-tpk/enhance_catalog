@@ -1515,20 +1515,29 @@ def clean_cc_file(dtcc_filepath):
     with open(dtcc_filepath, 'w') as dtcc_file:
         dtcc_file.write(new_all_lines)
 
-# Converts .loc and .reloc into Catalog objects
 
+# [loc2cat] converts .loc and .reloc into Catalog objects
 def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', depth_correction=0):
+
+    # Import all dependencies
+    from obspy import Catalog, UTCDateTime
+    from obspy.core.event import Event, Origin, Magnitude, Comment
+
     # Get list of input event resource ids
     if event_id_mapper is not None and input_catalog is not None:
         all_ids = [event.resource_id.id for event in input_catalog]
+
     # Initialize output catalog
     outcat = Catalog()
+
     # Open loc file and read lines
     with open(loc_filepath, "r") as loc:
         lines = loc.read()
         lines = lines.split('\n')
+
         # Loop over lines
         for line in lines[:-1]:
+
             # Extract information and craft event
             if type == 'loc':
                 (evid, lat, lon, dep, _, _, _, _, _, _, yr, mo, dy, hr, mm, ss, mag, cid) = line.split()
@@ -1557,6 +1566,7 @@ def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', 
             mag = float(mag)
             ev = Event(origins=[Origin(time=time, longitude=lon, latitude=lat, depth=dep)],
                        magnitudes=[Magnitude(mag=mag)])
+
             # Find base event and copy over comments
             old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
             if len(old_event_id) != 1:
@@ -1567,24 +1577,35 @@ def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', 
                 ev.comments = old_event.comments
                 evid_origin_comment = 'Event ID: %s' % evid
                 ev.origins[0].comments.append(Comment(text=evid_origin_comment))
+
             # Append event to catalog
             outcat.append(ev)
+
     # Return catalog
     return outcat
 
-# Converts .dat and .sel to Catalog objects
+
+# [dat2cat] converts .dat and .sel to Catalog objects
 def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correction=0):
+    # Import all dependencies
+    from obspy import Catalog, UTCDateTime
+    from obspy.core.event import Event, Origin, Magnitude, Comment
+
     # Get list of input event resource ids
     if event_id_mapper is not None and input_catalog is not None:
         all_ids = [event.resource_id.id for event in input_catalog]
+
     # Initialize output catalog
     outcat = Catalog()
+
     # Open loc file and read lines
     with open(dat_filepath, "r") as dat:
         lines = dat.read()
         lines = lines.split('\n')
+
         # Loop over lines
         for line in lines[:-1]:
+
             # Extract information and craft event
             (yrmody, hrmmsscs, lat, lon, dep, mag, _, _, _, evid) = line.split()
             yr = int(yrmody[0:4])
@@ -1603,6 +1624,7 @@ def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correc
             ev = Event(origins=[Origin(time=time, longitude=float(lon), latitude=float(lat),
                                        depth=(float(dep) - depth_correction))],
                        magnitudes=[Magnitude(mag=float(mag))])
+
             # Find base event and copy over resource id and comments
             old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
             if len(old_event_id) != 1:
@@ -1613,18 +1635,26 @@ def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correc
                 ev.comments = old_event.comments
                 evid_origin_comment = 'Event ID: %s' % evid
                 ev.origins[0].comments.append(Comment(text=evid_origin_comment))
+
             # Append event to catalog
             outcat.append(ev)
+
     # Return catalog
     return outcat
 
 
-# Returns a copied catalogA, but repeat events in catalogB are removed
+# [remove_catalog_repeats] returns a copied catalogA, but repeat events in catalogB are removed
 def remove_catalog_repeats(catalogA, catalogB):
+    # Parse event ids
     catalogA_evids = [int(event.origins[0].comments[0].text.split()[-1]) for event in catalogA]
     catalogB_evids = [int(event.origins[0].comments[0].text.split()[-1]) for event in catalogB]
+
+    # Copy catalog
     catalogC = catalogA.copy()
+
+    # Loop over event ids, and if there is a repeat, remove events from the copied catalog
     for i, catalogA_evid in reversed(list(enumerate(catalogA_evids))):
         if catalogA_evid in catalogB_evids:
             catalogC.events.pop(i)
+
     return catalogC
