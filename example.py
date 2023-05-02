@@ -12,7 +12,7 @@
 # Import all dependencies
 from obspy import UTCDateTime
 from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe, scan_data
-from functions import rethreshold_results, generate_dtcc
+from functions import rethreshold_results, generate_dtcc, run_hypoDD
 from toolbox import reader, writer, calculate_catalog_FI, calculate_relative_magnitudes
 
 ## (0) Prepare output directory and parse AVO catalog
@@ -246,4 +246,63 @@ generate_dtcc(catalog=relocatable_catalog_FImag,
               min_link=min_link)
 
 ## (8) Relocate catalog candidates
+ph2dt_inc_dict = {'MEV': 12000,
+                  'MSTA': 2600,
+                  'MOBS': 1000}
+ph2dt_inp_dict = {'MINWGHT': 0,
+                  'MAXDIST': 120,
+                  'MAXSEP': 10,
+                  'MAXNGH': 10,
+                  'MINLNK': 3,  # 8
+                  'MINOBS': 3,  # 8
+                  'MAXOBS': 20}
+hypoDD_inc_dict = {'MAXEVE': 1000,
+                   'MAXDATA': 20000,
+                   'MAXEVE0': 20,
+                   'MAXDATA0': 2000,
+                   'MAXLAY': 30,
+                   'MAXSTA': 100,
+                   'MAXCL': 200}
+hypoDD_inp_dict = {'IDAT': 3,
+                   'IPHA': 3,
+                   'DIST': 50,
+                   'OBSCC': 0,
+                   'OBSCT': 0,
+                   'MINDS': -999,
+                   'MAXDS': -999,
+                   'MAXGAP': -999,
+                   'ISTART': 2,
+                   'ISOLVE': 2,
+                   'IAQ': 0,
+                   'NSET': 5,
+                   'NITER': [10, 10, 10, 10, 10],
+                   'WTCCP': [0.01, 0.01, 0.10, 0.50, 1.00],
+                   'WTCCS': [0.01, 0.01, 0.10, 0.50, 1.00],
+                   'WRCC': [10, 10, 10, 6, 6],
+                   'WDCC': [4, 4, 4, 2, 2],
+                   'WTCTP': [1.00, 1.00, 1.00, 0.10, 0.01],
+                   'WTCTS': [1.00, 1.00, 1.00, 0.10, 0.01],
+                   'WRCT': [12, 6, 6, 6, 6],
+                   'WDCT': [10, 5, 2.5, 2.5, 2.5],
+                   'DAMP': [100, 100, 100, 100, 100]}
 
+stalats = '60.5913,60.5621,60.5905,60.5224,60.5726,60.4875,60.4888,60.4616'
+stalons = '-152.6882,-152.9293,-152.8058,-152.7401,-152.4075,-152.8425,-152.6940,-152.7560'
+staelevs = '1090,1136,1414,1400,930,1546,1641,1921'
+vzmodel_path = './vz/redoubt_vzmodel.txt'
+has_ps_ratio = True  # If the input vz model has ratios in the 3rd column, set to None
+correct_depths = True
+
+hypoDD_loc, hypoDD_reloc = run_hypoDD(catalog=relocatable_catalog_FImag,
+                                      relocate_catalog_output_dir=relocate_catalog_output_dir,
+                                      stations=station,
+                                      stalats=stalats,
+                                      stalons=stalons,
+                                      staelevs=staelevs,
+                                      vzmodel_path=vzmodel_path,
+                                      has_ps_ratio=has_ps_ratio,
+                                      correct_depths=correct_depths,
+                                      ph2dt_inc_dict=ph2dt_inc_dict,
+                                      ph2dt_inp_dict=ph2dt_inp_dict,
+                                      hypoDD_inc_dict=hypoDD_inc_dict,
+                                      hypoDD_inp_dict=hypoDD_inp_dict)

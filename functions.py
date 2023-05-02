@@ -1373,3 +1373,398 @@ def generate_dtcc(catalog,
         os.remove(original_dt_path)
 
     print('Cross correlations done!')
+
+
+def run_hypoDD(catalog,
+               relocate_catalog_output_dir,
+               stations,
+               stalats,
+               stalons,
+               staelevs,
+               vzmodel_path,
+               has_ps_ratio,
+               correct_depths,
+               ph2dt_inc_dict,
+               ph2dt_inp_dict,
+               hypoDD_inc_dict,
+               hypoDD_inp_dict,
+               hypoDD_dir='./hypoDD/'):
+    """
+    Run hypoDD using input .inc and .inp files
+    :param catalog (:class:`~obspy.core.event.Catalog`): catalog of all relocatable events
+    :param relocate_catalog_output_dir (str): output directory for the relocate_catalog step
+    :param stations (str or list): SEED code(s) for stations allowed for differential time calculation
+    :param stalats (str or list or typle): list (or tuple or comma separated string) of station latitudes [-90,90]
+    :param stalons (str or list or typle): list (or tuple or comma separated string) of station longitudes [-180,180]
+    :param staelevs (str or list or typle): list (or tuple or comma separated string) of station elevations (m)
+    :param vzmodel_path (str): path to velocity model text file
+    :param has_ps_ratio (bool): set to `True` if velocity model text file has a column of Vp/Vs ratios. If `False`, assume 1.75 for all layers.
+    :param correct_depths (bool): set to `True` to shift the entire relocation problem downwards using the velocity model ceiling to avoid erroneous airquake elimination
+    :param ph2dt_inc_dict (dict): dictionary of all ph2dt.inc arguments
+    :param ph2dt_inp_dict (dict): dictionary of all ph2dt.inp arguments
+    :param hypoDD_inc_dict (dict): dictionary of all hypoDD.inc arguments
+    :param hypoDD_inp_dict (dict): dictionary of all hypoDD.inp arguments
+    :param hypoDD_dir (str): path to hypoDD directory
+    :return: hypoDD_loc (:class:`~obspy.core.event.Catalog`): catalog of all relocation candidate events
+    :return: hypoDD_reloc (:class:`~obspy.core.event.Catalog`): catalog of all successfully relocated events
+    """
+
+    # Import all dependencies
+    import os
+    import tarfile
+    import subprocess
+    import pandas as pd
+    from obspy import UTCDateTime
+    from toolbox import writer, loc2cat
+    from eqcorrscan.utils.catalog_to_dd import _generate_event_id_mapper
+
+    # Initialize hypoDD sub directories
+    print('\nCreating sub directories...')
+    for dir in [hypoDD_dir + 'IN', hypoDD_dir + 'INP', hypoDD_dir + 'OUT_ph2dt', hypoDD_dir + 'OUT_hypoDD']:
+        try:
+            os.mkdir(dir)
+        except FileExistsError:
+            print('Subdirectory %s already exists.' % dir)
+
+    # If depth_correction = True, we want to shift the entire problem downwards
+    if correct_depths:
+        print('\nWARNING: correcting elevations and depths for input catalog, vzmodel and stations')
+        # Read the input vzmodel and use the
+        vzmodel_read = open(vzmodel_path, "r")
+        vzmodel_lines = vzmodel_read.readlines()
+        model_ceiling = float(vzmodel_lines[0].split()[0])
+        depth_correction = -1 * model_ceiling
+        vzmodel_read.close()
+    else:
+        depth_correction = 0
+
+    # Deconstruct .xml file
+    print('\nDeconstructing catalog into phase.dat and stations.dat ...')
+
+    # Prepare output filepaths
+    STATION_DAT_FILEPATH = hypoDD_dir + 'IN/stations.dat'
+    PHASE_DAT_FILEPATH = hypoDD_dir + 'IN/phase.dat'
+    DETECTION_DAT_FILEPATH = hypoDD_dir + 'IN/detection.dat'
+
+    # Prepare file formats
+    STATION_DAT_FORMAT = '%s %.4f %.4f %.1f\n'
+    PHASE_DAT_FORMAT_1 = '#  %4d %2d %2d %2d %2d %2d.%02d %8.4f %9.4f %8.3f %5.2f %.2f %.2f %.2f %10d\n'
+    PHASE_DAT_FORMAT_2 = '%s %.3f %.2f  %2s\n'
+    DETECTION_DAT_FORMAT = '%4d%02d%02d  %2d%02d%02d%02d %9.4f %10.4f %10.3f %6.2f %7.2f %7.2f %6.2f %10d\n'
+
+    # Write station.dat file
+    if type(stations) == type(stalats) == type(stalons) == type(staelevs) == str:
+        stations = stations.split(',')
+        stalats = [float(n) for n in stalats.split(',')]
+        stalons = [float(n) for n in stalons.split(',')]
+        staelevs = [float(n) for n in staelevs.split(',')]
+    elif type(stations) == type(stalats) == type(stalons) == type(staelevs) == tuple:
+        stations = list(stations)
+        stalats = [float(n) for n in stalats]
+        stalons = [float(n) for n in stalons]
+        staelevs = [float(n) for n in staelevs]
+    if correct_depths:
+        staelevs = [n - (depth_correction * 1000) for n in staelevs]
+    STATION_DAT_FILE = open(STATION_DAT_FILEPATH, 'w')
+    for i in range(len(stations)):
+        STATION_DAT_FILE.write(STATION_DAT_FORMAT % (stations[i],
+                                                     stalats[i],
+                                                     stalons[i],
+                                                     staelevs[i]))
+    STATION_DAT_FILE.close()
+
+    # Generate event id mapper
+    event_id_mapper = _generate_event_id_mapper(catalog, event_id_mapper=None)
+    # Initialize phase.dat and detection.dat and write both file simultaneously
+    PHASE_DAT_FILE = open(PHASE_DAT_FILEPATH, 'w')
+    DETECTION_DAT_FILE = open(DETECTION_DAT_FILEPATH, 'w')
+    # Loop through events in catalog
+    for event in catalog:
+        # Extract key information
+        yr = int(event.origins[0].time.year)
+        mo = int(event.origins[0].time.month)
+        dy = int(event.origins[0].time.day)
+        hh = int(event.origins[0].time.hour)
+        mm = int(event.origins[0].time.minute)
+        ss = int(event.origins[0].time.second)
+        cs = int(event.origins[0].time.microsecond / 1e4)
+        lat = event.origins[0].latitude
+        lon = event.origins[0].longitude
+        if correct_depths:
+            dep = event.origins[0].depth + depth_correction
+        else:
+            dep = event.origins[0].depth
+        if event.magnitudes == []:
+            print('Event index %d, UTC Time %s has no magnitude, skipping.' % (
+            catalog.events.index(event), event.origins[0].time))
+        else:
+            mag_object = event.preferred_magnitude() or event.magnitudes[0]
+            mag = mag_object.mag
+        eh = 0  # Change accordingly if event object contains error info
+        ez = 0  # Change accordingly if event object contains error info
+        rms = 0  # Change accordingly if event object contains error info
+        evid = event_id_mapper[event.resource_id.id]
+        # Check event time against template to see if it is a self detection
+        event_time = event.origins[0].time
+        try:
+            template_name = event.comments[0].text.split()[1]
+            template_time_segments = [int(numstr) for numstr in template_name.replace('t', '_').split('_')]
+            template_time = UTCDateTime(*template_time_segments)
+            time_diff = abs(event_time - template_time)
+        except:
+            time_diff = 0
+        # If it is a self detection, write info into phase file for ph2dt
+        if time_diff < 1:
+            PHASE_DAT_FILE.write(
+                PHASE_DAT_FORMAT_1 % (yr, mo, dy, hh, mm, ss, cs, lat, lon, dep, mag, eh, ez, rms, evid))
+            for i, pick in enumerate(event.picks):
+                sta = pick.waveform_id.station_code
+                tt = pick.time - event_time
+                if event.origins[0].arrivals == []:
+                    wght = 0.1  # Implement weighting scheme
+                else:
+                    wght = event.origins[0].arrivals[i].time_weight
+                pha = pick.phase_hint
+                PHASE_DAT_FILE.write(PHASE_DAT_FORMAT_2 % (sta, tt, wght, pha))
+        else:
+            # Otherwise, it is a detection, and we write it into our detection list file for appending later
+            DETECTION_DAT_FILE.write(
+                DETECTION_DAT_FORMAT % (yr, mo, dy, hh, mm, ss, cs, lat, lon, dep, mag, eh, ez, rms, evid))
+    # Close files
+    PHASE_DAT_FILE.close()
+    DETECTION_DAT_FILE.close()
+    print('Catalog parsed into phase.dat and detection.dat successfully.')
+
+    # Extract contents from hypoDD tarfile
+    print('\nExtracting hypoDD tarfile contents ...')
+    hypoDD_tar = tarfile.open(hypoDD_dir + 'HYPODD_2.1b.tar.gz', "r:gz")
+    hypoDD_tar.extractall(hypoDD_dir)
+    print('hypoDD tarfile extracted.')
+
+    # Configure ph2dt.inc
+    ph2dt_inc_text = ['c ph2dt.inc: Stores parameters that define array dimensions in ph2dt.',
+                      'c            Modify to fit size of problem and available computer memory.',
+                      'c Parameter Description:',
+                      'c MEV:   Max number of events.',
+                      'c MSTA:  Max number of stations.',
+                      'c MOBS:  Max number of phases (P&S) per eventer event.',
+                      '',
+                      '      integer	MEV, MSTA, MOBS',
+                      '',
+                      '      parameter(MEV=    %d,' % ph2dt_inc_dict['MEV'],
+                      '     &		MSTA=   %d,' % ph2dt_inc_dict['MSTA'],
+                      '     &		MOBS=   %d)' % ph2dt_inc_dict['MOBS']]
+    with open(hypoDD_dir + '/HYPODD/include/ph2dt.inc', "w") as open_file:
+        open_file.write('\n'.join(ph2dt_inc_text))
+    open_file.close()
+
+    # Configure hypoDD.inc
+    hypoDD_inc_text = ['c hypoDD.inc: Stores parameters that define array dimensions in hypoDD.',
+                       'c             Modify to fit size of problem and available computer memory.',
+                       'c	      If 3D raytracing is used, also set model parameters in vel3d.inc.',
+                       'c Parameter Description:',
+                       'c MAXEVE:   Max number of events (must be at least the size of the number ',
+                       'c           of events listed in the event file)',
+                       'c MAXDATA:  Max number of observations (must be at least the size of the ',
+                       'c           number of observations).  ',
+                       'c MAXEVE0:  Max number of events used for SVD. If only LSQR is used, ',
+                       'c           MAXEVE0 can be set to 2 to free up memory. ',
+                       'c MAXDATA0: Max number of observations used for SVD. If only LSQR is used, ',
+                       'c           MAXDATA0 can be set to 1 to free up memory. ',
+                       'c MAXLAY:   Max number of model layers.',
+                       'c MAXSTA:   Max number of stations.',
+                       'c MAXCL:    Max number of clusters allowed. ',
+                       '      integer*4 MAXEVE, MAXLAY, MAXDATA, MAXSTA, MAXEVE0, MAXDATA0',
+                       '      integer*4 MAXCL',
+                       '',
+                       '      parameter(MAXEVE   = %d,' % hypoDD_inc_dict['MAXEVE'],
+                       '     &          MAXDATA  = %d,' % hypoDD_inc_dict['MAXDATA'],
+                       '     &          MAXEVE0  = %d,' % hypoDD_inc_dict['MAXEVE0'],
+                       '     &          MAXDATA0 = %d,' % hypoDD_inc_dict['MAXDATA0'],
+                       '     &          MAXLAY   = %d,' % hypoDD_inc_dict['MAXLAY'],
+                       '     &          MAXSTA   = %d,' % hypoDD_inc_dict['MAXSTA'],
+                       '     &          MAXCL    = %d' % hypoDD_inc_dict['MAXCL']]
+    with open(hypoDD_dir + '/HYPODD/include/hypoDD.inc', "w") as open_file:
+        open_file.write('\n'.join(hypoDD_inc_text))
+    open_file.close()
+
+    # Clean and recompile within src dir
+    print('Compiling ...')
+    clean_command = 'make clean -C %s' % (hypoDD_dir + 'HYPODD/src/')
+    make_command = 'make -C %s' % (hypoDD_dir + 'HYPODD/src/')
+    subprocess.call(clean_command, shell=True)
+    subprocess.call(make_command, shell=True)  # not working for M2 chip?
+
+    # Configure ph2dt.inp
+    ph2dt_inp_text = ['* ph2dt.inp - input control file for program ph2dt',
+                      '* Input station file:',
+                      '%s' % STATION_DAT_FILEPATH,
+                      '* Input phase file:',
+                      '%s' % PHASE_DAT_FILEPATH,
+                      '*MINWGHT: min. pick weight allowed [0]',
+                      '*MAXDIST: max. distance in km between event pair and stations [200]',
+                      '*MAXSEP: max. hypocentral separation in km [10]',
+                      '*MAXNGH: max. number of neighbors per event [10]',
+                      '*MINLNK: min. number of links required to define a neighbor [8]',
+                      '*MINOBS: min. number of links per pair saved [8]',
+                      '*MAXOBS: max. number of links per pair saved [20]',
+                      '*MINWGHT MAXDIST MAXSEP MAXNGH MINLNK MINOBS MAXOBS',
+                      '   %d      %d     %d     %d     %d      %d     %d' %
+                      (ph2dt_inp_dict['MINWGHT'],
+                       ph2dt_inp_dict['MAXDIST'],
+                       ph2dt_inp_dict['MAXSEP'],
+                       ph2dt_inp_dict['MAXNGH'],
+                       ph2dt_inp_dict['MINLNK'],
+                       ph2dt_inp_dict['MINOBS'],
+                       ph2dt_inp_dict['MAXOBS'])]
+    with open(hypoDD_dir + '/INP/ph2dt.inp', "w") as open_file:
+        open_file.write('\n'.join(ph2dt_inp_text))
+    open_file.close()
+
+    # Run ph2dt
+    ph2dt_command = hypoDD_dir + 'HYPODD/src/ph2dt/ph2dt' + ' ' + hypoDD_dir + '/INP/ph2dt.inp'
+    subprocess.call(ph2dt_command, shell=True)
+
+    # Move ph2dt outputs to "hypoDDver/OUT_ph2dt/"
+    to_move = ['ph2dt.log', 'station.sel', 'event.sel', 'event.dat', 'dt.ct']
+    for filename in to_move:
+        move_command = 'mv ./%s %sOUT_ph2dt/%s' % (filename, hypoDD_dir, filename)
+        remove_command = 'rm ./%s' % (filename)
+        subprocess.call(move_command, shell=True)
+
+    # Stitch event.dat and detection.dat to create event_hypoDD.dat
+    with open(hypoDD_dir + 'OUT_ph2dt/event.dat') as open_file:
+        EVENT_DAT = open_file.read()
+    with open(DETECTION_DAT_FILEPATH) as open_file2:
+        DETECTION_DAT = open_file2.read()
+    with open(hypoDD_dir + 'OUT_ph2dt/event_hypoDD.dat', 'w') as open_file3:
+        open_file3.write(EVENT_DAT + DETECTION_DAT)
+
+    # Prepare velocity model information for hypoDD.inp
+    vzmodel = pd.read_csv(vzmodel_path, header=None)
+    TOP = []
+    VELP = []
+    RAT = []
+    for i in range(len(vzmodel.values)):
+        line = vzmodel.values[i][0]
+        if correct_depths:
+            TOP.append(str(float(line.split(' ')[0]) + depth_correction))
+        else:
+            TOP.append(str(line.split(' ')[0]))
+        VELP.append(str(line.split(' ')[1]))
+        if has_ps_ratio:
+            RAT.append(str(line.split(' ')[2]))
+        else:
+            RAT.append(str(1.75))
+    TOP = ' '.join(TOP)
+    VELP = ' '.join(VELP)
+    RAT = ' '.join(RAT)
+
+    # Configure weighting
+    weight_params = [hypoDD_inp_dict['NITER'],
+                     hypoDD_inp_dict['WTCCP'],
+                     hypoDD_inp_dict['WTCCS'],
+                     hypoDD_inp_dict['WRCC'],
+                     hypoDD_inp_dict['WDCC'],
+                     hypoDD_inp_dict['WTCTP'],
+                     hypoDD_inp_dict['WTCTS'],
+                     hypoDD_inp_dict['WRCT'],
+                     hypoDD_inp_dict['WDCT'],
+                     hypoDD_inp_dict['DAMP']]
+    # Check if each parameter has the same number of values
+    if not all(len(weight_param) == len(weight_params[0]) for weight_param in weight_params[1:]):
+        raise ValueError('Not all weight parameters have the same length!')
+    # Now craft rows accordingly
+    WEIGHT_TABLE = ''
+    for i in range(len(weight_params[0])):
+        WEIGHT_TABLE = WEIGHT_TABLE + ' %2d %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %5d' % tuple(
+            [weight_param[i] for weight_param in weight_params])
+        if i != len(weight_params[0]) - 1:
+            WEIGHT_TABLE = WEIGHT_TABLE + '\n'
+
+    # Configure hypoDD.inp
+    hypoDD_inp_text = ['hypoDD_2',
+                       '* Parameter control file hypoDD.inp:',
+                       '*--- INPUT FILE SELECTION',
+                       '* filename of cross-corr diff. time input(blank if not available):',
+                       '%s' % (hypoDD_dir + 'IN/dt.cc'),
+                       '* filename of catalog travel time input(blank if not available):',
+                       '%s' % (hypoDD_dir + 'OUT_ph2dt/dt.ct'),
+                       '* filename of initial hypocenter input:',
+                       '%s' % (hypoDD_dir + 'OUT_ph2dt/event_hypoDD.dat'),
+                       '* filename of initial hypocenter input:',
+                       '%s' % (hypoDD_dir + 'IN/stations.dat'),
+                       '*',
+                       '*--- OUTPUT FILE SELECTION',
+                       '* filename of initial hypocenter output (if blank: output to hypoDD.loc):',
+                       '%s' % (hypoDD_dir + 'OUT_hypoDD/hypoDD.loc'),
+                       '* filename of relocated hypocenter output (if blank: output to hypoDD.reloc):',
+                       '%s' % (hypoDD_dir + 'OUT_hypoDD/hypoDD.reloc'),
+                       '* filename of station residual output (if blank: no output written):',
+                       '%s' % (hypoDD_dir + 'OUT_hypoDD/hypoDD.sta'),
+                       '* filename of data residual output (if blank: no output written):',
+                       '%s' % (hypoDD_dir + 'OUT_hypoDD/hypoDD.res'),
+                       '* filename of takeoff angle output (if blank: no output written):',
+                       '%s' % (hypoDD_dir + 'OUT_hypoDD/hypoDD.src'),
+                       '*',
+                       '*--- DATA SELECTION:',
+                       '* IDAT IPHA DIST',
+                       '    %d     %d     %d' % (hypoDD_inp_dict['IDAT'],
+                                                 hypoDD_inp_dict['IPHA'],
+                                                 hypoDD_inp_dict['DIST']),
+                       '*',
+                       '*--- EVENT CLUSTERING:',
+                       '* OBSCC OBSCT MINDS MAXDS MAXGAP ',
+                       '    %d    %d    %d    %d    %d        ' % (hypoDD_inp_dict['OBSCC'],
+                                                                   hypoDD_inp_dict['OBSCT'],
+                                                                   hypoDD_inp_dict['MINDS'],
+                                                                   hypoDD_inp_dict['MAXDS'],
+                                                                   hypoDD_inp_dict['MAXGAP']),
+                       '*',
+                       '*--- SOLUTION CONTROL:',
+                       '* ISTART ISOLV IAQ NSET',
+                       '    %d    %d    %d    %d ' % (hypoDD_inp_dict['ISTART'],
+                                                      hypoDD_inp_dict['ISOLVE'],
+                                                      hypoDD_inp_dict['IAQ'],
+                                                      hypoDD_inp_dict['NSET']),
+                       '*',
+                       '*--- DATA WEIGHTING AND REWEIGHTING:',
+                       '* NITER WTCCP WTCCS WRCC WDCC WTCTP WTCTS WRCT WDCT DAMP',
+                       '%s' % WEIGHT_TABLE,
+                       '*',
+                       '*--- FORWARD MODEL SPECIFICATIONS:',
+                       '* IMOD',
+                       '1',
+                       '* TOP: depths of top of layer (km) ',
+                       '%s' % TOP,
+                       '* VELP: layer P velocities (km/s)',
+                       '%s' % VELP,
+                       '* RAT: p/s ratio ',
+                       '%s' % RAT,
+                       '*',
+                       '*--- CLUSTER/EVENT SELECTION:',
+                       '* CID',
+                       '    0',
+                       '* ID',
+                       '*',
+                       '* end of hypoDD.inp']
+
+    # Write out hypoDD.inp in inputs directory
+    with open(hypoDD_dir + 'INP/hypoDD.inp', "w") as open_file:
+        open_file.write('\n'.join(hypoDD_inp_text))
+    open_file.close()
+
+    # Run hypoDD
+    hypoDD_command = hypoDD_dir + 'HYPODD/src/hypoDD/hypoDD' + ' ' + hypoDD_dir + '/INP/hypoDD.inp'
+    subprocess.call(hypoDD_command, shell=True)
+
+    # Write out catalog objects from event.sel, hypoDD.loc and hypoDD.reloc
+    print('Now writing catalog objects from hypoDD outputs...')
+    hypoDD_loc = loc2cat(hypoDD_dir + 'OUT_hypoDD/hypoDD.loc', event_id_mapper, catalog, type='loc',
+                         depth_correction=depth_correction)
+    hypoDD_reloc = loc2cat(hypoDD_dir + 'OUT_hypoDD/hypoDD.reloc', event_id_mapper, catalog, type='reloc',
+                           depth_correction=depth_correction)
+    writer(relocate_catalog_output_dir + 'hypoDD_loc.xml', hypoDD_loc)
+    writer(relocate_catalog_output_dir + 'hypoDD_reloc.xml', hypoDD_reloc)
+
+    return hypoDD_loc, hypoDD_reloc
