@@ -1517,15 +1517,17 @@ def clean_cc_file(dtcc_filepath):
 
 
 # [loc2cat] converts .loc and .reloc into Catalog objects
-def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', depth_correction=0):
+def loc2cat(loc_filepath, input_catalog=None, type='loc', depth_correction=0):
 
     # Import all dependencies
     from obspy import Catalog, UTCDateTime
     from obspy.core.event import Event, Origin, Magnitude, Comment
+    from eqcorrscan.utils.catalog_to_dd import _generate_event_id_mapper
 
     # Get list of input event resource ids
-    if event_id_mapper is not None and input_catalog is not None:
+    if input_catalog:
         all_ids = [event.resource_id.id for event in input_catalog]
+        event_id_mapper = _generate_event_id_mapper(input_catalog, event_id_mapper=None)
 
     # Initialize output catalog
     outcat = Catalog()
@@ -1568,7 +1570,7 @@ def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', 
                        magnitudes=[Magnitude(mag=mag)])
 
             # Find base event and copy over comments
-            if event_id_mapper and input_catalog:
+            if input_catalog:
                 old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
                 if len(old_event_id) != 1:
                     raise ValueError('Multiple matched on event id mapper. Check event ids!')
@@ -1587,15 +1589,17 @@ def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', 
 
 
 # [dat2cat] converts .dat and .sel to Catalog objects
-def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correction=0):
+def dat2cat(dat_filepath, input_catalog=None, depth_correction=0):
 
     # Import all dependencies
     from obspy import Catalog, UTCDateTime
     from obspy.core.event import Event, Origin, Magnitude, Comment
+    from eqcorrscan.utils.catalog_to_dd import _generate_event_id_mapper
 
     # Get list of input event resource ids
-    if event_id_mapper is not None and input_catalog is not None:
+    if input_catalog:
         all_ids = [event.resource_id.id for event in input_catalog]
+        event_id_mapper = _generate_event_id_mapper(input_catalog, event_id_mapper=None)
 
     # Initialize output catalog
     outcat = Catalog()
@@ -1628,7 +1632,7 @@ def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correc
                        magnitudes=[Magnitude(mag=float(mag))])
 
             # Find base event and copy over resource id and comments
-            if event_id_mapper and input_catalog:
+            if input_catalog:
                 old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
                 if len(old_event_id) != 1:
                     raise ValueError('Multiple matched on event id mapper. Check event ids!')
