@@ -7,12 +7,12 @@
 # 6. Calculate frequency index and relative magnitudes
 # 7. Generate dt.cc file for relocatable catlaog
 # 8. Relocate catalog candidates
-# 9. Plot resulting earthquakes in time and space
+# 9. Plot relocated earthquakes
 
 # Import all dependencies
 from obspy import UTCDateTime
 from functions import initialize_run, download_data, run_redpy, convert_redpy, create_tribe, scan_data
-from functions import rethreshold_results, generate_dtcc, run_hypoDD
+from functions import rethreshold_results, generate_dtcc, run_hypoDD, plot_hypoDD_results
 from toolbox import reader, writer, calculate_catalog_FI, calculate_relative_magnitudes
 
 ## (0) Prepare output directory and parse AVO catalog
@@ -307,3 +307,18 @@ hypoDD_loc, hypoDD_reloc = run_hypoDD(catalog=relocatable_catalog_FImag,
                                       ph2dt_inp_dict=ph2dt_inp_dict,
                                       hypoDD_inc_dict=hypoDD_inc_dict,
                                       hypoDD_inp_dict=hypoDD_inp_dict)
+
+## 9. Plot relocated earthquakes
+relocatable_catalog_FImag = reader(scan_data_output_dir + 'relocatable_catalog_FImag.xml')
+hypoDD_loc = reader(relocate_catalog_output_dir + 'hypoDD_loc.xml')
+hypoDD_reloc = reader(relocate_catalog_output_dir + 'hypoDD_reloc.xml')
+lat_lims = [60.4, 60.6]
+lon_lims = [-152.9, -152.6]
+dep_lims = [-3, 10]
+
+plot_hypoDD_results(hypoDD_in=relocatable_catalog_FImag,
+                    hypoDD_loc=hypoDD_loc,
+                    hypoDD_reloc=hypoDD_reloc,
+                    lat_lims=lat_lims,
+                    lon_lims=lon_lims,
+                    dep_lims=dep_lims)

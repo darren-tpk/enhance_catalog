@@ -1765,11 +1765,111 @@ def run_hypoDD(catalog,
 
     # Write out catalog objects from event.sel, hypoDD.loc and hypoDD.reloc
     print('Now writing catalog objects from hypoDD outputs...')
-    hypoDD_loc = loc2cat(hypoDD_dir + 'OUT_hypoDD/hypoDD.loc', event_id_mapper, catalog, type='loc',
+    hypoDD_loc = loc2cat(hypoDD_dir + 'OUT_hypoDD/hypoDD.loc', catalog, type='loc',
                          depth_correction=depth_correction)
-    hypoDD_reloc = loc2cat(hypoDD_dir + 'OUT_hypoDD/hypoDD.reloc', event_id_mapper, catalog, type='reloc',
+    hypoDD_reloc = loc2cat(hypoDD_dir + 'OUT_hypoDD/hypoDD.reloc', catalog, type='reloc',
                            depth_correction=depth_correction)
     writer(relocate_catalog_output_dir + 'hypoDD_loc.xml', hypoDD_loc)
     writer(relocate_catalog_output_dir + 'hypoDD_reloc.xml', hypoDD_reloc)
 
     return hypoDD_loc, hypoDD_reloc
+
+
+def plot_hypoDD_results(hypoDD_in,
+                        hypoDD_loc,
+                        hypoDD_reloc,
+                        lat_lims,
+                        lon_lims,
+                        dep_lims,
+                        markersize=5):
+    """
+    Plot hypoDD results in 3 dimensions, to show differences between the input catalog, relocation candidates, and relocated events
+    :param hypoDD_in (:class:`~obspy.core.event.Catalog`): relocatable catalog
+    :param hypoDD_loc (:class:`~obspy.core.event.Catalog`): catalog of all relocation candidate events (that have sufficient differential time observations)
+    :param hypoDD_reloc (:class:`~obspy.core.event.Catalog`): catalog of all successfully relocated events
+    :param lat_lims (list or tuple): minimum and maximum latitude plot limits expressed as a tuple/list of length 2
+    :param lon_lims (list or tuple): minimum and maximum longitude plot limits expressed as a tuple/list of length 2
+    :param dep_lims (list or tuple): minimum and maximum depth plot limits expressed as a tuple/list of length 2 (km)
+    :param markersize (float): marker size for earthquake plots (defaults to 5)
+    :return: N/A
+    """
+
+    from eqcorrscan.utils.catalog_to_dd import _generate_event_id_mapper
+    from matplotlib import pyplot as plt
+    from toolbox import remove_catalog_repeats
+
+    # Get subset of relocation candidates that remain unshifted
+    hypoDD_loc_filtered = remove_catalog_repeats(hypoDD_loc, hypoDD_reloc)
+
+    # Extract lat, lon and depth for all catalogs
+    hypoDD_in_lats = [event.origins[0].latitude for event in hypoDD_in]
+    hypoDD_in_lons = [event.origins[0].longitude for event in hypoDD_in]
+    hypoDD_in_deps = [event.origins[0].depth for event in hypoDD_in]
+    hypoDD_loc_lats = [event.origins[0].latitude for event in hypoDD_loc]
+    hypoDD_loc_lons = [event.origins[0].longitude for event in hypoDD_loc]
+    hypoDD_loc_deps = [event.origins[0].depth for event in hypoDD_loc]
+    hypoDD_loc_filtered_lats = [event.origins[0].latitude for event in hypoDD_loc_filtered]
+    hypoDD_loc_filtered_lons = [event.origins[0].longitude for event in hypoDD_loc_filtered]
+    hypoDD_loc_filtered_deps = [event.origins[0].depth for event in hypoDD_loc_filtered]
+    hypoDD_reloc_lats = [event.origins[0].latitude for event in hypoDD_reloc]
+    hypoDD_reloc_lons = [event.origins[0].longitude for event in hypoDD_reloc]
+    hypoDD_reloc_deps = [event.origins[0].depth for event in hypoDD_reloc]
+
+    # Now do simple plotting
+    fig, ax = plt.subplots(2, 3, figsize=(10, 8))
+    # [LON VS LAT] Plot selected events among input events (blue against black)
+    ax[0, 0].plot(hypoDD_in_lons, hypoDD_in_lats, 'k.', markersize=markersize, label='input events')
+    ax[0, 0].plot(hypoDD_loc_lons, hypoDD_loc_lats, 'b.', markersize=markersize, label='relocatable')
+    ax[0, 0].axis('square')
+    ax[0, 0].axis([lon_lims[0], lon_lims[1], lat_lims[0], lat_lims[1]])
+    ax[0, 0].legend(loc='lower right')
+    ax[0, 0].set_title('LON vs LAT (before hypoDD)')
+    ax[0, 0].set_ylabel('Latitude')
+    ax[0, 0].set_xlabel('Longitude')
+    # [LON VS LAT] Plot relocated events among retained events (red against blue)
+    ax[1, 0].plot(hypoDD_loc_filtered_lons, hypoDD_loc_filtered_lats, 'b.', markersize=markersize, label='relocatable')
+    ax[1, 0].plot(hypoDD_reloc_lons, hypoDD_reloc_lats, 'r.', markersize=markersize, label='relocated')
+    ax[1, 0].axis('square')
+    ax[1, 0].axis([lon_lims[0], lon_lims[1], lat_lims[0], lat_lims[1]])
+    ax[1, 0].legend(loc='lower right')
+    ax[1, 0].set_title('LON vs LAT (after hypoDD)')
+    ax[1, 0].set_ylabel('Latitude')
+    ax[1, 0].set_xlabel('Longitude')
+    # [LON VS DEP] Plot selected events among input events (blue against black)
+    ax[0, 1].plot(hypoDD_in_lons, hypoDD_in_deps, 'k.', markersize=markersize, label='input events')
+    ax[0, 1].plot(hypoDD_loc_lons, hypoDD_loc_deps, 'b.', markersize=markersize, label='relocatable')
+    ax[0, 1].axis([lon_lims[0], lon_lims[1], dep_lims[0], dep_lims[1]])
+    ax[0, 1].invert_yaxis()
+    ax[0, 1].legend(loc='lower right')
+    ax[0, 1].set_title('LON vs DEP (before hypoDD)')
+    ax[0, 1].set_ylabel('Depth (km)')
+    ax[0, 1].set_xlabel('Longitude')
+    # [LON VS DEP] Plot relocated events among retained events (red against blue)
+    ax[1, 1].plot(hypoDD_loc_filtered_lons, hypoDD_loc_filtered_deps, 'b.', markersize=markersize, label='relocatable')
+    ax[1, 1].plot(hypoDD_reloc_lons, hypoDD_reloc_deps, 'r.', markersize=markersize, label='relocated')
+    ax[1, 1].axis([lon_lims[0], lon_lims[1], dep_lims[0], dep_lims[1]])
+    ax[1, 1].invert_yaxis()
+    ax[1, 1].legend(loc='lower right')
+    ax[1, 1].set_title('LON vs DEP (after hypoDD)')
+    ax[1, 1].set_ylabel('Depth (km)')
+    ax[1, 1].set_xlabel('Longitude')
+    # [LAT VS DEP] Plot selected events among input events (blue against black)
+    ax[0, 2].plot(hypoDD_in_lats, hypoDD_in_deps, 'k.', markersize=markersize, label='input events')
+    ax[0, 2].plot(hypoDD_loc_lats, hypoDD_loc_deps, 'b.', markersize=markersize, label='relocatable')
+    ax[0, 2].axis([lat_lims[0], lat_lims[1], dep_lims[0], dep_lims[1]])
+    ax[0, 2].invert_yaxis()
+    ax[0, 2].legend(loc='lower right')
+    ax[0, 2].set_title('LAT vs DEP (before hypoDD)')
+    ax[0, 2].set_ylabel('Depth (km)')
+    ax[0, 2].set_xlabel('Latitude')
+    # [LAT VS DEP] Plot relocated events among retained events (red against blue)
+    ax[1, 2].plot(hypoDD_loc_filtered_lats, hypoDD_loc_filtered_deps, 'b.', markersize=markersize, label='relocatable')
+    ax[1, 2].plot(hypoDD_reloc_lats, hypoDD_reloc_deps, 'r.', markersize=markersize, label='relocated events')
+    ax[1, 2].axis([lat_lims[0], lat_lims[1], dep_lims[0], dep_lims[1]])
+    ax[1, 2].invert_yaxis()
+    ax[1, 2].legend(loc='lower right')
+    ax[1, 2].set_title('LAT vs DEP (after hypoDD)')
+    ax[1, 2].set_ylabel('Depth (km)')
+    ax[1, 2].set_xlabel('Latitude')
+    plt.tight_layout()
+    fig.show()
