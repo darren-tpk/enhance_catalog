@@ -1568,15 +1568,16 @@ def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', 
                        magnitudes=[Magnitude(mag=mag)])
 
             # Find base event and copy over comments
-            old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
-            if len(old_event_id) != 1:
-                raise ValueError('Multiple matched on event id mapper. Check event ids!')
-            else:
-                old_event_id = old_event_id[0]
-                old_event = input_catalog[all_ids.index(old_event_id)]
-                ev.comments = old_event.comments
-                evid_origin_comment = 'Event ID: %s' % evid
-                ev.origins[0].comments.append(Comment(text=evid_origin_comment))
+            if event_id_mapper and input_catalog:
+                old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
+                if len(old_event_id) != 1:
+                    raise ValueError('Multiple matched on event id mapper. Check event ids!')
+                else:
+                    old_event_id = old_event_id[0]
+                    old_event = input_catalog[all_ids.index(old_event_id)]
+                    ev.comments = old_event.comments
+                    evid_origin_comment = 'Event ID: %s' % evid
+                    ev.origins[0].comments.append(Comment(text=evid_origin_comment))
 
             # Append event to catalog
             outcat.append(ev)
@@ -1587,6 +1588,7 @@ def loc2cat(loc_filepath, event_id_mapper=None, input_catalog=None, type='loc', 
 
 # [dat2cat] converts .dat and .sel to Catalog objects
 def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correction=0):
+
     # Import all dependencies
     from obspy import Catalog, UTCDateTime
     from obspy.core.event import Event, Origin, Magnitude, Comment
@@ -1626,15 +1628,16 @@ def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correc
                        magnitudes=[Magnitude(mag=float(mag))])
 
             # Find base event and copy over resource id and comments
-            old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
-            if len(old_event_id) != 1:
-                raise ValueError('Multiple matched on event id mapper. Check event ids!')
-            else:
-                old_event_id = old_event_id[0]
-                old_event = input_catalog[all_ids.index(old_event_id)]
-                ev.comments = old_event.comments
-                evid_origin_comment = 'Event ID: %s' % evid
-                ev.origins[0].comments.append(Comment(text=evid_origin_comment))
+            if event_id_mapper and input_catalog:
+                old_event_id = [id for id, num in event_id_mapper.items() if num == int(evid)]
+                if len(old_event_id) != 1:
+                    raise ValueError('Multiple matched on event id mapper. Check event ids!')
+                else:
+                    old_event_id = old_event_id[0]
+                    old_event = input_catalog[all_ids.index(old_event_id)]
+                    ev.comments = old_event.comments
+                    evid_origin_comment = 'Event ID: %s' % evid
+                    ev.origins[0].comments.append(Comment(text=evid_origin_comment))
 
             # Append event to catalog
             outcat.append(ev)
@@ -1645,6 +1648,7 @@ def dat2cat(dat_filepath, event_id_mapper=None, input_catalog=None, depth_correc
 
 # [remove_catalog_repeats] returns a copied catalogA, but repeat events in catalogB are removed
 def remove_catalog_repeats(catalogA, catalogB):
+
     # Parse event ids
     catalogA_evids = [int(event.origins[0].comments[0].text.split()[-1]) for event in catalogA]
     catalogB_evids = [int(event.origins[0].comments[0].text.split()[-1]) for event in catalogB]
