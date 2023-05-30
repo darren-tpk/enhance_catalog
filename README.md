@@ -2,6 +2,7 @@ enhance_catalog
 ============
 
 This repository stores the codes that make up the workflow described in Tan et al. (2023): 
+
 *Tan, D., Fee, D., Hotovec-Ellis, A. J., Pesicek, J. D., Haney, M. M., Power, J. A. & Girona, T. (2021). Volcanic earthquake catalog enhancement using integrated detection, matched-filtering, and relocation tools. [doi: 10.3389/feart.2023.1158442](https://doi.org/10.3389/feart.2023.1158442)*
 
 The codes can be used to enhance AVO earthquake catalogs using a streamlined integration of open-source catalog-enhancing tools: REDPy, EQcorrscan, HypoDD, and GrowClust. The combination of these tools offers the capability of adding seismic event detections and relocating events in a single workflow. The workflow relies on a combination of standard triggering and cross-correlation clustering (REDPy) to consolidate representative templates used in matched-filtering (EQcorrscan). The templates and their detections are then relocated using the differential time methods provided by HypoDD and/or GrowClust. Additional utilities include the incorporation of campaign and backfilled data at appropriate junctures, relative magnitude calculations, and frequency index calculations for valid events.
