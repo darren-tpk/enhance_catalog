@@ -20,7 +20,7 @@ The general sequence to be followed is:
 
 
 
-**General References and Suggested Citations**
+**Key references and other suggested citations**
 
 *Hotovec-Ellis, A. J., & Jeffries, C. (2016). Near real‐time detection, clustering, and analysis of repeating earthquakes: Application to Mount St. Helens and Redoubt volcanoes.*
 
