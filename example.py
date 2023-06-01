@@ -260,7 +260,7 @@ ph2dt_inp_dict = {'MINWGHT': 0,
                   'MINOBS': 8,
                   'MAXOBS': 20}
 hypoDD_inc_dict = {'MAXEVE': 5000,
-                   'MAXDATA': 50000,
+                   'MAXDATA': 3000000,
                    'MAXEVE0': 20,
                    'MAXDATA0': 2000,
                    'MAXLAY': 30,
