@@ -17,13 +17,13 @@ from toolbox import reader, writer, calculate_catalog_FI, calculate_relative_mag
 
 ## (0) Prepare output directory and parse AVO catalog
 subdir_name = 'example'
-catalog = reader('./redoubt_20080225_20090227.xml')  # Filtered AVO catalog for the 3 day example
+catalog = reader('./redoubt_20090320_20090322.xml')  # Filtered AVO catalog for the 3 day example
 initialize_run(subdir_name)
 
 ## (1) Download data
 data_destination = './data/'+ subdir_name + '/'
-starttime = UTCDateTime(2009,2,25,0,0,0)
-endtime = UTCDateTime(2009,2,28,0,0,0)
+starttime = UTCDateTime(2009,3,20,0,0,0)
+endtime = UTCDateTime(2009,3,23,0,0,0)
 client = 'IRIS'
 network = 'AV,AV,AV,AV,AV,AV,AV,AV'
 station = 'DFR,NCT,RDJH,RDN,RDT,RDWB,REF,RSO'
@@ -62,7 +62,6 @@ cmin = 0.85  # minimum cross-correlation coefficient value to consider a repeate
 ncor = 2  # minimum number of stations where cmin must be met to determine a repeater
 minorph = 0.05  # amount of days to keep orphans in the queue when it just triggers above threshold (> trigon)
 maxorph = 7  # amount of days to keep orphans in the queue when it triggers way above threshold (> trigon+7)
-dybin = 1/24  # length in days for each bin in the histogram subplot (use 1 hr as our analysis only spans 3 days)
 
 run_redpy(run_title=run_title,
           output_destination=redpy_output_destination,
@@ -88,9 +87,9 @@ run_redpy(run_title=run_title,
           ncor=ncor,
           minorph=minorph,
           maxorph=maxorph,
-          dybin=dybin)
+          dybin=1/4)
 
-## (3) Convert REDPy into separate catalog objects
+## (3) Convert REDPy into EQcorrscan-compatible ObsPy catalogs
 analyst_catalog = catalog
 redpy_output_path = redpy_output_destination + "".join(run_title.split()) + '/'
 convert_redpy_output_dir = './output/' + subdir_name + '/convert_redpy/'
@@ -113,7 +112,7 @@ convert_redpy(analyst_catalog=analyst_catalog,
               add_redpy_pick_to_associated=add_redpy_pick_to_associated,
               add_campaign_pick_to_associated=add_campaign_pick_to_associated)
 
-## (4) Convert REDPy into EQcorrscan-compatible ObsPy catalogs
+## (4) Create EQcorrscan templates
 convert_redpy_output_dir = convert_redpy_output_dir
 create_tribe_output_dir = './output/' + subdir_name + '/create_tribe/'
 samprate = 50  # desired sampling rate for templates
@@ -142,6 +141,7 @@ threshold_type = 'av_chan_corr'  # EQcorrscan threshold type -- choose between '
 threshold = 0.7  # threshold value used for matched-filter detections
 trig_int = 8  # minimum trigger interval for individual template (s)
 decluster = True  # remove overlapping detections from different templates
+decluster_metric = 'cor_sum'  # choose between average correlation ('avg_cor'), absolute correlation sum ('cor_sum'), or value above threshold ('thresh_exc')
 
 party, detected_catalog, relocatable_catalog = scan_data(tribe=tribe,
                                                          scan_data_output_dir=scan_data_output_dir,
@@ -154,7 +154,8 @@ party, detected_catalog, relocatable_catalog = scan_data(tribe=tribe,
                                                          threshold_type=threshold_type,
                                                          threshold=threshold,
                                                          trig_int=trig_int,
-                                                         decluster=decluster)
+                                                         decluster=decluster,
+                                                         decluster_metric='cor_sum')
 
 # # Optional rethresholding option after conducting a manual sensitivity test
 # # Note that it is strongly recommended to run scan_data with decluster=False if rethresholding is desired
@@ -255,11 +256,11 @@ ph2dt_inp_dict = {'MINWGHT': 0,
                   'MAXDIST': 120,
                   'MAXSEP': 10,
                   'MAXNGH': 10,
-                  'MINLNK': 3,  # 8
-                  'MINOBS': 3,  # 8
+                  'MINLNK': 8,
+                  'MINOBS': 8,
                   'MAXOBS': 20}
-hypoDD_inc_dict = {'MAXEVE': 1000,
-                   'MAXDATA': 20000,
+hypoDD_inc_dict = {'MAXEVE': 5000,
+                   'MAXDATA': 50000,
                    'MAXEVE0': 20,
                    'MAXDATA0': 2000,
                    'MAXLAY': 30,
@@ -268,8 +269,8 @@ hypoDD_inc_dict = {'MAXEVE': 1000,
 hypoDD_inp_dict = {'IDAT': 3,
                    'IPHA': 3,
                    'DIST': 50,
-                   'OBSCC': 0,
-                   'OBSCT': 0,
+                   'OBSCC': 3,
+                   'OBSCT': 8,
                    'MINDS': -999,
                    'MAXDS': -999,
                    'MAXGAP': -999,
