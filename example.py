@@ -17,7 +17,7 @@ from toolbox import reader, writer, calculate_catalog_FI, calculate_relative_mag
 
 ## (0) Prepare output directory and parse AVO catalog
 subdir_name = 'example'
-catalog = reader('./redoubt_20080401_20090901.xml')  # Filtered AVO catalog for the 3 day example
+catalog = reader('./redoubt_20080225_20090227.xml')  # Filtered AVO catalog for the 3 day example
 initialize_run(subdir_name)
 
 ## (1) Download data
@@ -62,6 +62,7 @@ cmin = 0.85  # minimum cross-correlation coefficient value to consider a repeate
 ncor = 2  # minimum number of stations where cmin must be met to determine a repeater
 minorph = 0.05  # amount of days to keep orphans in the queue when it just triggers above threshold (> trigon)
 maxorph = 7  # amount of days to keep orphans in the queue when it triggers way above threshold (> trigon+7)
+dybin = 1/24  # length in days for each bin in the histogram subplot (use 1 hr as our analysis only spans 3 days)
 
 run_redpy(run_title=run_title,
           output_destination=redpy_output_destination,
@@ -86,7 +87,8 @@ run_redpy(run_title=run_title,
           cmin=cmin,
           ncor=ncor,
           minorph=minorph,
-          maxorph=maxorph)
+          maxorph=maxorph,
+          dybin=dybin)
 
 ## (3) Convert REDPy into separate catalog objects
 analyst_catalog = catalog
