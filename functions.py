@@ -160,7 +160,7 @@ def run_redpy(run_title,
               fiupmax=10,
               fispanlow=-0.5,
               fispanhigh=0.5,
-              trigalg='classicstalta',
+              trigalg='recstalta',
               offset=0,
               plotformat='eqrate,fi,occurrence+occurrencefi,longevity',
               printsta=0,
@@ -225,7 +225,7 @@ def run_redpy(run_title,
     :param fiupmax (float): frequency index upper bound minimum (defaults to 10.0 Hz)
     :param fispanlow (float): FI span minimum for plot colorbar (dimensionless, defaults to -0.5)
     :param fispanhigh (float): FI span maximum for plot colorbar (dimensionless, defaults to +0.5)
-    :param trigalg (str): chosen STA/LTA algorithm supported by ObsPy's network coincidence trigger (defaults to 'classicstalta')
+    :param trigalg (str): chosen STA/LTA algorithm supported by ObsPy's network coincidence trigger (defaults to 'recstalta')
     :param offset (float): optional time offset (see https://github.com/ahotovec/REDPy/blob/master/settings.cfg) (defaults to 0)
     :param plotformat (str): list and order of plots to be included (see https://github.com/ahotovec/REDPy/blob/master/settings.cfg)
     :param printsta (int): index of the station that is shown on the main plot, and used for plotting cores and amplitudes (defaults to 0)
@@ -573,7 +573,7 @@ def convert_redpy(analyst_catalog,
             # Use coincidence trigger to get a pick time estimate
             try:
                 coin_trigger = []
-                coin_trigger = coincidence_trigger('classicstalta', trigon, trigoff, stream, nstaC, sta=swin, lta=lwin, details=True)
+                coin_trigger = coincidence_trigger('recstalta', trigon, trigoff, stream, nstaC, sta=swin, lta=lwin, details=True)
             # If it fails (usually due to data being too gappy), move to next event
             except:
                 continue
@@ -696,7 +696,7 @@ def convert_redpy(analyst_catalog,
                 # Use coincidence trigger to get a pick time estimate
                 try:
                     coin_trigger = []
-                    coin_trigger = coincidence_trigger('classicstalta', trigon, trigoff, stream, nstaC, sta=swin, lta=lwin, details=True)
+                    coin_trigger = coincidence_trigger('recstalta', trigon, trigoff, stream, nstaC, sta=swin, lta=lwin, details=True)
                 # If it fails (usually due to data being too gappy), move to next event
                 except:
                     continue
@@ -907,6 +907,7 @@ def scan_data(tribe,
               threshold,
               trig_int,
               decluster=True,
+              decluster_metric='avg_cor',
               max_zeros=100,
               npts_threshold=100,
               tolerance=4e4,
@@ -927,6 +928,7 @@ def scan_data(tribe,
     :param threshold (float): threshold value used for matched-filter detections
     :param trig_int (float): minimum trigger interval for individual template (s)
     :param decluster (bool): if `True`, decluster matched-filter output such that different templates are not allowed to trigger within trig_int
+    :param decluster_metric (str): metric to sort peaks by. 'avg_cor' takes the single station average correlation, 'cor_sum' takes the total correlation sum across all channels, 'thresh_exc' takes the factor by how much the detection exceeded the input threshold
     :param max_zeros (int): maximum number of zeros allowed in trace segment prior to merging (defaults to 100)
     :param npts_threshold (int): minimum number of samples needed for each trace segment prior to merging (defaults to 100)
     :param tolerance (float): factor to median tolerance for boxcar removal from data (as a factor to median)
@@ -1065,7 +1067,7 @@ def scan_data(tribe,
     # Clean the party off of repeats (different templates that detect the "same" event)
     if decluster:
         print('Declustering party with leftover detections...')
-        party_all = party_all.decluster(trig_int=trig_int)
+        party_all = party_all.decluster(trig_int=trig_int, metric=decluster_metric)
 
     # Convert party into an ObsPy catalog
     detected_catalog = party_all.get_catalog()
