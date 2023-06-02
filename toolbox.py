@@ -1174,7 +1174,7 @@ def calculate_catalog_FI(catalog, data_path, reference_station, reference_channe
             event_dayend = event_daystart + 86400
             sub_catalog_bool = (np.array(detection_times) > event_daystart) & (np.array(detection_times) < event_dayend)
             sub_catalog_index = np.flatnonzero(sub_catalog_bool)
-            sub_catalog = Catalog(list(compress(catalog, sub_catalog_bool)))
+            sub_catalog = Catalog(list(compress(catalog, sub_catalog_bool))).copy()
             tracker[sub_catalog_index] = True
 
         # Remove picks in sub_catalog events that are not on reference stachans
@@ -1321,7 +1321,7 @@ def calculate_relative_magnitudes(catalog, tribe, data_path, noise_window, signa
             tracker[sub_catalog_index] = True
 
         # Obtain day-long streams for the sub-catalog
-        sub_catalog = Catalog(list(compress(catalog, sub_catalog_bool)))
+        sub_catalog = Catalog(list(compress(catalog, sub_catalog_bool))).copy()
         master_catalog_stream = prepare_catalog_stream(data_path, sub_catalog, resampling_frequency, tolerance)
         master_catalog_stream = master_catalog_stream.trim(starttime=UTCDateTime(date_pair[0]),
                                                            endtime=UTCDateTime(date_pair[0]) + 86400, pad=True)

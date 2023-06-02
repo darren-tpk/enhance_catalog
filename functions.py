@@ -859,7 +859,7 @@ def create_tribe(convert_redpy_output_dir,
             event_daystart = UTCDateTime(event.origins[0].time.date)
             event_dayend = event_daystart + 86400
             sub_catalog_index = (np.array(catalog_times) > event_daystart) & (np.array(catalog_times) < event_dayend)
-            sub_catalog = Catalog(list(compress(template_catalog, sub_catalog_index)))
+            sub_catalog = Catalog(list(compress(template_catalog, sub_catalog_index))).copy()
             tracker[np.where(sub_catalog_index==True)] = True
 
         # Prepare catalog stream, trim to the start and end of the day to enforce daylong processing
