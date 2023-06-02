@@ -132,7 +132,7 @@ tribe = create_tribe(convert_redpy_output_dir=convert_redpy_output_dir,
                      min_snr=min_snr)
 
 ## (5) Run EQcorrscan matched-filter scan
-# tribe = reader(create_tribe_output_dir + 'tribe.tgz')
+tribe = reader(create_tribe_output_dir + 'tribe.tgz')
 scan_data_output_dir = './output/' + subdir_name + '/scan_data/'
 min_stations = 3  # minimum number of stations where each template must be observed on before being used for matched-filter
 min_picks = 0  # minimum number of picks that each template must possess before being used for matched-filter
@@ -155,7 +155,7 @@ party, detected_catalog, relocatable_catalog = scan_data(tribe=tribe,
                                                          threshold=threshold,
                                                          trig_int=trig_int,
                                                          decluster=decluster,
-                                                         decluster_metric='cor_sum')
+                                                         decluster_metric=decluster_metric)
 
 # # Optional rethresholding option after conducting a manual sensitivity test
 # # Note that it is strongly recommended to run scan_data with decluster=False if rethresholding is desired
