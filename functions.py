@@ -1097,12 +1097,14 @@ def scan_data(tribe,
             lon = source_event.origins[0].longitude
             dep = source_event.origins[0].depth
 
-            # Reformat the event's detection time to UTC
+            # Reformat the event's detection time to UTC and calculate estimated origin time
             time_text = event.resource_id.id.split('_')[-1]
-            UTCdt = UTCDateTime(time_text)
+            detection_utc = UTCDateTime(time_text)
+            template_origin_dt = np.min([tr.stats.starttime for tr in source_template.st]) - source_event.origins[0].time
+            origin_utc = detection_utc - template_origin_dt
 
             # Create an ObsPy Origin object and store it in the event
-            event.origins = [Origin(time=UTCdt, latitude=lat, longitude=lon, depth=dep)]
+            event.origins = [Origin(time=origin_utc, latitude=lat, longitude=lon, depth=dep)]
 
             # Loop over picks in event
             for pick in event.picks:
@@ -1193,12 +1195,14 @@ def rethreshold_results(tribe,
             lon = source_event.origins[0].longitude
             dep = source_event.origins[0].depth
 
-            # Reformat the event's detection time to UTC
+            # Reformat the event's detection time to UTC and calculate estimated origin time
             time_text = event.resource_id.id.split('_')[-1]
-            UTCdt = UTCDateTime(time_text)
+            detection_utc = UTCDateTime(time_text)
+            template_origin_dt = np.min([tr.stats.starttime for tr in source_template.st]) - source_event.origins[0].time
+            origin_utc = detection_utc - template_origin_dt
 
             # Create an ObsPy Origin object and store it in the event
-            event.origins = [Origin(time=UTCdt, latitude=lat, longitude=lon, depth=dep)]
+            event.origins = [Origin(time=origin_utc, latitude=lat, longitude=lon, depth=dep)]
 
             # Loop over picks in event
             for pick in event.picks:
