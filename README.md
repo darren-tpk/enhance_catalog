@@ -18,7 +18,7 @@ The general sequence to be followed is:
 8. Relocate valid events to obtain the relocated, enhanced catalog
 9. Plot resulting data products in time and in space
 
-
+Refer to the Table S12 pdf file in the repository to access the latest, detailed recommendations for each function. 
 
 **Key references and other suggested citations**
 
