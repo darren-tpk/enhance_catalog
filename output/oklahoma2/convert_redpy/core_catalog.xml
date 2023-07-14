@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='utf-8'?>
+<q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2">
+  <eventParameters publicID="smi:local/c6f6da94-0522-46e8-a117-c3080b428547">
+    <event publicID="smi:local/event/158">
+      <preferredOriginID>smi:local/origin/158</preferredOriginID>
+      <preferredMagnitudeID>smi:local/magnitude/158</preferredMagnitudeID>
+      <origin publicID="smi:local/origin/158">
+        <time>
+          <value>2012-09-15T19:46:32.672000Z</value>
+        </time>
+        <latitude>
+          <value>35.652856</value>
+        </latitude>
+        <longitude>
+          <value>-98.263643</value>
+        </longitude>
+        <depth>
+          <value>4.946904</value>
+        </depth>
+        <comment id="smi:local/f660584b-feb6-46bc-89e9-27a737cc233a">
+          <text>Cluster 0 core event; in analyst catalog, REDPy detection time = 2012-09-15T19:46:34.360000Z</text>
+        </comment>
+      </origin>
+      <magnitude publicID="smi:local/magnitude/158">
+        <mag>
+          <value>0.96</value>
+        </mag>
+      </magnitude>
+      <pick publicID="smi:local/cf79148a-eb0b-4e81-b022-e5fcacff3453">
+        <time>
+          <value>2012-09-15T19:46:35.300000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST1" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/459cdede-f0c4-4b64-8582-e5f3f7a480a6">
+        <time>
+          <value>2012-09-15T19:46:35.330000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST2" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/2176d20d-18e9-4e53-8542-6a6ce69d0084">
+        <time>
+          <value>2012-09-15T19:46:35.718000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST4" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/0333ed53-bb12-4c1a-8f8c-231c328c08fe">
+        <time>
+          <value>2012-09-15T19:46:34.420000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST6" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/0d1fdaa5-ca78-4841-b187-ecc5acd60512">
+        <time>
+          <value>2012-09-15T19:46:34.100000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST8" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/98accfd5-9a53-4855-9e2d-d7660c6b23e9">
+        <time>
+          <value>2012-09-15T19:46:34.140000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST9" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/4f08bd3f-23f7-47df-8d79-ccb7df1e8b6b">
+        <time>
+          <value>2012-09-15T19:46:34.330000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST10" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/b2db8c82-c07e-4ff0-9445-2443a2f3274d">
+        <time>
+          <value>2012-09-15T19:46:34.847000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST11" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/87cb30e0-cad9-411e-b0c3-40b01c2884cc">
+        <time>
+          <value>2012-09-15T19:46:34.531000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST12" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/08b46586-2fec-4af8-aa4a-12c4795f05e5">
+        <time>
+          <value>2012-09-15T19:46:34.390000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST13" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/16620d5c-f694-4b7d-942c-961c21bc670e">
+        <time>
+          <value>2012-09-15T19:46:34.430000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST14" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/1b4adf54-6fd4-4f74-baf1-78caee1f3ac1">
+        <time>
+          <value>2012-09-15T19:46:34.780000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST15" locationCode="00" channelCode="HHZ"></waveformID>
+        <phaseHint>P</phaseHint>
+      </pick>
+      <pick publicID="smi:local/20ddc814-014f-40c1-88e8-7fdd07fb8831">
+        <time>
+          <value>2012-09-15T19:46:37.250000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST1" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/5404a432-9916-434f-a591-e6832fddfe0a">
+        <time>
+          <value>2012-09-15T19:46:37.290000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST2" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/2a73b5df-356e-4e31-9cc1-90962f9f1bb8">
+        <time>
+          <value>2012-09-15T19:46:37.890000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST4" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/51979921-aff4-475b-ab56-3ca47f458bce">
+        <time>
+          <value>2012-09-15T19:46:35.830000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST6" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/05440ad7-8d25-4200-ba34-3f35f92772bd">
+        <time>
+          <value>2012-09-15T19:46:35.191000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST8" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/939510e6-74cd-42f3-9590-6953dda82bc5">
+        <time>
+          <value>2012-09-15T19:46:35.320000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST9" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/e7646d37-032e-440a-955e-f0cbccbca7e3">
+        <time>
+          <value>2012-09-15T19:46:35.640000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST10" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/86950f68-4517-41f2-9458-3eaa6b62833d">
+        <time>
+          <value>2012-09-15T19:46:36.388000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST11" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/6b87e790-029f-4ad9-a467-5485c9a8f35c">
+        <time>
+          <value>2012-09-15T19:46:35.957000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST12" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/61229334-cdc3-4e2e-8db9-55b6e16c3e70">
+        <time>
+          <value>2012-09-15T19:46:35.780000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST13" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/c49f8dba-e929-474c-a042-0d4d97a1707b">
+        <time>
+          <value>2012-09-15T19:46:35.840000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST14" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+      <pick publicID="smi:local/a20d631d-70e0-43de-926e-bd406468fbd4">
+        <time>
+          <value>2012-09-15T19:46:36.225000Z</value>
+        </time>
+        <waveformID networkCode="JP" stationCode="ST15" locationCode="00" channelCode="HHN"></waveformID>
+        <phaseHint>S</phaseHint>
+      </pick>
+    </event>
+    <event publicID="smi:local/843e152f-17fc-457f-84ec-82a1dd2d3534">
+      <origin publicID="smi:local/d0bc6c37-05a1-4246-ad79-efd47e7db98a">
+        <time>
+          <value>2012-09-28T02:38:15.630000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/e1aea6af-b74c-49fe-8f4b-95242be799fd">
+          <text>Cluster 1 core event; not in analyst catalog</text>
+        </comment>
+      </origin>
+    </event>
+    <event publicID="smi:local/b5194f57-f522-47f0-a85c-3cf55abcf3e2">
+      <origin publicID="smi:local/bace707e-3635-4a60-b34b-df4b7a8d73b2">
+        <time>
+          <value>2012-09-29T13:03:42.690000Z</value>
+        </time>
+        <latitude/>
+        <longitude/>
+        <comment id="smi:local/053cccfc-5995-4bc2-8168-27ba84df04d0">
+          <text>Cluster 2 core event; not in analyst catalog</text>
+        </comment>
+      </origin>
+    </event>
+  </eventParameters>
+</q:quakeml>

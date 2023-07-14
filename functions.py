@@ -1300,43 +1300,41 @@ def generate_dtcc(catalog,
         catalog_P.events.append(ev1)
         catalog_S.events.append(ev2)
 
-    # If we are writing correlations in bulk of the whole catalog, we process the entire catalog at one go
-    if not by_cluster:
+    # Process the entire catalog at one go
+    print('Preparing stream dictionaries for differential times computation...')
 
-        print('Preparing stream dictionaries for differential times computation...')
+    # Generate stream dictionary (refer to toolbox.py)
+    # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
+    stream_dict_P = prepare_stream_dict(catalog_P, pre_pick=pre_pick_excess, length=length_excess, local=True,
+                                      data_path=data_path)
+    stream_dict_S = prepare_stream_dict(catalog_S, pre_pick=pre_pick_excess, length=length_excess, local=True,
+                                      data_path=data_path)
 
-        # Generate stream dictionary (refer to toolbox.py)
-        # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
-        stream_dict_P = prepare_stream_dict(catalog_P, pre_pick=pre_pick_excess, length=length_excess, local=True,
-                                          data_path=data_path)
-        stream_dict_S = prepare_stream_dict(catalog_S, pre_pick=pre_pick_excess, length=length_excess, local=True,
-                                          data_path=data_path)
+    # Execute cross correlations and write out a .cc file using write_correlations (refer to EQcorrscan docs)
+    # Note this stores a file called "dt.cc" in your current working directory
+    print('Correlating P-arrivals...')
+    _ = write_correlations(catalog=catalog_P, stream_dict=stream_dict_P, extract_len=length_actual,
+                           pre_pick=pre_pick_actual, shift_len=shift_len, lowcut=lowcut,
+                           highcut=highcut, max_sep=max_sep, min_link=0, min_cc=min_cc,
+                           interpolate=False, max_workers=None, parallel_process=parallel_process)
 
-        # Execute cross correlations and write out a .cc file using write_correlations (refer to EQcorrscan docs)
-        # Note this stores a file called "dt.cc" in your current working directory
-        print('Correlating P-arrivals...')
-        _ = write_correlations(catalog=catalog_P, stream_dict=stream_dict_P, extract_len=length_actual,
-                               pre_pick=pre_pick_actual, shift_len=shift_len, lowcut=lowcut,
-                               highcut=highcut, max_sep=max_sep, min_link=0, min_cc=min_cc,
-                               interpolate=False, max_workers=None, parallel_process=parallel_process)
+    # Define source and target cc filepaths, then copy over to relocate_catalog output directory
+    original_dt_path = './dt.cc'
+    target_dt_path_P = relocate_catalog_output_dir + 'dt.ccP'
+    adjust_weights(original_dt_path, target_dt_path_P, dt_cap=shift_len, append=False,
+                   weight_func=weight_func)
+    os.remove(original_dt_path)
 
-        # Define source and target cc filepaths, then copy over to relocate_catalog output directory
-        original_dt_path = './dt.cc'
-        target_dt_path_P = relocate_catalog_output_dir + 'dt.ccP'
-        adjust_weights(original_dt_path, target_dt_path_P, dt_cap=shift_len, append=False,
-                       weight_func=weight_func)
-        os.remove(original_dt_path)
-
-        # Correlate S-arrivals
-        print('Correlating S-arrivals...')
-        _ = write_correlations(catalog=catalog_S, stream_dict=stream_dict_S, extract_len=length_actual_S,
-                               pre_pick=pre_pick_actual_S, shift_len=shift_len_S, lowcut=lowcut,
-                               highcut=highcut, max_sep=max_sep, min_link=0, min_cc=min_cc,
-                               interpolate=False, max_workers=None, parallel_process=parallel_process)
-        target_dt_path_S = relocate_catalog_output_dir + 'dt.ccS'
-        adjust_weights(original_dt_path, target_dt_path_S, dt_cap=shift_len_S, append=False,
-                       weight_func=weight_func)
-        os.remove(original_dt_path)
+    # Correlate S-arrivals
+    print('Correlating S-arrivals...')
+    _ = write_correlations(catalog=catalog_S, stream_dict=stream_dict_S, extract_len=length_actual_S,
+                           pre_pick=pre_pick_actual_S, shift_len=shift_len_S, lowcut=lowcut,
+                           highcut=highcut, max_sep=max_sep, min_link=0, min_cc=min_cc,
+                           interpolate=False, max_workers=None, parallel_process=parallel_process)
+    target_dt_path_S = relocate_catalog_output_dir + 'dt.ccS'
+    adjust_weights(original_dt_path, target_dt_path_S, dt_cap=shift_len_S, append=False,
+                   weight_func=weight_func)
+    os.remove(original_dt_path)
 
     print('Cross correlations done!')
 
@@ -1381,6 +1379,7 @@ def run_hypoDD(catalog,
     import subprocess
     import pandas as pd
     from obspy import UTCDateTime
+    from obspy.core.event import Event
     from toolbox import writer, loc2cat
     from eqcorrscan.utils.catalog_to_dd import _generate_event_id_mapper
 

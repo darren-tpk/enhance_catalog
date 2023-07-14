@@ -1,5 +1,15 @@
 #%% Toolbox of all supporting functions
 
+#%% [remove_redpy_cluster] Wrapper to call REDPy's removeFamily.py
+def remove_redpy_cluster(cfg_path, *clusters):
+    import subprocess
+    if all(isinstance(c, int) for c in clusters):
+        clusters = [str(c) for c in clusters]
+        cluster_string = ' '.join(clusters)
+        subprocess.call('python ./redpy/removeFamily.py -v -c ' + cfg_path + ' ' + cluster_string, shell=True)
+    else:
+        raise ValueError('Some inputs are not integers! Enter integers representing REDPy family indices only.')
+
 #%% [pull_cores] Pulls out catalog of cores from a mixed catalog
 def pull_cores(full_catalog):
 
