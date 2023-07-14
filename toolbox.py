@@ -1074,7 +1074,7 @@ def adjust_weights(dtcc_filepath,target_filepath,dt_cap=None,min_link=0,append=F
                 if abs(dt) > dt_cap:
                     continue
 
-            # Extract old weight and apply sqrt
+            # Extract old weight and apply weight function if provided
             old_weight_str = dtcc_line.split()[2]
             old_weight = float(old_weight_str)
             if weight_func and callable(weight_func):
@@ -1091,7 +1091,7 @@ def adjust_weights(dtcc_filepath,target_filepath,dt_cap=None,min_link=0,append=F
 
     # Remove event pairs that have less than min_link observations
     header_indices = np.flatnonzero([target_line[0] == '#' for target_line in target_lines])
-    num_link = np.diff(np.append(header_indices, len(target_lines)-1))
+    num_link = np.diff(np.append(header_indices, len(target_lines)-1)) - 1
     failed_pair_indices = header_indices[np.flatnonzero(num_link < min_link)]
     for failed_pair_index in failed_pair_indices:
         target_lines[failed_pair_index] = ''
