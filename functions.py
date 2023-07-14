@@ -1240,8 +1240,10 @@ def generate_dtcc(catalog,
                   min_link,
                   max_sep=100,
                   weight_func=None,
-                  by_cluster=False,
                   make_s_picks=False,
+                  pre_pick_actual_S=None,
+                  length_actual_S=None,
+                  shift_len_S=None,
                   parallel_process=True):
 
     """
@@ -1260,8 +1262,10 @@ def generate_dtcc(catalog,
     :param min_link (int): minimum number of differential time observations for an event pair to be included in the output
     :param max_sep (float): maximum separation between event pairs allowed (km) (defaults to 100 to include all event pairs)
     :param weight_func (function): function to be applied on raw cross-correlation coefficient squared value computed by write_correlations()
-    :param by_cluster (bool): if `True`, only permit pairings between events obtained from the same parent template
     :param make_s_picks (bool): if `True`, make theoretical S picks from P picks using an vp/vs ratio of 1.73 before constructing dt.cc
+    :param pre_pick_actual_S (float): if defined, use a different pre_pick_actual for S picks. pre_pick_actual argument will be used for P picks only.
+    :param length_actual_S (float): if defined, use a different length_actual for S picks. length_actual argument will be used for P picks only.
+    :param shift_len_S (float): if defined, use a different shift_len for S picks. shift_len argument will be used for P picks only.
     :param parallel_process (bool): if `True`, use parallel processing to calculate cross-correlation differential times
     :return:
     """
@@ -1277,105 +1281,61 @@ def generate_dtcc(catalog,
     if make_s_picks:
         catalog = estimate_s_picks(catalog)
 
+    # Define S-pick specific params if they were provided, else copy parent param
+    pre_pick_actual_S = pre_pick_actual_S or pre_pick_actual
+    length_actual_S = length_actual_S or length_actual
+    shift_len_S = shift_len_S or shift_len
+
+    # Separate the catalog into two sub-catalogs (one with Ps, one with Ss)
+    catalog_P = Catalog()
+    catalog_S = Catalog()
+    for e in catalog:
+        ev1 = Event(origins=e.origins, comments=e.comments, magnitudes=e.magnitudes)
+        ev2 = Event(origins=e.origins, comments=e.comments, magnitudes=e.magnitudes)
+        for pick in e.picks:
+            if pick.phase_hint == 'P':
+                ev1.picks.append(pick)
+            else:
+                ev2.picks.append(pick)
+        catalog_P.events.append(ev1)
+        catalog_S.events.append(ev2)
+
     # If we are writing correlations in bulk of the whole catalog, we process the entire catalog at one go
     if not by_cluster:
 
-        print('Correlating all events in catalog with one another...')
+        print('Preparing stream dictionaries for differential times computation...')
 
         # Generate stream dictionary (refer to toolbox.py)
         # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
-        stream_dict = prepare_stream_dict(catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
+        stream_dict_P = prepare_stream_dict(catalog_P, pre_pick=pre_pick_excess, length=length_excess, local=True,
+                                          data_path=data_path)
+        stream_dict_S = prepare_stream_dict(catalog_S, pre_pick=pre_pick_excess, length=length_excess, local=True,
                                           data_path=data_path)
 
         # Execute cross correlations and write out a .cc file using write_correlations (refer to EQcorrscan docs)
         # Note this stores a file called "dt.cc" in your current working directory
-        _ = write_correlations(catalog=catalog, stream_dict=stream_dict, extract_len=length_actual,
+        print('Correlating P-arrivals...')
+        _ = write_correlations(catalog=catalog_P, stream_dict=stream_dict_P, extract_len=length_actual,
                                pre_pick=pre_pick_actual, shift_len=shift_len, lowcut=lowcut,
-                               highcut=highcut, max_sep=max_sep, min_link=min_link, min_cc=min_cc,
+                               highcut=highcut, max_sep=max_sep, min_link=0, min_cc=min_cc,
                                interpolate=False, max_workers=None, parallel_process=parallel_process)
 
-        # Define source and target cc filepaths
+        # Define source and target cc filepaths, then copy over to relocate_catalog output directory
         original_dt_path = './dt.cc'
-        target_dt_path = relocate_catalog_output_dir + 'dt.cc'
-        adjust_weights(original_dt_path, target_dt_path, dt_cap=shift_len, min_link=min_link, append=False,
+        target_dt_path_P = relocate_catalog_output_dir + 'dt.ccP'
+        adjust_weights(original_dt_path, target_dt_path_P, dt_cap=shift_len, append=False,
                        weight_func=weight_func)
         os.remove(original_dt_path)
 
-    # If we are correlating by cluster
-    else:
-
-        print('Correlating all events in catalog by cluster...')
-
-        # Start by generating event id mapper for full catalog
-        event_id_mapper = _generate_event_id_mapper(catalog, event_id_mapper=None)
-
-        # Obtain a unique list of source templates
-        templates = []
-        for event in catalog:
-            templates.append(event.comments[0].text.split()[1])
-        unique_templates = np.unique(templates)
-
-        # Initialize a list to store the catalog index of every template's self-detection
-        template_indices = []
-
-        # Define source and target cc filepaths
-        original_dt_path = './dt.cc'
-        target_dt_path = relocate_catalog_output_dir + 'dt.cc'
-
-        # Loop through each unique template
-        for i, unique_template in enumerate(unique_templates):
-
-            # Find index of catalog events that correspond to this template
-            template_detection_indices = [k for k, template in enumerate(templates) if unique_template in template]
-
-            # Craft sub-catalog
-            sub_catalog = Catalog()
-            detect_vals = []
-            for template_detection_index in template_detection_indices:
-                template_detection = catalog[template_detection_index]
-                detect_val = float(template_detection.comments[2].text.split('=')[1])
-                detect_vals.append(detect_val)
-                sub_catalog += template_detection
-
-            # Store the index of the template's self-detection, this will be used for our final inter-cluster step
-            template_indices.append(template_detection_indices[np.argmax(detect_vals)])
-
-            # Now craft stream dictionary
-            stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess,
-                                              local=True, data_path=data_path)
-
-            # Execute cross correlations
-            _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
-                                   extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
-                                   lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
-                                   min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=True)
-
-            # Write/append dt.cc to target cc file
-            if i == 0:
-                adjust_weights(original_dt_path, target_dt_path, dt_cap=shift_len, min_link=min_link, append=False,
-                               weight_func=weight_func)
-            else:
-                adjust_weights(original_dt_path, target_dt_path, dt_cap=shift_len, min_link=min_link, append=True,
-                               weight_func=weight_func)
-
-        # Now execute inter-template cross correlation by generating a sub-catalog containing template self-detections
-        sub_catalog = Catalog()
-        for template_index in template_indices:
-            sub_catalog += catalog[template_index]
-
-        # Now craft stream dictionary
-        stream_dict = prepare_stream_dict(sub_catalog, pre_pick=pre_pick_excess, length=length_excess, local=True,
-                                          data_path=data_path)
-
-        # Execute cross correlations
-        _ = write_correlations(catalog=sub_catalog, stream_dict=stream_dict, event_id_mapper=event_id_mapper,
-                               extract_len=length_actual, pre_pick=pre_pick_actual, shift_len=shift_len,
-                               lowcut=lowcut, highcut=highcut, max_sep=max_sep, min_link=min_link,
-                               min_cc=min_cc, interpolate=False, max_workers=None, parallel_process=False)
-
-        # Append dt.cc to master dt.cc
-        adjust_weights(original_dt_path, target_dt_path, dt_cap=shift_len, min_link=min_link, append=True,
-                       weight_func=None)
+        # Correlate S-arrivals
+        print('Correlating S-arrivals...')
+        _ = write_correlations(catalog=catalog_S, stream_dict=stream_dict_S, extract_len=length_actual_S,
+                               pre_pick=pre_pick_actual_S, shift_len=shift_len_S, lowcut=lowcut,
+                               highcut=highcut, max_sep=max_sep, min_link=0, min_cc=min_cc,
+                               interpolate=False, max_workers=None, parallel_process=parallel_process)
+        target_dt_path_S = relocate_catalog_output_dir + 'dt.ccS'
+        adjust_weights(original_dt_path, target_dt_path_S, dt_cap=shift_len_S, append=False,
+                       weight_func=weight_func)
         os.remove(original_dt_path)
 
     print('Cross correlations done!')
