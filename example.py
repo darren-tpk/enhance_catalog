@@ -311,7 +311,7 @@ hypoDD_loc, hypoDD_reloc = run_hypoDD(catalog=relocatable_catalog_FImag,
                                       hypoDD_inc_dict=hypoDD_inc_dict,
                                       hypoDD_inp_dict=hypoDD_inp_dict)
 
-## 9. Plot relocated earthquakes
+## (9) Plot relocated earthquakes
 relocatable_catalog_FImag = reader(scan_data_output_dir + 'relocatable_catalog_FImag.xml')
 hypoDD_loc = reader(relocate_catalog_output_dir + 'hypoDD_loc.xml')
 hypoDD_reloc = reader(relocate_catalog_output_dir + 'hypoDD_reloc.xml')
