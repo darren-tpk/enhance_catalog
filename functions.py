@@ -107,7 +107,7 @@ def download_data(data_destination,starttime,endtime,client,network,station,chan
                     trace_julday = str(tr.stats.starttime.julday)
                     trace_time = str(tr.stats.starttime.time)[0:8]
                     trace_datetime_str = ":".join([trace_year, str(trace_julday).zfill(3), trace_time])
-                    seed_filename = sta + '.' + chan + '.' + trace_datetime_str
+                    seed_filename = tr.stats.station + '.' + tr.stats.channel + '.' + trace_datetime_str
 
                     # Write to seed file
                     seed_filepath = data_destination + seed_filename
