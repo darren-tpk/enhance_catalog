@@ -259,6 +259,7 @@ def run_redpy(run_title,
 
     # Import all dependencies
     import subprocess
+    import sys
     from obspy import UTCDateTime
 
     # If input net/sta/chan/loc/stalats/stalons are lists, merge into comma separated string
@@ -366,13 +367,14 @@ def run_redpy(run_title,
         f.write('\n'.join(config_text))
 
     # Call initialize command
-    initialize_command = 'python ./redpy/initialize.py -v -c %s' % (output_destination + cfg_name)
+    initialize_command = '%s ./redpy/initialize.py -v -c %s' % (sys.executable, output_destination + cfg_name)
     subprocess.call(initialize_command, shell=True)
 
     # Call backfill command
-    initialize_command = 'python ./redpy/backfill.py -v -c %s -s %s -e %s' % (output_destination + cfg_name,
-                                                                       starttime.strftime('%Y-%m-%d'),
-                                                                       endtime.strftime('%Y-%m-%d'))
+    initialize_command = '%s ./redpy/backfill.py -v -c %s -s %s -e %s' % (sys.executable,
+                                                                          output_destination + cfg_name,
+                                                                          starttime.strftime('%Y-%m-%d'),
+                                                                          endtime.strftime('%Y-%m-%d'))
     subprocess.call(initialize_command, shell=True)
 
 def convert_redpy(analyst_catalog,
