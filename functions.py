@@ -1277,6 +1277,7 @@ def generate_dtcc(catalog,
     import numpy as np
     from eqcorrscan.utils.catalog_to_dd import write_correlations, _generate_event_id_mapper
     from obspy import Catalog
+    from obspy.core.event import Event
     from toolbox import prepare_stream_dict, adjust_weights, estimate_s_picks
 
     # Make estimated S pick if user specifies
