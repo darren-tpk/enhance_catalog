@@ -3,10 +3,12 @@
 #%% [remove_redpy_cluster] Wrapper to call REDPy's removeFamily.py
 def remove_redpy_cluster(cfg_path, *clusters):
     import subprocess
+    import sys
     if all(isinstance(c, int) for c in clusters):
         clusters = [str(c) for c in clusters]
         cluster_string = ' '.join(clusters)
-        subprocess.call('python ./redpy/removeFamily.py -v -c ' + cfg_path + ' ' + cluster_string, shell=True)
+        command_string = '%s ./redpy/removeFamily.py -v -c %s %s' % (sys.executable, cfg_path, cluster_string)
+        subprocess.call(command_string, shell=True)
     else:
         raise ValueError('Some inputs are not integers! Enter integers representing REDPy family indices only.')
 
