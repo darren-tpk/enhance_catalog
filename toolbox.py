@@ -1003,7 +1003,7 @@ def prepare_catalog_stream(data_path,catalog,resampling_frequency,tolerance,max_
     return stream
 
 # [prepare_stream_dict] prepare stream dictionary pertaining to input catalog
-def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",data_path=None):
+def prepare_stream_dict(catalog,pre_pick,length,resampling_frequency,local=False,client_name="IRIS",data_path=None):
 
     # Import dependencies
     from toolbox import read_trace
@@ -1043,8 +1043,9 @@ def prepare_stream_dict(catalog,pre_pick,length,local=False,client_name="IRIS",d
             # Add trace to stream object
             event_st += tr
 
-        # Split stream and append by alongside event id
+        # Split stream, resample then append by alongside event id
         event_st = event_st.split()
+        event_st = event_st.resample(resampling_frequency)
         stream_tuples.append((event_id,event_st))
 
     # Convert tuple object to dict object
