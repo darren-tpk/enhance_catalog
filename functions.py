@@ -1236,6 +1236,7 @@ def generate_dtcc(catalog,
                   length_actual,
                   length_excess,
                   shift_len,
+                  resampling_frequency,
                   lowcut,
                   highcut,
                   min_cc,
@@ -1258,6 +1259,7 @@ def generate_dtcc(catalog,
     :param length_actual (float): length of phase segment from pre-pick (s)
     :param length_excess (float): length in excess of phase segment from pre-pick for waveform retrieval (s)
     :param shift_len (float): length of time shift to find the maximum cross-correlation coefficient between phase segments (s)
+    :param resampling_frequency (float): desired sampling rate for stream dictionary (Hz) (upsample to 100Hz for 0.01s precision)
     :param lowcut (float): bandpass filter lower bound (Hz)
     :param highcut (float): bandpass filter upper bound (Hz)
     :param min_cc (float): minimum cross-correlation coefficient for a differential time to be retained for an event pair
@@ -1308,10 +1310,10 @@ def generate_dtcc(catalog,
 
     # Generate stream dictionary (refer to toolbox.py)
     # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
-    stream_dict_P = prepare_stream_dict(catalog_P, pre_pick=pre_pick_excess, length=length_excess, local=True,
-                                      data_path=data_path)
-    stream_dict_S = prepare_stream_dict(catalog_S, pre_pick=pre_pick_excess, length=length_excess, local=True,
-                                      data_path=data_path)
+    stream_dict_P = prepare_stream_dict(catalog_P, pre_pick=pre_pick_excess, length=length_excess,
+                                        resampling_frequency=resampling_frequency, local=True, data_path=data_path)
+    stream_dict_S = prepare_stream_dict(catalog_S, pre_pick=pre_pick_excess, length=length_excess,
+                                        resampling_frequency=resampling_frequency, local=True, data_path=data_path)
 
     # Execute cross correlations and write out a .cc file using write_correlations (refer to EQcorrscan docs)
     # Note this stores a file called "dt.cc" in your current working directory
@@ -1355,6 +1357,19 @@ def generate_dtcc(catalog,
                     for key in set(list(dtccP_dict.keys())+list(dtccS_dict.keys()))}
         dtcc_lines = '#'.join([key+val for key,val in dtcc_dict.items()]).split('\n')
         dtcc_lines = '\n'.join(dtcc_lines)
+
+    # Remove event pairs that have less than min_link observations
+    header_indices = np.flatnonzero([l[0] == '#' for l in dtcc_lines])
+    num_link = np.diff(np.append(header_indices, len(dtcc_lines)-1)) - 1
+    failed_pair_indices = header_indices[np.flatnonzero(num_link < min_link)]
+    for failed_pair_index in failed_pair_indices:
+        dtcc_lines[failed_pair_index] = ''
+        if failed_pair_index != (len(dtcc_lines) - 1):
+            i = 1
+            while dtcc_lines[failed_pair_index+i][0] != '#' and (failed_pair_index+i) != (len(dtcc_lines)-1):
+                dtcc_lines[failed_pair_index+i] = ''
+                i += 1
+    dtcc_lines = [l for l in dtcc_lines if l != '']
 
     with open(relocate_catalog_output_dir + 'dt.cc', "w") as open_file:
         open_file.write(''.join(dtcc_lines))
