@@ -1324,8 +1324,8 @@ def generate_dtcc(catalog,
     # Define source and target cc filepaths, then copy over to relocate_catalog output directory
     original_dt_path = './dt.cc'
     target_dt_path_P = relocate_catalog_output_dir + 'dt.ccP'
-    adjust_weights(original_dt_path, target_dt_path_P, dt_cap=shift_len, append=False,
-                   weight_func=weight_func)
+    adjust_weights(original_dt_path, target_dt_path_P, dt_cap=shift_len, min_link=1,
+                   append=False, weight_func=weight_func)
     os.remove(original_dt_path)
 
     # Correlate S-arrivals
@@ -1335,9 +1335,30 @@ def generate_dtcc(catalog,
                            highcut=highcut, max_sep=max_sep, min_link=0, min_cc=min_cc,
                            interpolate=False, max_workers=None, parallel_process=parallel_process)
     target_dt_path_S = relocate_catalog_output_dir + 'dt.ccS'
-    adjust_weights(original_dt_path, target_dt_path_S, dt_cap=shift_len_S, append=False,
-                   weight_func=weight_func)
+    adjust_weights(original_dt_path, target_dt_path_S, dt_cap=shift_len_S, min_link=1,
+                   append=False, weight_func=weight_func)
     os.remove(original_dt_path)
+
+    # Combine dt.cc files for P and S
+    dtccP_textfile = open(target_dt_path_P, 'r')
+    dtccP_lines = dtccP_textfile.readlines()
+    dtccS_textfile = open(target_dt_path_S, 'r')
+    dtccS_lines = dtccS_textfile.readlines()
+    if dtccP_lines != [] and dtccS_lines == []:
+        dtcc_lines = dtccP_lines
+    elif dtccP_lines == [] and dtccS_lines != []:
+        dtcc_lines = dtccS_lines
+    else:
+        dtccP_dict = {l[0:25]:l[25:] for l in ''.join(dtccP_lines).split('#')}
+        dtccS_dict = {l[0:25]:l[25:] for l in ''.join(dtccS_lines).split('#')}
+        dtcc_dict = {key: dtccP_dict.get(key,[]) + dtccS_dict.get(key,[])
+                    for key in set(list(dtccP_dict.keys())+list(dtccS_dict.keys()))}
+        dtcc_lines = '#'.join([key+val for key,val in dtcc_dict.items()]).split('\n')
+        dtcc_lines = '\n'.join(dtcc_lines)
+
+    with open(relocate_catalog_output_dir + 'dt.cc', "w") as open_file:
+        open_file.write(''.join(dtcc_lines))
+    open_file.close()
 
     print('Cross correlations done!')
 
