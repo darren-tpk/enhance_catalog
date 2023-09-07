@@ -260,7 +260,7 @@ ph2dt_inp_dict = {'MINWGHT': 0,
                   'MINOBS': 5,
                   'MAXOBS': 20}
 hypoDD_inc_dict = {'MAXEVE': 5000,
-                   'MAXDATA': 3000000,
+                   'MAXDATA': 5000000,
                    'MAXEVE0': 20,
                    'MAXDATA0': 2000,
                    'MAXLAY': 30,
@@ -318,10 +318,12 @@ hypoDD_reloc = reader(relocate_catalog_output_dir + 'hypoDD_reloc.xml')
 lat_lims = [60.4, 60.6]
 lon_lims = [-152.9, -152.6]
 dep_lims = [-3, 10]
+markersize = 2
 
 plot_hypoDD_results(hypoDD_in=relocatable_catalog_FImag,
                     hypoDD_loc=hypoDD_loc,
                     hypoDD_reloc=hypoDD_reloc,
                     lat_lims=lat_lims,
                     lon_lims=lon_lims,
-                    dep_lims=dep_lims)
+                    dep_lims=dep_lims,
+                    markersize=markersize)
