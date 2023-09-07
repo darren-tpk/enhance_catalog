@@ -1306,7 +1306,7 @@ def generate_dtcc(catalog,
         catalog_S.events.append(ev2)
 
     # Process the entire catalog at one go
-    print('Preparing stream dictionaries for differential times computation...')
+    print('\nPreparing stream dictionaries for differential times computation...')
 
     # Generate stream dictionary (refer to toolbox.py)
     # Note that we want pre_pick and length to be in excess, since write_correlations trims the data for us
