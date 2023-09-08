@@ -1356,7 +1356,7 @@ def generate_dtcc(catalog,
         dtcc_dict = {key: dtccP_dict.get(key,'') + dtccS_dict.get(key,'')
                     for key in set(list(dtccP_dict.keys())+list(dtccS_dict.keys()))}
         dtcc_lines = '#'.join([key+val for key,val in dtcc_dict.items()]).split('\n')
-        dtcc_lines = '\n'.join(dtcc_lines)
+        dtcc_lines = [l+'\n' for l in (dtcc_lines)]
 
     # Remove event pairs that have less than min_link observations
     header_indices = np.flatnonzero([l[0] == '#' for l in dtcc_lines])
