@@ -1353,7 +1353,7 @@ def generate_dtcc(catalog,
     else:
         dtccP_dict = {l[0:25]:l[25:] for l in ''.join(dtccP_lines).split('#')}
         dtccS_dict = {l[0:25]:l[25:] for l in ''.join(dtccS_lines).split('#')}
-        dtcc_dict = {key: dtccP_dict.get(key,[]) + dtccS_dict.get(key,[])
+        dtcc_dict = {key: dtccP_dict.get(key,'') + dtccS_dict.get(key,'')
                     for key in set(list(dtccP_dict.keys())+list(dtccS_dict.keys()))}
         dtcc_lines = '#'.join([key+val for key,val in dtcc_dict.items()]).split('\n')
         dtcc_lines = '\n'.join(dtcc_lines)
