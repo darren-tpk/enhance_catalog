@@ -1786,7 +1786,8 @@ def plot_hypoDD_results(hypoDD_in,
                         lat_lims,
                         lon_lims,
                         dep_lims,
-                        markersize=5):
+                        markersize=5,
+                        export_filepath=None):
     """
     Plot hypoDD results in 3 dimensions, to show differences between the input catalog, relocation candidates, and relocated events
     :param hypoDD_in (:class:`~obspy.core.event.Catalog`): relocatable catalog
@@ -1796,6 +1797,7 @@ def plot_hypoDD_results(hypoDD_in,
     :param lon_lims (list or tuple): minimum and maximum longitude plot limits expressed as a tuple/list of length 2
     :param dep_lims (list or tuple): minimum and maximum depth plot limits expressed as a tuple/list of length 2 (km)
     :param markersize (float): marker size for earthquake plots (defaults to 5)
+    :param export_filepath (str): (str or `None`): If str, exports plotted figure as a '.png' file. If `None`, show figure in interactive python.
     :return: N/A
     """
 
@@ -1878,6 +1880,11 @@ def plot_hypoDD_results(hypoDD_in,
     ax[1, 2].set_ylabel('Depth (km)')
     ax[1, 2].set_xlabel('Latitude')
     plt.tight_layout()
-    fig.show()
+
+    if export_filepath:
+        fig.savefig(export_filepath, bbox_inches='tight')
+        plt.close()
+    else:
+        fig.show()
 
     print('Done!')

@@ -321,6 +321,7 @@ lat_lims = [60.4, 60.6]
 lon_lims = [-152.9, -152.6]
 dep_lims = [-3, 10]
 markersize = 2
+export_filepath = None
 
 plot_hypoDD_results(hypoDD_in=relocatable_catalog_FImag,
                     hypoDD_loc=hypoDD_loc,
@@ -328,4 +329,5 @@ plot_hypoDD_results(hypoDD_in=relocatable_catalog_FImag,
                     lat_lims=lat_lims,
                     lon_lims=lon_lims,
                     dep_lims=dep_lims,
-                    markersize=markersize)
+                    markersize=markersize,
+                    export_filepath=export_filepath)
