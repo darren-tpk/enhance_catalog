@@ -1775,6 +1775,7 @@ def run_hypoDD(catalog,
                            depth_correction=depth_correction)
     writer(relocate_catalog_output_dir + 'hypoDD_loc.xml', hypoDD_loc)
     writer(relocate_catalog_output_dir + 'hypoDD_reloc.xml', hypoDD_reloc)
+    print('Done!')
 
     return hypoDD_loc, hypoDD_reloc
 
@@ -1801,6 +1802,7 @@ def plot_hypoDD_results(hypoDD_in,
     from eqcorrscan.utils.catalog_to_dd import _generate_event_id_mapper
     from matplotlib import pyplot as plt
     from toolbox import remove_catalog_repeats
+    print('\nPlotting results...')
 
     # Get subset of relocation candidates that remain unshifted
     hypoDD_loc_filtered = remove_catalog_repeats(hypoDD_loc, hypoDD_reloc)
@@ -1877,3 +1879,5 @@ def plot_hypoDD_results(hypoDD_in,
     ax[1, 2].set_xlabel('Latitude')
     plt.tight_layout()
     fig.show()
+
+    print('Done!')
