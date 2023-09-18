@@ -1369,7 +1369,7 @@ def generate_dtcc(catalog,
             while dtcc_lines[failed_pair_index+i][0] != '#' and (failed_pair_index+i) != (len(dtcc_lines)-1):
                 dtcc_lines[failed_pair_index+i] = ''
                 i += 1
-    dtcc_lines = [l for l in dtcc_lines if l != '']
+    dtcc_lines = [l for l in dtcc_lines if (l != '' and l != '\n')]
 
     with open(relocate_catalog_output_dir + 'dt.cc', "w") as open_file:
         open_file.write(''.join(dtcc_lines))
