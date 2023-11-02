@@ -228,7 +228,7 @@ def read_hypoi(hypoi_file,
                     depth = -999
                     print('WARNING: The catalog has an event that does not have a depth entry. Setting depth=-999.')
             else:
-                depth = float(line[31:36]) / 100
+                depth = float(line[31:36]) * 10  # m
                 if depth_lim is not None and (depth < depth_lim[0] or depth > depth_lim[1]):
                     valid_event = False
                     continue
