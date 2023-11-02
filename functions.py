@@ -1437,7 +1437,7 @@ def run_hypoDD(catalog,
         vzmodel_read = open(vzmodel_path, "r")
         vzmodel_lines = vzmodel_read.readlines()
         model_ceiling = float(vzmodel_lines[0].split()[0])
-        depth_correction = -1 * model_ceiling
+        depth_correction = -1 * model_ceiling * 1000  # m
         vzmodel_read.close()
     else:
         depth_correction = 0
@@ -1468,7 +1468,7 @@ def run_hypoDD(catalog,
         stalons = [float(n) for n in stalons]
         staelevs = [float(n) for n in staelevs]
     if correct_depths:
-        staelevs = [n - (depth_correction * 1000) for n in staelevs]
+        staelevs = [n - depth_correction for n in staelevs]
     STATION_DAT_FILE = open(STATION_DAT_FILEPATH, 'w')
     for i in range(len(stations)):
         STATION_DAT_FILE.write(STATION_DAT_FORMAT % (stations[i],
@@ -1495,9 +1495,9 @@ def run_hypoDD(catalog,
         lat = event.origins[0].latitude
         lon = event.origins[0].longitude
         if correct_depths:
-            dep = event.origins[0].depth + depth_correction
+            dep = (event.origins[0].depth + depth_correction) / 1000
         else:
-            dep = event.origins[0].depth
+            dep = (event.origins[0].depth) / 1000
         if event.magnitudes == []:
             print('Event index %d, UTC Time %s has no magnitude, skipping.' % (
             catalog.events.index(event), event.origins[0].time))
