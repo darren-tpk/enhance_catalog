@@ -1597,7 +1597,7 @@ def run_hypoDD(catalog,
     clean_command = 'make clean -C %s' % (hypoDD_dir + 'HYPODD/src/')
     make_command = 'make -C %s' % (hypoDD_dir + 'HYPODD/src/')
     subprocess.call(clean_command, shell=True)
-    subprocess.call(make_command, shell=True)  # not working for M2 chip?
+    subprocess.call(make_command, shell=True)  # not working for PyCharm IDE?
 
     # Configure ph2dt.inp
     ph2dt_inp_text = ['* ph2dt.inp - input control file for program ph2dt',
@@ -1653,7 +1653,7 @@ def run_hypoDD(catalog,
     for i in range(len(vzmodel.values)):
         line = vzmodel.values[i][0]
         if correct_depths:
-            TOP.append(str(float(line.split(' ')[0]) + depth_correction))
+            TOP.append(str(float(line.split(' ')[0]) + depth_correction/1000))
         else:
             TOP.append(str(line.split(' ')[0]))
         VELP.append(str(line.split(' ')[1]))
@@ -1787,6 +1787,7 @@ def plot_hypoDD_results(hypoDD_in,
                         lon_lims,
                         dep_lims,
                         markersize=5,
+                        legend_loc='lower right',
                         export_filepath=None):
     """
     Plot hypoDD results in 3 dimensions, to show differences between the input catalog, relocation candidates, and relocated events
@@ -1797,6 +1798,7 @@ def plot_hypoDD_results(hypoDD_in,
     :param lon_lims (list or tuple): minimum and maximum longitude plot limits expressed as a tuple/list of length 2
     :param dep_lims (list or tuple): minimum and maximum depth plot limits expressed as a tuple/list of length 2 (km)
     :param markersize (float): marker size for earthquake plots (defaults to 5)
+    :param legend_loc (str): string describing position of legend in each subplot (e.g. 'lower right', 'lower left')
     :param export_filepath (str): (str or `None`): If str, exports plotted figure as a '.png' file. If `None`, show figure in interactive python.
     :return: N/A
     """
@@ -1812,16 +1814,16 @@ def plot_hypoDD_results(hypoDD_in,
     # Extract lat, lon and depth for all catalogs
     hypoDD_in_lats = [event.origins[0].latitude for event in hypoDD_in]
     hypoDD_in_lons = [event.origins[0].longitude for event in hypoDD_in]
-    hypoDD_in_deps = [event.origins[0].depth for event in hypoDD_in]
+    hypoDD_in_deps = [event.origins[0].depth/1000 for event in hypoDD_in]
     hypoDD_loc_lats = [event.origins[0].latitude for event in hypoDD_loc]
     hypoDD_loc_lons = [event.origins[0].longitude for event in hypoDD_loc]
-    hypoDD_loc_deps = [event.origins[0].depth for event in hypoDD_loc]
+    hypoDD_loc_deps = [event.origins[0].depth/1000 for event in hypoDD_loc]
     hypoDD_loc_filtered_lats = [event.origins[0].latitude for event in hypoDD_loc_filtered]
     hypoDD_loc_filtered_lons = [event.origins[0].longitude for event in hypoDD_loc_filtered]
-    hypoDD_loc_filtered_deps = [event.origins[0].depth for event in hypoDD_loc_filtered]
+    hypoDD_loc_filtered_deps = [event.origins[0].depth/1000 for event in hypoDD_loc_filtered]
     hypoDD_reloc_lats = [event.origins[0].latitude for event in hypoDD_reloc]
     hypoDD_reloc_lons = [event.origins[0].longitude for event in hypoDD_reloc]
-    hypoDD_reloc_deps = [event.origins[0].depth for event in hypoDD_reloc]
+    hypoDD_reloc_deps = [event.origins[0].depth/1000 for event in hypoDD_reloc]
 
     # Now do simple plotting
     fig, ax = plt.subplots(2, 3, figsize=(10, 8))
@@ -1830,7 +1832,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[0, 0].plot(hypoDD_loc_lons, hypoDD_loc_lats, 'b.', markersize=markersize, label='relocatable')
     ax[0, 0].set_aspect(2)
     ax[0, 0].axis([lon_lims[0], lon_lims[1], lat_lims[0], lat_lims[1]])
-    ax[0, 0].legend(loc='lower right')
+    ax[0, 0].legend(loc=legend_loc, fontsize=7.5)
     ax[0, 0].set_title('LON vs LAT (before hypoDD)')
     ax[0, 0].set_ylabel('Latitude')
     ax[0, 0].set_xlabel('Longitude')
@@ -1839,7 +1841,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[1, 0].plot(hypoDD_reloc_lons, hypoDD_reloc_lats, 'r.', markersize=markersize, label='relocated')
     ax[1, 0].set_aspect(2)
     ax[1, 0].axis([lon_lims[0], lon_lims[1], lat_lims[0], lat_lims[1]])
-    ax[1, 0].legend(loc='lower right')
+    ax[1, 0].legend(loc=legend_loc, fontsize=7.5)
     ax[1, 0].set_title('LON vs LAT (after hypoDD)')
     ax[1, 0].set_ylabel('Latitude')
     ax[1, 0].set_xlabel('Longitude')
@@ -1848,7 +1850,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[0, 1].plot(hypoDD_loc_lons, hypoDD_loc_deps, 'b.', markersize=markersize, label='relocatable')
     ax[0, 1].axis([lon_lims[0], lon_lims[1], dep_lims[0], dep_lims[1]])
     ax[0, 1].invert_yaxis()
-    ax[0, 1].legend(loc='lower right')
+    ax[0, 1].legend(loc=legend_loc, fontsize=7.5)
     ax[0, 1].set_title('LON vs DEP (before hypoDD)')
     ax[0, 1].set_ylabel('Depth (km)')
     ax[0, 1].set_xlabel('Longitude')
@@ -1857,7 +1859,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[1, 1].plot(hypoDD_reloc_lons, hypoDD_reloc_deps, 'r.', markersize=markersize, label='relocated')
     ax[1, 1].axis([lon_lims[0], lon_lims[1], dep_lims[0], dep_lims[1]])
     ax[1, 1].invert_yaxis()
-    ax[1, 1].legend(loc='lower right')
+    ax[1, 1].legend(loc=legend_loc, fontsize=7.5)
     ax[1, 1].set_title('LON vs DEP (after hypoDD)')
     ax[1, 1].set_ylabel('Depth (km)')
     ax[1, 1].set_xlabel('Longitude')
@@ -1866,7 +1868,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[0, 2].plot(hypoDD_loc_lats, hypoDD_loc_deps, 'b.', markersize=markersize, label='relocatable')
     ax[0, 2].axis([lat_lims[0], lat_lims[1], dep_lims[0], dep_lims[1]])
     ax[0, 2].invert_yaxis()
-    ax[0, 2].legend(loc='lower right')
+    ax[0, 2].legend(loc=legend_loc, fontsize=7.5)
     ax[0, 2].set_title('LAT vs DEP (before hypoDD)')
     ax[0, 2].set_ylabel('Depth (km)')
     ax[0, 2].set_xlabel('Latitude')
@@ -1875,7 +1877,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[1, 2].plot(hypoDD_reloc_lats, hypoDD_reloc_deps, 'r.', markersize=markersize, label='relocated events')
     ax[1, 2].axis([lat_lims[0], lat_lims[1], dep_lims[0], dep_lims[1]])
     ax[1, 2].invert_yaxis()
-    ax[1, 2].legend(loc='lower right')
+    ax[1, 2].legend(loc=legend_loc, fontsize=7.5)
     ax[1, 2].set_title('LAT vs DEP (after hypoDD)')
     ax[1, 2].set_ylabel('Depth (km)')
     ax[1, 2].set_xlabel('Latitude')
