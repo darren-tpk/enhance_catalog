@@ -160,7 +160,7 @@ def read_hypoi(hypoi_file,
 
             # Check if event falls within bounding box limits
             if bbox_lim is not None:
-                if type(bbox_lim) != tuple and len(bbox_lims) != 4:
+                if type(bbox_lim) != tuple and len(bbox_lim) != 4:
                     raise ValueError(
                         'Input bbox_lim provided is not of length 4. Please follow the (latitude1,longitude1,latitude2,longitude2) format.')
                 if latitude < bbox_lim[0] or latitude > bbox_lim[2] or longitude > bbox_lim[1] or longitude < bbox_lim[
@@ -1577,7 +1577,7 @@ def loc2cat(loc_filepath, input_catalog=None, type='loc', depth_correction=0):
                 time = UTCDateTime(yr, mo, dy, hr, mm, ss)
             lon = float(lon)
             lat = float(lat)
-            dep = (float(dep) - depth_correction)
+            dep = (float(dep)*1000 - depth_correction)
             mag = float(mag)
             ev = Event(origins=[Origin(time=time, longitude=lon, latitude=lat, depth=dep)],
                        magnitudes=[Magnitude(mag=mag)])
