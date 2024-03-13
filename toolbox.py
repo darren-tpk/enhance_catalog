@@ -2,6 +2,13 @@
 
 #%% [remove_redpy_cluster] Wrapper to call REDPy's removeFamily.py
 def remove_redpy_cluster(cfg_path, *clusters):
+    """
+    Wrapper to call REDPy's removeFamily.py
+    :param cfg_path (str): configuration file path
+    :param clusters (list): cluster indices to remove
+    :return: N/A
+    """
+
     import subprocess
     import sys
     if all(isinstance(c, int) for c in clusters):
@@ -14,6 +21,11 @@ def remove_redpy_cluster(cfg_path, *clusters):
 
 #%% [pull_cores] Pulls out catalog of cores from a mixed catalog
 def pull_cores(full_catalog):
+    """
+    Pulls out catalog of cores from a mixed catalog
+    :param full_catalog (:class:`~obspy.core.event.Catalog`): ObsPy catalog containing all events
+    :return: (:class:`~obspy.core.event.Catalog`): ObsPy catalog containing only core events
+    """
 
     # Import all dependencices
     import time
@@ -623,6 +635,19 @@ def read_hypoi(hypoi_file,
 
 #%% [download_catalog] function to download catalog along with its phase data using libcomcat
 def download_catalog(start_time,end_time,contributor,latitude,longitude,max_radius,max_depth,review_status='reviewed',verbose=False):
+    """
+    Function to download a catalog of earthquakes and their phase data using libcomcat.
+    :param start_time (:class:`~obspy.core.utcdatetime.UTCDateTime`): start time for search
+    :param end_time (:class:`~obspy.core.utcdatetime.UTCDateTime`): end time for search
+    :param contributor (str): contributor of catalog (e.g. 'us')
+    :param latitude (float): latitude of search centroid
+    :param longitude (float): longitude of search centroid
+    :param max_radius (float): max radius of search (km)
+    :param max_depth (float): maximum depth of search (km)
+    :param review_status (str): review status of catalog (e.g. 'reviewed')
+    :param verbose (bool): verbosity of output
+    :return: (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    """
 
     from libcomcat.search import search
     import requests
@@ -662,6 +687,12 @@ def download_catalog(start_time,end_time,contributor,latitude,longitude,max_radi
 
 #%% [remove_boxcars] function to remove artificial boxcar-like signals from stream
 def remove_boxcars(st,tolerance):
+    """
+    Function to remove artificial boxcar-like signals from stream
+    :param st (:class:`~obspy.core.stream.Stream`): ObsPy stream object
+    :param tolerance (float): tolerance for spike detection
+    :return: (:class:`~obspy.core.stream.Stream`): ObsPy stream object with boxcars removed
+    """
 
     # Import dependencies
     import numpy as np
@@ -760,7 +791,13 @@ def remove_boxcars(st,tolerance):
 
 # [remove_bad_traces] function to remove traces with too many zeros
 def remove_bad_traces(st,max_zeros=100,npts_threshold=100):
-
+    """
+    Function to remove traces with too many zeros or too few data points
+    :param st (:class:`~obspy.core.stream.Stream`): ObsPy stream object
+    :param max_zeros (int): maximum number of zeros allowed in trace
+    :param npts_threshold (int): minimum number of data points allowed for a trace
+    :return: (:class:`~obspy.core.stream.Stream`): ObsPy stream object with bad traces removed
+    """
     # Recommended value: max_zeros=100 for 50Hz daylong traces
 
     # Import dependencies
@@ -777,6 +814,11 @@ def remove_bad_traces(st,max_zeros=100,npts_threshold=100):
 
 # [gen_detect_hist] function to create detection-threshold histogram
 def gen_detect_hist(party):
+    """
+    Generate a histogram of detection-threshold gaps for a party
+    :param party (:class:`~eqcorrscan.core.match_filter.party.Party`): party object
+    :return: N/A
+    """
 
     # Import dependencies
     import numpy as np
@@ -815,6 +857,13 @@ def gen_detect_hist(party):
 
 # [writer] function to write and save a catalog/tribe/party
 def writer(outpath,object):
+    """
+    Function to write and save a catalog/tribe/party
+    :param outpath (str): path to save file
+    :param object: ObsPy Catalog, EQcorrscan Tribe or EQcorrscan Party object
+    :return: N/A
+    """
+
 
     # Run quick check for file extension
     if (outpath[-4:] != '.tgz') and (outpath[-4:] != '.xml'):
@@ -847,6 +896,11 @@ def writer(outpath,object):
 
 # [reader] function to read a catalog/tribe/party
 def reader(inpath):
+    """
+    Function to read a catalog/tribe/party
+    :param inpath (str): path to read file
+    :return: ObsPy Catalog, EQcorrscan Tribe or EQcorrscan Party object
+    """
 
     # Run quick check for file extension
     if (inpath[-4:] != '.tgz') and (inpath[-4:] != '.xml'):
@@ -872,6 +926,16 @@ def reader(inpath):
 
 # [read_trace] read trace from local data files (limited to less than 24h in duration)
 def read_trace(data_path,station,channel,starttime,endtime,tolerance=4e4):
+    """
+    Function to read trace from local
+    :param data_path (str): path to data files
+    :param station (str): station code
+    :param channel (str): channel code
+    :param starttime (:class:`~obspy.core.utcdatetime.UTCDateTime`): start time for trace
+    :param endtime (:class:`~obspy.core.utcdatetime.UTCDateTime`): end time for trace
+    :param tolerance (float): tolerance for spike detection
+    :return: (:class:`~obspy.core.trace.Trace`): ObsPy trace object
+    """
 
     # Import dependencies
     import glob
@@ -930,6 +994,17 @@ def read_trace(data_path,station,channel,starttime,endtime,tolerance=4e4):
 
 # [prepare_catalog_stream] function to read streams pertaining to an input catalog
 def prepare_catalog_stream(data_path,catalog,resampling_frequency,tolerance,max_zeros=100,npts_threshold=100):
+    """
+    Function to read streams pertaining to an input catalog
+    :param data_path (str): path to data files
+    :param catalog (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    :param resampling_frequency (float): resampling frequency
+    :param tolerance (float): tolerance for spike detection
+    :param max_zeros (int): maximum number of zeros allowed in trace
+    :param npts_threshold (int): minimum number of data points required for a trace
+    :return: (:class:`~obspy.core.stream.Stream`): ObsPy stream object
+    """
+
 
     # Import dependencies
     import glob
@@ -1004,6 +1079,17 @@ def prepare_catalog_stream(data_path,catalog,resampling_frequency,tolerance,max_
 
 # [prepare_stream_dict] prepare stream dictionary pertaining to input catalog
 def prepare_stream_dict(catalog,pre_pick,length,resampling_frequency,local=False,client_name="IRIS",data_path=None):
+    """
+    Function to prepare stream dictionary pertaining to input catalog
+    :param catalog (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    :param pre_pick (float): pre-pick time in seconds
+    :param length (float): length of trace in seconds
+    :param resampling_frequency (float): resampling frequency
+    :param local (bool): if True, read from local data directory
+    :param client_name (str): name of client if not local
+    :param data_path (str): path to data files if local
+    :return: (dict): dictionary of ObsPy stream objects
+    """
 
     # Import dependencies
     from toolbox import read_trace
@@ -1056,6 +1142,16 @@ def prepare_stream_dict(catalog,pre_pick,length,resampling_frequency,local=False
 
 # [adjust_weights] adjust weights within a dt.cc file and write/append to another file
 def adjust_weights(dtcc_filepath,target_filepath,dt_cap=None,min_link=0,append=False,weight_func=None):
+    """
+    Function to adjust weights within a dt.cc file and write/append to another file
+    :param dtcc_filepath (str): path to dt.cc file
+    :param target_filepath (str): path to target file
+    :param dt_cap (float): maximum allowed dt
+    :param min_link (int): minimum number of links required for an event pair
+    :param append (bool): if True, append to target file
+    :param weight_func (function): function to adjust weights
+    :return: N/A
+    """
 
     # Import dependencies
     import os
@@ -1145,6 +1241,27 @@ def adjust_weights(dtcc_filepath,target_filepath,dt_cap=None,min_link=0,append=F
 def calculate_catalog_FI(catalog, data_path, reference_station, reference_channel, min_match, resampling_frequency,
                          prepick, length, lowcut, highcut, filomin=1, filomax=2.5, fiupmin=5, fiupmax=10, tolerance=4e4,
                          verbose=False, histogram=False):
+    """
+    Calculate the FIs of events in a catalog using reference station channels
+    :param catalog (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    :param data_path (str): path to data files
+    :param reference_station (str or list): reference station code(s)
+    :param reference_channel (str or list): reference channel code(s)
+    :param min_match (int): minimum number of matching stations required for FI calculation
+    :param resampling_frequency (float): resampling frequency
+    :param prepick (float): pre-pick time in seconds
+    :param length (float): length of trace in seconds
+    :param lowcut (float): lowcut frequency for bandpass filter
+    :param highcut (float): highcut frequency for bandpass filter
+    :param filomin (float): minimum frequency for FI lower window
+    :param filomax (float): maximum frequency for FI lower window
+    :param fiupmin (float): minimum frequency for FI upper window
+    :param fiupmax (float): maximum frequency for FI upper window
+    :param tolerance (float): tolerance for spike detection
+    :param verbose (bool): if True, print progress count for the number of successful FI computations
+    :param histogram (bool): if True, generate histogram of FI values
+    :return: (:class:`~obspy.core.event.Catalog`): ObsPy catalog object with FI values
+    """
 
     # Import all dependencies
     import glob
@@ -1286,6 +1403,24 @@ def calculate_catalog_FI(catalog, data_path, reference_station, reference_channe
 def calculate_relative_magnitudes(catalog, tribe, data_path, noise_window, signal_window, min_cc, min_snr,
                                   shift_len, resampling_frequency, lowcut, highcut, tolerance=4e4, use_s_picks=False,
                                   verbose=False):
+    """
+    Function to calculate magnitudes using SNR and CC based on Schaff & Richards (2014)
+    :param catalog (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    :param tribe (:class:`~eqcorrscan.core.match_filter.tribe.Tribe`): EQcorrscan tribe object
+    :param data_path (str): path to data files
+    :param noise_window (tuple): noise window for SNR calculation, in s, relative to P-wave arrival
+    :param signal_window (tuple): signal window for SNR calculation, in s, relative to P-wave arrival
+    :param min_cc (float): minimum cross-correlation value for magnitude calculation
+    :param min_snr (float): minimum signal-to-noise ratio for magnitude calculation
+    :param shift_len (float): length of time shift for cross-correlation
+    :param resampling_frequency (float): resampling frequency
+    :param lowcut (float): lowcut frequency for bandpass filter
+    :param highcut (float): highcut frequency for bandpass filter
+    :param tolerance (float): tolerance for spike detection
+    :param use_s_picks (bool): if True, include S picks for magnitude calculation
+    :param verbose (bool): if True, print progress count for the number of successful magnitude computations
+    :return: (:class:`~obspy.core.event.Catalog`): ObsPy catalog object with magnitudes
+    """
 
     # Import dependencies
     import numpy as np
@@ -1468,6 +1603,14 @@ def calculate_relative_magnitudes(catalog, tribe, data_path, noise_window, signa
 
 # [estimate_s_picks] function to go through a catalog to add estimated s picks
 def estimate_s_picks(catalog, vpvs_ratio=1.73, s_pick_component='N'):
+    """
+    Function to go through a catalog to add estimated S picks using a Vp/Vs ratio
+    :param catalog (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    :param vpvs_ratio (float): Vp/Vs ratio
+    :param s_pick_component (str): channel component code for S pick
+    :return: (:class:`~obspy.core.event.Catalog`): ObsPy catalog object with estimated S picks
+    """
+
     # Loop over events in catalog
     for event in catalog:
         # Get list of picked stations
@@ -1493,6 +1636,12 @@ def estimate_s_picks(catalog, vpvs_ratio=1.73, s_pick_component='N'):
 # [clean_cc_file] removes repeated event pairs and observations in dt.cc file
 # WARNING: this function works in place.
 def clean_cc_file(dtcc_filepath):
+    """
+    Clean dt.cc file off duplicates
+    :param dtcc_filepath (str): file path to dt.cc file
+    :return: N/A
+    """
+
     # Open dt.cc file
     with open(dtcc_filepath, 'r') as dtcc_file:
         # Read all lines and split by line break
@@ -1528,9 +1677,16 @@ def clean_cc_file(dtcc_filepath):
     with open(dtcc_filepath, 'w') as dtcc_file:
         dtcc_file.write(new_all_lines)
 
-
 # [loc2cat] converts .loc and .reloc into Catalog objects
 def loc2cat(loc_filepath, input_catalog=None, type='loc', depth_correction=0):
+    """
+    Convert .loc and .reloc files into ObsPy Catalog objects
+    :param loc_filepath (str): file path to .loc or .reloc file
+    :param input_catalog (:class:`~obspy.core.event.Catalog`): Input catalog to reference event IDs
+    :param type (str): type of file, either 'loc' or 'reloc'
+    :param depth_correction (float): depth correction in meters
+    :return: (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    """
 
     # Import all dependencies
     from obspy import Catalog, UTCDateTime
@@ -1603,6 +1759,13 @@ def loc2cat(loc_filepath, input_catalog=None, type='loc', depth_correction=0):
 
 # [dat2cat] converts .dat and .sel to Catalog objects
 def dat2cat(dat_filepath, input_catalog=None, depth_correction=0):
+    """
+    Convert .dat and .sel files into ObsPy Catalog objects
+    :param dat_filepath (str): file path to .dat or .sel file
+    :param input_catalog (:class:`~obspy.core.event.Catalog`): Input catalog to reference event IDs
+    :param depth_correction (float): depth correction in meters
+    :return: (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    """
 
     # Import all dependencies
     from obspy import Catalog, UTCDateTime
@@ -1665,6 +1828,12 @@ def dat2cat(dat_filepath, input_catalog=None, depth_correction=0):
 
 # [remove_catalog_repeats] returns a copied catalogA, but repeat events in catalogB are removed
 def remove_catalog_repeats(catalogA, catalogB):
+    """
+    Returns a copied catalogA with repeat events in seen catalogB removed
+    :param catalogA (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    :param catalogB (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    :return: (:class:`~obspy.core.event.Catalog`): ObsPy catalog object
+    """
 
     # Parse event ids
     catalogA_evids = [int(event.origins[0].comments[0].text.split()[-1]) for event in catalogA]
