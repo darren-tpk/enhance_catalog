@@ -167,8 +167,8 @@ def run_redpy(run_title,
               minplot=5,
               dybin=1,
               hrbin=1.,
-              occurbin=1,
-              recbin=1,
+              occurbin=24,
+              recbin=24,
               fixedheight=False,
               recplot=14.,
               mminplot=0,
@@ -1501,6 +1501,7 @@ def run_hypoDD(catalog,
         if event.magnitudes == []:
             print('Event index %d, UTC Time %s has no magnitude, skipping.' % (
             catalog.events.index(event), event.origins[0].time))
+            continue
         else:
             mag_object = event.preferred_magnitude() or event.magnitudes[0]
             mag = mag_object.mag
