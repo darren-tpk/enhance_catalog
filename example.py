@@ -321,7 +321,7 @@ lat_lims = [60.4, 60.6]
 lon_lims = [-152.9, -152.6]
 dep_lims = [-3, 10]
 markersize = 2
-export_filepath = None
+export_filepath = './example_relocations.png'
 
 plot_hypoDD_results(hypoDD_in=relocatable_catalog_FImag,
                     hypoDD_loc=hypoDD_loc,
