@@ -1764,9 +1764,13 @@ def run_hypoDD(catalog,
     hypoDD_command = hypoDD_dir + 'HYPODD/src/hypoDD/hypoDD' + ' ' + hypoDD_dir + '/INP/hypoDD.inp'
     subprocess.call(hypoDD_command, shell=True)
 
-    # Move hypoDD log to relocate catalog output dir
+    # Move hypoDD log and copy hypoDD outputs to relocate catalog output dir
     move_command = 'mv ./hypoDD.log %shypoDD.log' % relocate_catalog_output_dir
+    copy_command = 'scp -r %sOUT_hypoDD/ %s' % (hypoDD_dir, relocate_catalog_output_dir)
+    copy_command2 = 'scp -r %sOUT_ph2dt/ %s' % (hypoDD_dir, relocate_catalog_output_dir)
     subprocess.call(move_command, shell=True)
+    subprocess.call(copy_command, shell=True)
+    subprocess.call(copy_command2, shell=True)
 
     # Write out catalog objects from event.sel, hypoDD.loc and hypoDD.reloc
     print('Now writing catalog objects from hypoDD outputs...')
