@@ -773,7 +773,8 @@ def create_tribe(convert_redpy_output_dir,
                  process_len=86400,
                  tolerance=4e4,
                  channel_convention=True,
-                 use_all_analyst_events=False):
+                 use_all_analyst_events=False,
+                 alternate_catalog=None):
 
     """
     Creates a tribe of templates for EQcorrscan
@@ -791,6 +792,7 @@ def create_tribe(convert_redpy_output_dir,
     :param tolerance (float): factor to median tolerance for boxcar removal from data (as a factor to median)
     :param channel_convention (bool): if `True`, enforce strict compliance for P/S picks to be on vertical/horizontal components
     :param use_all_analyst_events (bool): if `True`, disregard REDPy clustering and create templates from all analyst-derived events
+    :param alternate_catalog (:class:`~obspy.core.event.Catalog`): alternate catalog to use for template creation. If not None, uses this catalog instead of searching convert_redpy and scan_data directories.
     :return: tribe (:class:`~core.match_filter.tribe`): tribe of successfully crafted templates
     """
 
@@ -810,12 +812,15 @@ def create_tribe(convert_redpy_output_dir,
         template_stations = template_stations.split(',')
 
     # Read in, and combine, the picked core catalog and unmatched analyst catalog
-    core_catalog_picked = reader(convert_redpy_output_dir + 'core_catalog_picked.xml')
-    if use_all_analyst_events:
-        unmatched_analyst_events = reader(convert_redpy_output_dir + 'unmatched_analyst_events_core.xml')
+    if not alternate_catalog:
+        core_catalog_picked = reader(convert_redpy_output_dir + 'core_catalog_picked.xml')
+        if use_all_analyst_events:
+            unmatched_analyst_events = reader(convert_redpy_output_dir + 'unmatched_analyst_events_core.xml')
+        else:
+            unmatched_analyst_events = reader(convert_redpy_output_dir + 'unmatched_analyst_events_redpy.xml')
+        template_catalog = core_catalog_picked + unmatched_analyst_events
     else:
-        unmatched_analyst_events = reader(convert_redpy_output_dir + 'unmatched_analyst_events_redpy.xml')
-    template_catalog = core_catalog_picked + unmatched_analyst_events
+        template_catalog = alternate_catalog
 
     # Clean catalog to only include picks from our station list
     print('\nRemoving picks on stations not in input station list...')
