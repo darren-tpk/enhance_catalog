@@ -1504,9 +1504,9 @@ def run_hypoDD(catalog,
         else:
             dep = (event.origins[0].depth) / 1000
         if event.magnitudes == []:
-            print('Event index %d, UTC Time %s has no magnitude, skipping.' % (
+            print('Event index %d, UTC Time %s has no magnitude, adding dummy magnitude -9.' % (
             catalog.events.index(event), event.origins[0].time))
-            continue
+            mag = -9
         else:
             mag_object = event.preferred_magnitude() or event.magnitudes[0]
             mag = mag_object.mag
