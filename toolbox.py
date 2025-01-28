@@ -1005,7 +1005,6 @@ def prepare_catalog_stream(data_path,catalog,resampling_frequency,tolerance,max_
     :return: (:class:`~obspy.core.stream.Stream`): ObsPy stream object
     """
 
-
     # Import dependencies
     import glob
     from obspy import Stream, read
@@ -1290,7 +1289,10 @@ def calculate_catalog_FI(catalog, data_path, reference_station, reference_channe
         count = 0
 
     # Initialize array of all event times
-    detection_times = np.array([UTCDateTime(event.resource_id.id.split('_')[-1]) for event in catalog])
+    try:
+        detection_times = np.array([UTCDateTime(event.resource_id.id.split('_')[-1]) for event in catalog])
+    except:
+        detection_times = np.array([UTCDateTime(event.origins[0].time) for event in catalog])
 
     # Loop over events in catalog
     for i, event in enumerate(catalog):
@@ -1300,7 +1302,10 @@ def calculate_catalog_FI(catalog, data_path, reference_station, reference_channe
             continue
         # Otherwise check for other events occuring on the same day so that we load the local data at one go
         else:
-            event_daystart = UTCDateTime(UTCDateTime(event.resource_id.id.split('_')[-1]).date)
+            try:
+                event_daystart = UTCDateTime(UTCDateTime(event.resource_id.id.split('_')[-1]).date)
+            except:
+                event_daystart = UTCDateTime(UTCDateTime(event.origins[0].time).date)
             event_dayend = event_daystart + 86400
             sub_catalog_bool = (np.array(detection_times) > event_daystart) & (np.array(detection_times) < event_dayend)
             sub_catalog_index = np.flatnonzero(sub_catalog_bool)
@@ -1309,7 +1314,7 @@ def calculate_catalog_FI(catalog, data_path, reference_station, reference_channe
 
         # Remove picks in sub_catalog events that are not on reference stachans
         for event in sub_catalog:
-            for pick in event.picks:
+            for pick in reversed(event.picks):
                 if (pick.waveform_id.station_code, pick.waveform_id.channel_code) not in reference_stachans:
                     event.picks.remove(pick)
 
@@ -1350,7 +1355,10 @@ def calculate_catalog_FI(catalog, data_path, reference_station, reference_channe
                 comment_text = 'FI=None'
                 catalog[sub_catalog_index[j]].comments.append(Comment(text=comment_text))
                 if verbose:
-                    print('Inserting FI=None for %s. Sub stream object is empty.' % (event.resource_id.id))
+                    try:
+                        print('Inserting FI=None for %s. Sub stream object is empty.' % (event.resource_id.id))
+                    except:
+                        print('Inserting FI=None for %s. Sub stream object is empty.' % (event.origins[0].time))
                 continue
 
             # Execute fft on data
