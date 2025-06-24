@@ -1534,6 +1534,8 @@ def run_hypoDD(catalog,
                     wght = 0.1  # Implement weighting scheme
                 else:
                     wght = event.origins[0].arrivals[i].time_weight
+                    if not wght:
+                        wght = 0
                 pha = pick.phase_hint
                 PHASE_DAT_FILE.write(PHASE_DAT_FORMAT_2 % (sta, tt, wght, pha))
         else:
@@ -1598,12 +1600,17 @@ def run_hypoDD(catalog,
         open_file.write('\n'.join(hypoDD_inc_text))
     open_file.close()
 
+    # Remove conda-specific paths and prepend desired path
+    env = os.environ.copy()
+    env["PATH"] = "/opt/homebrew/bin:" + ":".join(
+        p for p in env["PATH"].split(":") if "mambaforge" not in p
+    )
+
     # Clean and recompile within src dir
-    print('Compiling ...')
     clean_command = 'make clean -C %s' % (hypoDD_dir + 'HYPODD/src/')
     make_command = 'make -C %s' % (hypoDD_dir + 'HYPODD/src/')
-    subprocess.call(clean_command, shell=True)
-    subprocess.call(make_command, shell=True)  # not working for PyCharm IDE?
+    subprocess.call(clean_command, shell=True, env=env)
+    subprocess.call(make_command, shell=True, env=env)
 
     # Configure ph2dt.inp
     ph2dt_inp_text = ['* ph2dt.inp - input control file for program ph2dt',
@@ -1798,6 +1805,7 @@ def plot_hypoDD_results(hypoDD_in,
                         dep_lims,
                         markersize=5,
                         legend_loc='lower right',
+                        figsize=(10, 8),
                         export_filepath=None):
     """
     Plot hypoDD results in 3 dimensions, to show differences between the input catalog, relocation candidates, and relocated events
@@ -1809,6 +1817,7 @@ def plot_hypoDD_results(hypoDD_in,
     :param dep_lims (list or tuple): minimum and maximum depth plot limits expressed as a tuple/list of length 2 (km)
     :param markersize (float): marker size for earthquake plots (defaults to 5)
     :param legend_loc (str): string describing position of legend in each subplot (e.g. 'lower right', 'lower left')
+    :param figsize (tuple): figure size in inches (defaults to (10, 8))
     :param export_filepath (str): (str or `None`): If str, exports plotted figure as a '.png' file. If `None`, show figure in interactive python.
     :return: N/A
     """
@@ -1836,10 +1845,10 @@ def plot_hypoDD_results(hypoDD_in,
     hypoDD_reloc_deps = [event.origins[0].depth/1000 for event in hypoDD_reloc]
 
     # Now do simple plotting
-    fig, ax = plt.subplots(2, 3, figsize=(10, 8))
+    fig, ax = plt.subplots(2, 3, figsize=figsize)
     # [LON VS LAT] Plot selected events among input events (blue against black)
     ax[0, 0].plot(hypoDD_in_lons, hypoDD_in_lats, 'k.', markersize=markersize, label='input events')
-    ax[0, 0].plot(hypoDD_loc_lons, hypoDD_loc_lats, 'b.', markersize=markersize, label='relocatable')
+    ax[0, 0].plot(hypoDD_loc_lons, hypoDD_loc_lats, 'b.', markersize=markersize, label='relocatable events')
     ax[0, 0].set_aspect(2)
     ax[0, 0].axis([lon_lims[0], lon_lims[1], lat_lims[0], lat_lims[1]])
     ax[0, 0].legend(loc=legend_loc, fontsize=7.5)
@@ -1847,8 +1856,8 @@ def plot_hypoDD_results(hypoDD_in,
     ax[0, 0].set_ylabel('Latitude')
     ax[0, 0].set_xlabel('Longitude')
     # [LON VS LAT] Plot relocated events among retained events (red against blue)
-    ax[1, 0].plot(hypoDD_loc_filtered_lons, hypoDD_loc_filtered_lats, 'b.', markersize=markersize, label='relocatable')
-    ax[1, 0].plot(hypoDD_reloc_lons, hypoDD_reloc_lats, 'r.', markersize=markersize, label='relocated')
+    ax[1, 0].plot(hypoDD_loc_filtered_lons, hypoDD_loc_filtered_lats, 'b.', markersize=markersize, label='relocatable events')
+    ax[1, 0].plot(hypoDD_reloc_lons, hypoDD_reloc_lats, 'r.', markersize=markersize, label='relocated events')
     ax[1, 0].set_aspect(2)
     ax[1, 0].axis([lon_lims[0], lon_lims[1], lat_lims[0], lat_lims[1]])
     ax[1, 0].legend(loc=legend_loc, fontsize=7.5)
@@ -1857,7 +1866,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[1, 0].set_xlabel('Longitude')
     # [LON VS DEP] Plot selected events among input events (blue against black)
     ax[0, 1].plot(hypoDD_in_lons, hypoDD_in_deps, 'k.', markersize=markersize, label='input events')
-    ax[0, 1].plot(hypoDD_loc_lons, hypoDD_loc_deps, 'b.', markersize=markersize, label='relocatable')
+    ax[0, 1].plot(hypoDD_loc_lons, hypoDD_loc_deps, 'b.', markersize=markersize, label='relocatable events')
     ax[0, 1].axis([lon_lims[0], lon_lims[1], dep_lims[0], dep_lims[1]])
     ax[0, 1].invert_yaxis()
     ax[0, 1].legend(loc=legend_loc, fontsize=7.5)
@@ -1865,8 +1874,8 @@ def plot_hypoDD_results(hypoDD_in,
     ax[0, 1].set_ylabel('Depth (km)')
     ax[0, 1].set_xlabel('Longitude')
     # [LON VS DEP] Plot relocated events among retained events (red against blue)
-    ax[1, 1].plot(hypoDD_loc_filtered_lons, hypoDD_loc_filtered_deps, 'b.', markersize=markersize, label='relocatable')
-    ax[1, 1].plot(hypoDD_reloc_lons, hypoDD_reloc_deps, 'r.', markersize=markersize, label='relocated')
+    ax[1, 1].plot(hypoDD_loc_filtered_lons, hypoDD_loc_filtered_deps, 'b.', markersize=markersize, label='relocatable events')
+    ax[1, 1].plot(hypoDD_reloc_lons, hypoDD_reloc_deps, 'r.', markersize=markersize, label='relocated events')
     ax[1, 1].axis([lon_lims[0], lon_lims[1], dep_lims[0], dep_lims[1]])
     ax[1, 1].invert_yaxis()
     ax[1, 1].legend(loc=legend_loc, fontsize=7.5)
@@ -1875,7 +1884,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[1, 1].set_xlabel('Longitude')
     # [LAT VS DEP] Plot selected events among input events (blue against black)
     ax[0, 2].plot(hypoDD_in_lats, hypoDD_in_deps, 'k.', markersize=markersize, label='input events')
-    ax[0, 2].plot(hypoDD_loc_lats, hypoDD_loc_deps, 'b.', markersize=markersize, label='relocatable')
+    ax[0, 2].plot(hypoDD_loc_lats, hypoDD_loc_deps, 'b.', markersize=markersize, label='relocatable events')
     ax[0, 2].axis([lat_lims[0], lat_lims[1], dep_lims[0], dep_lims[1]])
     ax[0, 2].invert_yaxis()
     ax[0, 2].legend(loc=legend_loc, fontsize=7.5)
@@ -1883,7 +1892,7 @@ def plot_hypoDD_results(hypoDD_in,
     ax[0, 2].set_ylabel('Depth (km)')
     ax[0, 2].set_xlabel('Latitude')
     # [LAT VS DEP] Plot relocated events among retained events (red against blue)
-    ax[1, 2].plot(hypoDD_loc_filtered_lats, hypoDD_loc_filtered_deps, 'b.', markersize=markersize, label='relocatable')
+    ax[1, 2].plot(hypoDD_loc_filtered_lats, hypoDD_loc_filtered_deps, 'b.', markersize=markersize, label='relocatable events')
     ax[1, 2].plot(hypoDD_reloc_lats, hypoDD_reloc_deps, 'r.', markersize=markersize, label='relocated events')
     ax[1, 2].axis([lat_lims[0], lat_lims[1], dep_lims[0], dep_lims[1]])
     ax[1, 2].invert_yaxis()
