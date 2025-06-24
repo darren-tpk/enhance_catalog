@@ -38,7 +38,7 @@ Quickstart
 1. Clone and enter directory
 
 ```
-git clone https://github.com/darren-uaf/enhance_catalog
+git clone https://github.com/darren-tpk/enhance_catalog
 cd enhance_catalog
 ```
 
